@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-	<title>Japt v</title>
+	<title>Japt Interpreter</title>
 	<meta charset="utf-8">
 	<meta content="initial-scale=1,width=device-width" name="viewport">
 	<meta content="#000" name="theme-color">
@@ -12,7 +12,7 @@
 		<h1 class="dib vat">Japt Interpreter</h1>
 		<div class="pa wsnw" id="tools">
 			<label class="dib vam" for="flags"><svg class="vam" data-mdi="flag" viewBox="0 0 24 24"></svg></label>
-			<input class="dib vat" maxlength="5" id="flags" value="">
+			<input class="dib vat" maxlength="5" id="flags" spellcheck="false" value="">
 			<svg class="cp vam" data-mdi="play,stop" id="run" viewBox="0 0 24 24"></svg>
 			<svg class="cp vam" data-mdi="lock-open,lock" id="safemode" viewBox="0 0 24 24"></svg>
 			<svg class="cp vam" data-mdi="link-variant" id="copy_link" viewBox="0 0 24 24"></svg>
@@ -27,18 +27,19 @@
 	</header>
 	<main class="pr" id="interpreter">
 		<h2><label class="dib fwm" for="code">Code:</label> <span class="fr" id="counter"></span></h2>
-		<textarea class="oh" id="code" rows="1"></textarea>
+		<textarea class="oh" id="code" spellcheck="false" rows="1"></textarea>
 		<h2 class="fwm">Transpiled JS:</h2>
-		<textarea class="oh" id="transpiled" rows="1" readonly></textarea>
+		<textarea class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
 		<h2><label class="dib fwm" for="input">Input:</label></h2>
-		<textarea class="oh" id="input" rows="1"></textarea>
+		<textarea class="oh" id="input" spellcheck="false" rows="1"></textarea>
 		<h2><span class="fwm">Output:</span> <span class="fr" id="timer"></span></h2>
-		<textarea class="oh" id="output" rows="1" readonly></textarea>
+		<textarea class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
 		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span></span></p>
-		<textarea class="mz oh oz pen" id="clipboard" rows="1"></textarea>
+		<textarea class="mz oh oz pen" id="clipboard" spellcheck="false" rows="1"></textarea>
+		<input class="dn" id="timeout" type="checkbox">
 	</main>
 	<aside data-open="false" id="docs">
-		<h2 class="pa"><svg class="cp vam" data-mdi="file-document" viewBox="0 0 24 24"><title>Documentation</title></svg></h2>
+		<h2 class="ch pa"><svg class="cp vam" data-mdi="file-document" viewBox="0 0 24 24"><title>Documentation</title></svg></h2>
 		<div class="oa">
 			<p class="fwm" id="wip">This 3rd-party Japt interpreter and its documentation are a work in progress. The official Japt interpreter can be found <a href="https://ethproductions.github.io/japt/">here</a>.</p>
 			<article>
@@ -246,8 +247,8 @@
 		</div>
 	</aside>
 	<aside class="pf" id="keyboard">
-		<h2 class="pa"><svg class="cp vam" data-mdi="keyboard" viewBox="0 0 24 24"><title>Character Map</title></svg></h2>
-		<ol class="df"></ol>
+		<h2 class="dn pa"><svg class="cp vam" data-mdi="keyboard" viewBox="0 0 24 24"><title>Character Map</title></svg></h2>
+		<ol class="dg"></ol>
 	</aside>
 	<script src="https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js"></script>
 	<script src="js/default.js"></script>
