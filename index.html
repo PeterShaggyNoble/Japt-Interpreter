@@ -7,26 +7,27 @@
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500|Roboto:400,500" rel="stylesheet">
 	<link href="css/default.css" rel="stylesheet">
 </head>
-<body data-keyboard="false" data-running="false" data-safemode="false">
+<body class="dark" data-keyboard="false" data-running="false" data-safemode="false">
 	<header class="df pf" id="header">
-		<h1 class="dib vat">Japt Interpreter</h1>
+		<h1>Japt Interpreter</h1>
+		<ol class="df oh" id="versions" tabindex="-1"></ol>
 		<div class="pa wsnw" id="tools">
 			<label class="dib vam" for="flags"><svg class="vam" data-mdi="flag" viewBox="0 0 24 24"></svg></label>
 			<input class="dib vat" maxlength="5" id="flags" spellcheck="false" value="">
-			<svg class="cp vam" data-mdi="play,stop" id="run" viewBox="0 0 24 24"></svg>
+			<svg class="cp vam" data-mdi="play-circle,stop-circle" id="run" viewBox="0 0 24 24"></svg>
 			<svg class="cp vam" data-mdi="lock-open,lock" id="safemode" viewBox="0 0 24 24"></svg>
 			<svg class="cp vam" data-mdi="link-variant" id="copy_link" viewBox="0 0 24 24"></svg>
-			<svg class="cp vam" data-mdi="xml" id="copy_code" viewBox="0 0 24 24"></svg>
-			<svg class="cp vam" data-mdi="markdown" id="copy_post" viewBox="0 0 24 24"></svg>
+			<svg class="cp vam" data-mdi="text" id="copy_post" viewBox="0 0 24 24"></svg>
 		</div>
 		<ul id="links">
+			<li class="dib"><svg class="cp vam" data-mdi="invert-colors" id="theme" viewBox="0 0 24 24"></svg></li>
 			<li class="dib"><a href="https://chat.stackexchange.com/rooms/34018/japt"><svg class="vam" data-mdi="forum" viewBox="0 0 24 24"></svg></a></li>
 			<li class="dib"><a href="https://codegolf.stackexchange.com/q/121253/"><svg class="vam" data-mdi="information" viewBox="0 0 24 24"></svg></a></li>
 			<li class="dib"><a href="https://github.com/PeterShaggyNoble/Japt-Interpreter/"><svg class="vam" data-mdi="github-circle" viewBox="0 0 24 24"></svg></a></li>
 		</ul>
 	</header>
 	<main class="pr" id="interpreter">
-		<h2><label class="dib fwm" for="code">Code:</label> <span class="fr" id="counter"></span></h2>
+		<h2><label class="dib fwm" for="code">Code:</label> <svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_code" viewBox="0 0 24 24"></svg> <span class="fr" id="counter"></span></h2>
 		<textarea class="oh" id="code" spellcheck="false" rows="1"></textarea>
 		<h2 class="fwm">Transpiled JS:</h2>
 		<textarea class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
@@ -34,7 +35,9 @@
 		<textarea class="oh" id="input" spellcheck="false" rows="1"></textarea>
 		<h2><span class="fwm">Output:</span> <span class="fr" id="timer"></span></h2>
 		<textarea class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
-		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span></span></p>
+		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span class="dib vam"></span></p>
+		<h2><label class="dib fwm vam" for="compressor">Compressor:</label> <svg class="cp fr vam" data-mdi="arrow-collapse" id="compress" viewBox="0 0 24 24"></svg></h2>
+		<textarea class="oh" id="compressor" spellcheck="false" rows="1"></textarea>
 		<textarea class="mz oh oz pen" id="clipboard" spellcheck="false" rows="1"></textarea>
 		<input class="dn" id="timeout" type="checkbox">
 	</main>
@@ -57,7 +60,7 @@
 						<tr>
 							<th>Variable</th>
 							<th>Value</th>
-							<th>Alt.</th>
+							<th>Alternative</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -215,10 +218,22 @@
 				</table>
 			</article>
 			<article>
-				<h3 class="ps" id="docs_regex">Regular Expressions</h3>
+				<h3 class="ps" id="docs_shortcuts">Shortcuts</h3>
+				<table>
+					<thead class="fwm">
+						<tr>
+							<th>Character</th>
+							<th>Code</th>
+						</tr>
+					</thead>
+					<tbody id="shortcuts"></tbody>
+				</table>
 			</article>
 			<article>
-				<h3 class="ps" id="docs_shortcuts">Shortcuts</h3>
+				<h3 class="ps" id="docs_compress">Compression</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_regex">Regular Expressions</h3>
 			</article>
 			<article>
 				<h3 class="ps" id="docs_strings">String Methods</h3>
@@ -244,10 +259,13 @@
 			<article>
 				<h3 class="ps" id="docs_flags">Flags</h3>
 			</article>
+			<article>
+				<h3 class="ps" id="docs_examples">Examples</h3>
+			</article>
 		</div>
 	</aside>
 	<aside class="pf" id="keyboard">
-		<h2 class="dn pa"><svg class="cp vam" data-mdi="keyboard" viewBox="0 0 24 24"><title>Character Map</title></svg></h2>
+		<h2 class="pa"><svg class="cp vam" data-mdi="keyboard" viewBox="0 0 24 24"><title>Character Map</title></svg></h2>
 		<ol class="dg"></ol>
 	</aside>
 	<script src="https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js"></script>
