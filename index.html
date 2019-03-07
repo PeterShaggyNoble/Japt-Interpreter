@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<head>
+	<title>Japt v</title>
+	<meta charset="utf-8">
+	<meta content="initial-scale=1,width=device-width" name="viewport">
+	<meta content="#000" name="theme-color">
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500|Roboto:400,500" rel="stylesheet">
+	<link href="css/default.css" rel="stylesheet">
+</head>
+<body data-keyboard="false" data-running="false" data-safemode="false">
+	<header class="df pf" id="header">
+		<h1 class="dib vat">Japt Interpreter</h1>
+		<div class="pa wsnw" id="tools">
+			<label class="dib vam" for="flags"><svg class="vam" data-mdi="flag" viewBox="0 0 24 24"></svg></label>
+			<input class="dib vat" maxlength="5" id="flags" value="">
+			<svg class="cp vam" data-mdi="play,stop" id="run" viewBox="0 0 24 24"></svg>
+			<svg class="cp vam" data-mdi="lock-open,lock" id="safemode" viewBox="0 0 24 24"></svg>
+			<svg class="cp vam" data-mdi="link-variant" id="copy_link" viewBox="0 0 24 24"></svg>
+			<svg class="cp vam" data-mdi="xml" id="copy_code" viewBox="0 0 24 24"></svg>
+			<svg class="cp vam" data-mdi="markdown" id="copy_post" viewBox="0 0 24 24"></svg>
+		</div>
+		<ul id="links">
+			<li class="dib"><a href="https://chat.stackexchange.com/rooms/34018/japt"><svg class="vam" data-mdi="forum" viewBox="0 0 24 24"></svg></a></li>
+			<li class="dib"><a href="https://codegolf.stackexchange.com/q/121253/"><svg class="vam" data-mdi="information" viewBox="0 0 24 24"></svg></a></li>
+			<li class="dib"><a href="https://github.com/PeterShaggyNoble/Japt-Interpreter/"><svg class="vam" data-mdi="github-circle" viewBox="0 0 24 24"></svg></a></li>
+		</ul>
+	</header>
+	<main class="pr" id="interpreter">
+		<h2><label class="dib fwm" for="code">Code:</label> <span class="fr" id="counter"></span></h2>
+		<textarea class="oh" id="code" rows="1"></textarea>
+		<h2 class="fwm">Transpiled JS:</h2>
+		<textarea class="oh" id="transpiled" rows="1" readonly></textarea>
+		<h2><label class="dib fwm" for="input">Input:</label></h2>
+		<textarea class="oh" id="input" rows="1"></textarea>
+		<h2><span class="fwm">Output:</span> <span class="fr" id="timer"></span></h2>
+		<textarea class="oh" id="output" rows="1" readonly></textarea>
+		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span></span></p>
+		<textarea class="mz oh oz pen" id="clipboard" rows="1"></textarea>
+	</main>
+	<aside data-open="false" id="docs">
+		<h2 class="pa"><svg class="cp vam" data-mdi="file-document" viewBox="0 0 24 24"><title>Documentation</title></svg></h2>
+		<div class="oa">
+			<p class="fwm" id="wip">This 3rd-party Japt interpreter and its documentation are a work in progress. The official Japt interpreter can be found <a href="https://ethproductions.github.io/japt/">here</a>.</p>
+			<article>
+				<h3 class="ps" id="docs_basics">Basics</h3>
+				<h4 class="fwm">Variables &amp; Functions</h4>
+				<p>The uppercase letters <code class="dib fwm vam wsnw">A-Z</code> are pre-defined variables. See the "Variables" section below for more information.</p>
+				<p>The lowercase letters <code class="dib fwm vam wsnw">a-z</code> and accented lowercase letters are various methods, which transpile to <code class="dib fwm vam wsnw">.a(</code>, etc. See the individual "Methods" sections below for more information.</p>
+				<p>Anonymous functions take the form <code class="dib fwm vam wsnw">ABC{</code>, which transpiles to <code class="dib fwm vam wsnw">function(A,B,C{</code> with <code class="dib fwm vam wsnw">A</code>, <code class="dib fwm vam wsnw">B</code> &amp; <code class="dib fwm vam wsnw">C</code> being the parameters.</p>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_variables">Variables</h3>
+				<p>Alternative variables are available in Japt v1.x only by inserting a <code class="dib fwm vam wsnw">;</code> at the beginning of the programme</p>
+				<table>
+					<thead class="fwm">
+						<tr>
+							<th>Variable</th>
+							<th>Value</th>
+							<th>Alt.</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>A</td>
+							<td><code class="dib fwm vam wsnw">10</code></td>
+							<td><code class="dib fwm vam wsnw">[]</code></td>
+						</tr>
+						<tr>
+							<td>B</td>
+							<td><code class="dib fwm vam wsnw">11</code></td>
+							<td class="ttu">Alphabet</td>
+						</tr>
+						<tr>
+							<td>C</td>
+							<td><code class="dib fwm vam wsnw">12</code></td>
+							<td class="ttl">Alphabet</td>
+						</tr>
+						<tr>
+							<td>D</td>
+							<td><code class="dib fwm vam wsnw">13</code></td>
+							<td>QWERTY</td>
+						</tr>
+						<tr>
+							<td>E</td>
+							<td><code class="dib fwm vam wsnw">14</code></td>
+							<td>ASCII</td>
+						</tr>
+						<tr>
+							<td>F</td>
+							<td><code class="dib fwm vam wsnw">15</code></td>
+							<td><code class="dib fwm vam wsnw">"[A-Za-z]"</code></td>
+						</tr>
+						<tr>
+							<td>G</td>
+							<td><code class="dib fwm vam wsnw">16</code></td>
+							<td><code class="dib fwm vam wsnw">36</code></td>
+						</tr>
+						<tr>
+							<td>H</td>
+							<td><code class="dib fwm vam wsnw">32</code></td>
+							<td><code class="dib fwm vam wsnw">65</code></td>
+						</tr>
+						<tr>
+							<td>I</td>
+							<td><code class="dib fwm vam wsnw">64</code></td>
+							<td><code class="dib fwm vam wsnw">91</code></td>
+						</tr>
+						<tr>
+							<td>J</td>
+							<td><code class="dib fwm vam wsnw">-1</code></td>
+							<td><code class="dib fwm vam wsnw">","</code></td>
+						</tr>
+						<tr>
+							<td>K</td>
+							<td colspan="2"><code class="dib fwm vam wsnw">new Date()</code></td>
+						</tr>
+						<tr>
+							<td>L</td>
+							<td><code class="dib fwm vam wsnw">100</code></td>
+							<td><code class="dib fwm vam wsnw">"."</code></td>
+						</tr>
+						<tr>
+							<td>M</td>
+							<td colspan="2"><code class="dib fwm vam wsnw">Math</code></td>
+						</tr>
+						<tr>
+							<td>N</td>
+							<td colspan="2">Input</td>
+						</tr>
+						<tr>
+							<td>O</td>
+							<td colspan="2">Other</td>
+						</tr>
+						<tr>
+							<td>P</td>
+							<td colspan="2"><code class="dib fwm vam wsnw">""</code></td>
+						</tr>
+						<tr>
+							<td>Q</td>
+							<td colspan="2"><code class="dib fwm vam wsnw">"\""</code></td>
+						</tr>
+						<tr>
+							<td>R</td>
+							<td colspan="2"><code class="dib fwm vam wsnw">"\n"</code></td>
+						</tr>
+						<tr>
+							<td>S</td>
+							<td colspan="2"><code class="dib fwm vam wsnw">" "</code></td>
+						</tr>
+						<tr>
+							<td>T</td>
+							<td colspan="2"><code class="dib fwm vam wsnw">0</code></td>
+						</tr>
+						<tr>
+							<td>U</td>
+							<td colspan="2">1st Input</td>
+						</tr>
+						<tr>
+							<td>V</td>
+							<td colspan="2">2nd Input</td>
+						</tr>
+						<tr>
+							<td>W</td>
+							<td colspan="2">3rd Input</td>
+						</tr>
+						<tr>
+							<td>X</td>
+							<td colspan="2">4th Input</td>
+						</tr>
+						<tr>
+							<td>Y</td>
+							<td colspan="2">5th Input</td>
+						</tr>
+						<tr>
+							<td>Z</td>
+							<td colspan="2">6th Input</td>
+						</tr>
+					</tbody>
+				</table>
+				<p>Additionally, the following constants are available as part of the <code class="dib fwm vam wsnw">M</code>ath object</p>
+				<table>
+					<thead class="fwm">
+						<tr>
+							<th>Variable</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>ME</td>
+							<td>Euler's Constant</td>
+						</tr>
+						<tr>
+							<td>MP</td>
+							<td>Pi</td>
+						</tr>
+						<tr>
+							<td>MQ</td>
+							<td>Golden Ratio</td>
+						</tr>
+						<tr>
+							<td>MR</td>
+							<td>sqrt(0.5) ( = <code class="dib fwm vam wsnw">½¬</code>)</td>
+						</tr>
+						<tr>
+							<td>MS</td>
+							<td>sqrt(2) ( = <code class="dib fwm vam wsnw">2¬</code>)</td>
+						</tr>
+						<tr>
+							<td>MT</td>
+							<td>Tau ( = Pi*2)</td>
+						</tr>
+					</tbody>
+				</table>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_regex">Regular Expressions</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_shortcuts">Shortcuts</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_strings">String Methods</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_arrays">Array Methods</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_numbers">Number Methods</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_functions">Function Methods</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_dates">Date Methods</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_math"><code>M</code>ath Methods</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_other"><code>O</code>ther Methods</h3>
+			</article>
+			<article>
+				<h3 class="ps" id="docs_flags">Flags</h3>
+			</article>
+		</div>
+	</aside>
+	<aside class="pf" id="keyboard">
+		<h2 class="pa"><svg class="cp vam" data-mdi="keyboard" viewBox="0 0 24 24"><title>Character Map</title></svg></h2>
+		<ol class="df"></ol>
+	</aside>
+	<script src="https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js"></script>
+	<script src="js/default.js"></script>
+</body>
