@@ -3,17 +3,17 @@
 	<title>Japt Interpreter</title>
 	<meta charset="utf-8">
 	<meta content="initial-scale=1,width=device-width" name="viewport">
-	<meta content="#000" name="theme-color">
+	<meta content="#212121" name="theme-color">
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500|Roboto:400,500" rel="stylesheet">
 	<link href="css/default.css" rel="stylesheet">
 </head>
-<body class="dark" data-keyboard="false" data-running="false" data-safemode="false">
+<body class="dark" data-header="true" data-permute="false" data-running="false" data-safemode="false">
 	<header class="df pf" id="header">
-		<h1>Japt Interpreter</h1>
-		<ol class="df oh" id="versions" tabindex="-1"></ol>
+		<h1>Japt</h1>
+		<ol class="df oh pr" id="versions" tabindex="-1"></ol>
 		<div class="pa wsnw" id="tools">
 			<label class="dib vam" for="flags"><svg class="vam" data-mdi="flag" viewBox="0 0 24 24"></svg></label>
-			<input class="dib vat" maxlength="5" id="flags" spellcheck="false" value="">
+			<input class="dib vam" maxlength="5" id="flags" spellcheck="false" value="">
 			<svg class="cp vam" data-mdi="play-circle,stop-circle" id="run" viewBox="0 0 24 24"></svg>
 			<svg class="cp vam" data-mdi="lock-open,lock" id="safemode" viewBox="0 0 24 24"></svg>
 			<svg class="cp vam" data-mdi="link-variant" id="copy_link" viewBox="0 0 24 24"></svg>
@@ -27,7 +27,7 @@
 		</ul>
 	</header>
 	<main class="pr" id="interpreter">
-		<h2><label class="dib fwm" for="code">Code:</label> <svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_code" viewBox="0 0 24 24"></svg> <span class="fr" id="counter"></span></h2>
+		<h2><label class="dib fwm" for="code">Code:</label> <svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_code" viewBox="0 0 24 24"></svg> <svg class="cp fr vam" data-mdi="golf" id="golf" viewBox="0 0 24 24"></svg> <span class="fr" id="counter"></span></h2>
 		<textarea class="oh" id="code" spellcheck="false" rows="1"></textarea>
 		<h2 class="fwm">Transpiled JS:</h2>
 		<textarea class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
@@ -36,21 +36,22 @@
 		<h2><span class="fwm">Output:</span> <span class="fr" id="timer"></span></h2>
 		<textarea class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
 		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span class="dib vam"></span></p>
-		<h2><label class="dib fwm vam" for="compressor">Compressor:</label> <svg class="cp fr vam" data-mdi="arrow-collapse" id="compress" viewBox="0 0 24 24"></svg></h2>
+		<h2><label class="dib fwm vam" for="compressor">Compressor:</label> <svg class="cp fr vam" data-mdi="arrow-collapse" id="compress" viewBox="0 0 24 24"></svg> <svg class="cp fr vam" data-mdi="shuffle,shuffle-disabled" id="permute" viewBox="0 0 24 24"></svg> <svg class="cp dn fr vam" data-mdi="undo" id="reset" viewBox="0 0 24 24"></svg> <svg class="cp dn fr vam" data-mdi="clipboard-text-outline" id="copy_compressed" viewBox="0 0 24 24"></svg></h2>
 		<textarea class="oh" id="compressor" spellcheck="false" rows="1"></textarea>
 		<textarea class="mz oh oz pen" id="clipboard" spellcheck="false" rows="1"></textarea>
 		<input class="dn" id="timeout" type="checkbox">
 	</main>
 	<aside data-open="false" id="docs">
-		<h2 class="ch pa"><svg class="cp vam" data-mdi="file-document" viewBox="0 0 24 24"><title>Documentation</title></svg></h2>
+		<h2 class="ch pa"><svg class="pen vam" data-mdi="file-document" viewBox="0 0 24 24"><title>Documentation</title></svg></h2>
 		<div class="oa">
-			<p class="fwm" id="wip">This 3rd-party Japt interpreter and its documentation are a work in progress. The official Japt interpreter can be found <a href="https://ethproductions.github.io/japt/">here</a>.</p>
+			<p class="fwm" id="wip">This 3rd-party interpreter and, in particular, its documentation are a work in progress. The official Japt interpreter with complete documentation can be found at <a href="https://ethproductions.github.io/japt/">ethproductions.github.io/japt</a>.</p>
+			<p>This documentation provides an overview of the features, functions &amp; methods of Japt. For more in-depth tutorials, see the <a href="https://codegolf.stackexchange.com/q/121253/">tips for golfing in Japt</a> on PPCG, join the <a href="https://chat.stackexchange.com/rooms/34018/japt">Japt chatroom</a> or have a look through some <a href="https://codegolf.stackexchange.com/search?tab=newest&amp;q=Japt">recent solutions</a>.</p>
 			<article>
 				<h3 class="ps" id="docs_basics">Basics</h3>
 				<h4 class="fwm">Variables &amp; Functions</h4>
-				<p>The uppercase letters <code class="dib fwm vam wsnw">A-Z</code> are pre-defined variables. See the "Variables" section below for more information.</p>
+				<p>The uppercase letters <code class="dib fwm vam wsnw">A-Z</code> are pre-defined variables. See the "<span class="cp tdu" data-for="docs_variables">Variables</span>" section below for more information.</p>
 				<p>The lowercase letters <code class="dib fwm vam wsnw">a-z</code> and accented lowercase letters are various methods, which transpile to <code class="dib fwm vam wsnw">.a(</code>, etc. See the individual "Methods" sections below for more information.</p>
-				<p>Anonymous functions take the form <code class="dib fwm vam wsnw">ABC{</code>, which transpiles to <code class="dib fwm vam wsnw">function(A,B,C{</code> with <code class="dib fwm vam wsnw">A</code>, <code class="dib fwm vam wsnw">B</code> &amp; <code class="dib fwm vam wsnw">C</code> being the parameters.</p>
+				<p>Anonymous functions take the form <code class="dib fwm vam wsnw">XYZ{</code>, which transpiles to <code class="dib fwm vam wsnw">function(X,Y,Z{</code> with <code class="dib fwm vam wsnw">X</code>, <code class="dib fwm vam wsnw">Y</code> &amp; <code class="dib fwm vam wsnw">Z</code> being the parameters.</p>
 			</article>
 			<article>
 				<h3 class="ps" id="docs_variables">Variables</h3>
@@ -265,7 +266,7 @@
 		</div>
 	</aside>
 	<aside class="pf" id="keyboard">
-		<h2 class="pa"><svg class="cp vam" data-mdi="keyboard" viewBox="0 0 24 24"><title>Character Map</title></svg></h2>
+		<h2 class="cp pa"><svg class="pen vam" data-mdi="keyboard" viewBox="0 0 24 24"><title>Character Map</title></svg></h2>
 		<ol class="dg"></ol>
 	</aside>
 	<script src="https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js"></script>
