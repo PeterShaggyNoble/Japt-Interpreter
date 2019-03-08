@@ -20,6 +20,7 @@ const 	W=window,
 		compressor:I(`compressor`),
 		counter:I(`counter`),
 		error:Q(`#error>span`),
+		explanation:I(`explanation`),
 		flags:I(`flags`),
 		input:I(`input`),
 		output:I(`output`),
@@ -239,7 +240,9 @@ const 	W=window,
 				markdown+=` v`+versions.selected
 			if(fields.flags.value)
 				markdown+=` [\`${fields.flags.value}\`](https://codegolf.meta.stackexchange.com/a/14339/)`;
-			markdown+=`, ${variables.bytes} ${`bytes`.slice(0,variables.bytes!==1?5:4)}\n\n${fields.code.value.replace(/^/gm,`   `)}\n\n[Try it](${interpreter.url()})`;
+			markdown+=`, ${variables.bytes} ${`bytes`.slice(0,variables.bytes!==1?5:4)}\n\n${fields.code.value.replace(/^/gm,`    `)}\n\n[Try it](${interpreter.url()})`;
+			if(fields.explanation.value)
+				markdown+=`\n\n-----\n\n##Explanation\n\n`+fields.explanation.value.replace(/^/gm,`    `)
 			return markdown
 		},
 		run(){
@@ -468,6 +471,8 @@ const 	W=window,
 			I(`copy_code`).addEventListener(`click`,()=>general.copy(fields.code.value),false);
 			fields.code.addEventListener(`input`,interpreter.update,false);
 			fields.input.addEventListener(`input`,()=>general.resize(fields.input),false);
+			I(`copy_explanation`).addEventListener(`click`,()=>general.copy(fields.explanation.value.replace(/^/gm,`    `)),false);
+			fields.explanation.addEventListener(`input`,()=>general.resize(fields.explanation),false);
 			compressor.buttons.compress.addEventListener(`click`,compressor.compress,false);
 			compressor.buttons.permute.addEventListener(`click`,()=>B.dataset.permute=(variables.permute=!variables.permute),false);
 			compressor.buttons.copy.addEventListener(`click`,()=>general.copy(compressor.result.string),false);
@@ -484,6 +489,7 @@ const 	W=window,
 				general.resize(fields.transpiled);
 				general.resize(fields.input);
 				general.resize(fields.output);
+				general.resize(fields.explanation);
 				general.resize(fields.compressor);
 			},false);
 		},

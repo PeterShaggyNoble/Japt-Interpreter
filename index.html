@@ -30,15 +30,17 @@
 		<h2><label class="dib fwm" for="code">Code:</label> <svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_code" viewBox="0 0 24 24"></svg> <svg class="cp fr vam" data-mdi="golf" id="golf" viewBox="0 0 24 24"></svg> <span class="fr" id="counter"></span></h2>
 		<textarea class="oh" id="code" spellcheck="false" rows="1"></textarea>
 		<h2 class="fwm">Transpiled JS:</h2>
-		<textarea class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
+		<textarea autocomplete="off" class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
 		<h2><label class="dib fwm" for="input">Input:</label></h2>
-		<textarea class="oh" id="input" spellcheck="false" rows="1"></textarea>
+		<textarea autocomplete="off" class="oh" id="input" spellcheck="false" rows="1"></textarea>
 		<h2><span class="fwm">Output:</span> <span class="fr" id="timer"></span></h2>
-		<textarea class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
+		<textarea autocomplete="off" class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
 		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span class="dib vam"></span></p>
+		<h2><label class="dib fwm" for="explanation">Explanation:</label> <svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_explanation" viewBox="0 0 24 24"></svg></h2>
+		<textarea autocomplete="off" class="oh" id="explanation" spellcheck="false" rows="1"></textarea>
 		<h2><label class="dib fwm vam" for="compressor">Compressor:</label> <svg class="cp fr vam" data-mdi="arrow-collapse" id="compress" viewBox="0 0 24 24"></svg> <svg class="cp fr vam" data-mdi="shuffle,shuffle-disabled" id="permute" viewBox="0 0 24 24"></svg> <svg class="cp dn fr vam" data-mdi="undo" id="reset" viewBox="0 0 24 24"></svg> <svg class="cp dn fr vam" data-mdi="clipboard-text-outline" id="copy_compressed" viewBox="0 0 24 24"></svg></h2>
-		<textarea class="oh" id="compressor" spellcheck="false" rows="1"></textarea>
-		<textarea class="mz oh oz pen" id="clipboard" spellcheck="false" rows="1"></textarea>
+		<textarea autocomplete="off" class="oh" id="compressor" spellcheck="false" rows="1"></textarea>
+		<textarea autocomplete="off" class="mz oh oz pen" id="clipboard" spellcheck="false" rows="1"></textarea>
 		<input class="dn" id="timeout" type="checkbox">
 	</main>
 	<aside data-open="false" id="docs">
