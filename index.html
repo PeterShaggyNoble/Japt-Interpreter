@@ -7,17 +7,16 @@
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500|Roboto:400,500" rel="stylesheet">
 	<link href="css/default.css" rel="stylesheet">
 </head>
-<body class="dark" data-header="true" data-permute="false" data-running="false" data-safemode="false">
+<body class="dark">
 	<header class="df pf" id="header">
 		<h1>Japt</h1>
 		<ol class="df oh pr" id="versions" tabindex="-1"></ol>
 		<div class="pa wsnw" id="tools">
-			<label class="dib vam" for="flags"><svg class="vam" data-mdi="flag" viewBox="0 0 24 24"></svg></label>
-			<input class="dib vam" maxlength="5" id="flags" spellcheck="false" value="">
-			<svg class="cp vam" data-mdi="play-circle,stop-circle" id="run" viewBox="0 0 24 24"></svg>
-			<svg class="cp vam" data-mdi="lock-open,lock" id="safemode" viewBox="0 0 24 24"></svg>
-			<svg class="cp vam" data-mdi="link-variant" id="copy_link" viewBox="0 0 24 24"></svg>
-			<svg class="cp vam" data-mdi="text" id="copy_post" viewBox="0 0 24 24"></svg>
+			<label class="dib pr vat" for="flags"><svg class="vam" data-mdi="flag" viewBox="0 0 24 24"></svg></label>
+			<input class="dib vat" maxlength="4" id="flags" spellcheck="false" value="">
+			<svg class="cp vat" data-mdi="play-circle" id="run" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle><circle cx="12" cy="12" r="11.625"></circle><rect height="17.325" width="24" x="0" y="0"></rect></svg>
+			<svg class="cp vat" data-mdi="link-variant" id="copy_link" viewBox="0 0 24 24"></svg>
+			<svg class="cp vat" data-mdi="text" id="copy_post" viewBox="0 0 24 24"></svg>
 		</div>
 		<ul id="links">
 			<li class="dib"><svg class="cp vam" data-mdi="invert-colors" id="theme" viewBox="0 0 24 24"></svg></li>
@@ -27,20 +26,31 @@
 		</ul>
 	</header>
 	<main class="pr" id="interpreter">
-		<h2><label class="dib fwm" for="code">Code:</label> <svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_code" viewBox="0 0 24 24"></svg> <svg class="cp fr vam" data-mdi="golf" id="golf" viewBox="0 0 24 24"></svg> <span class="fr" id="counter"></span></h2>
-		<textarea class="oh" id="code" spellcheck="false" rows="1"></textarea>
+		<h2 class="dib"><label class="dib fwm" for="code">Code:</label></h2>
+		<svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_code" viewBox="0 0 24 24"></svg>
+		<svg class="cp fr vam" data-mdi="golf" id="golf" viewBox="0 0 24 24"></svg>
+		<svg class="cp fr vam" data-mdi="redo" id="redo" viewBox="0 0 24 24"></svg>
+		<svg class="cp fr vam" data-mdi="undo" id="undo" viewBox="0 0 24 24"></svg>
+		<p class="fr" id="counter"></p>
+		<textarea autocomplete="off" class="oh" id="code" spellcheck="false" rows="1"></textarea>
 		<h2 class="fwm">Transpiled JS:</h2>
 		<textarea autocomplete="off" class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
 		<h2><label class="dib fwm" for="input">Input:</label></h2>
 		<textarea autocomplete="off" class="oh" id="input" spellcheck="false" rows="1"></textarea>
-		<h2><span class="fwm">Output:</span> <span class="fr" id="timer"></span></h2>
+		<h2 class="dib fwm">Output:</h2>
+		<p class="fr" id="timer"></p>
 		<textarea autocomplete="off" class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
 		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span class="dib vam"></span></p>
-		<h2><label class="dib fwm" for="explanation">Explanation:</label> <svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_explanation" viewBox="0 0 24 24"></svg></h2>
+		<h2 class="dib"><label class="dib fwm" for="explanation">Explanation:</label></h2>
+		<svg class="cp fr vam" data-mdi="clipboard-text-outline" id="copy_explanation" viewBox="0 0 24 24"></svg>
 		<textarea autocomplete="off" class="oh" id="explanation" spellcheck="false" rows="1"></textarea>
-		<h2><label class="dib fwm vam" for="compressor">Compressor:</label> <svg class="cp fr vam" data-mdi="arrow-collapse" id="compress" viewBox="0 0 24 24"></svg> <svg class="cp fr vam" data-mdi="shuffle,shuffle-disabled" id="permute" viewBox="0 0 24 24"></svg> <svg class="cp dn fr vam" data-mdi="undo" id="reset" viewBox="0 0 24 24"></svg> <svg class="cp dn fr vam" data-mdi="clipboard-text-outline" id="copy_compressed" viewBox="0 0 24 24"></svg></h2>
+		<h2 class="dib"><label class="dib fwm vam" for="compressor">Compressor:</label></h2>
+		<svg class="cp fr vam" data-mdi="arrow-collapse" id="compress" viewBox="0 0 24 24"></svg>
+		<svg class="cp fr vam" data-mdi="shuffle,shuffle-disabled" id="permute" viewBox="0 0 24 24"></svg>
+		<svg class="cp dn fr vam" data-mdi="autorenew" id="reset" viewBox="0 0 24 24"></svg>
+		<svg class="cp dn fr vam" data-mdi="clipboard-text-outline" id="copy_compressed" viewBox="0 0 24 24"></svg>
 		<textarea autocomplete="off" class="oh" id="compressor" spellcheck="false" rows="1"></textarea>
-		<textarea autocomplete="off" class="mz oh oz pen" id="clipboard" spellcheck="false" rows="1"></textarea>
+		<textarea autocomplete="off" class="mz oh oz pen" id="clipboard" readonly spellcheck="false" rows="1"></textarea>
 		<input class="dn" id="timeout" type="checkbox">
 	</main>
 	<aside data-open="false" id="docs">
@@ -48,15 +58,15 @@
 		<div class="oa">
 			<p class="fwm" id="wip">This 3rd-party interpreter and, in particular, its documentation are a work in progress. The official Japt interpreter with complete documentation can be found at <a href="https://ethproductions.github.io/japt/">ethproductions.github.io/japt</a>.</p>
 			<p>This documentation provides an overview of the features, functions &amp; methods of Japt. For more in-depth tutorials, see the <a href="https://codegolf.stackexchange.com/q/121253/">tips for golfing in Japt</a> on PPCG, join the <a href="https://chat.stackexchange.com/rooms/34018/japt">Japt chatroom</a> or have a look through some <a href="https://codegolf.stackexchange.com/search?tab=newest&amp;q=Japt">recent solutions</a>.</p>
-			<article>
-				<h3 class="ps" id="docs_basics">Basics</h3>
+			<article class="pr" id="docs_basics">
+				<h3 class="ps">Basics</h3>
 				<h4 class="fwm">Variables &amp; Functions</h4>
 				<p>The uppercase letters <code class="dib fwm vam wsnw">A-Z</code> are pre-defined variables. See the "<span class="cp tdu" data-for="docs_variables">Variables</span>" section below for more information.</p>
 				<p>The lowercase letters <code class="dib fwm vam wsnw">a-z</code> and accented lowercase letters are various methods, which transpile to <code class="dib fwm vam wsnw">.a(</code>, etc. See the individual "Methods" sections below for more information.</p>
 				<p>Anonymous functions take the form <code class="dib fwm vam wsnw">XYZ{</code>, which transpiles to <code class="dib fwm vam wsnw">function(X,Y,Z{</code> with <code class="dib fwm vam wsnw">X</code>, <code class="dib fwm vam wsnw">Y</code> &amp; <code class="dib fwm vam wsnw">Z</code> being the parameters.</p>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_variables">Variables</h3>
+			<article class="pr" id="docs_variables">
+				<h3 class="ps">Variables</h3>
 				<p>Alternative variables are available in Japt v1.x only by inserting a <code class="dib fwm vam wsnw">;</code> at the beginning of the programme</p>
 				<table>
 					<thead class="fwm">
@@ -220,8 +230,8 @@
 					</tbody>
 				</table>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_shortcuts">Shortcuts</h3>
+			<article class="pr" id="docs_shortcuts">
+				<h3 class="ps">Shortcuts</h3>
 				<table>
 					<thead class="fwm">
 						<tr>
@@ -232,38 +242,38 @@
 					<tbody id="shortcuts"></tbody>
 				</table>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_compress">Compression</h3>
+			<article class="pr" id="docs_compress">
+				<h3 class="ps">Compression</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_regex">Regular Expressions</h3>
+			<article class="pr" id="docs_regex">
+				<h3 class="ps">Regular Expressions</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_strings">String Methods</h3>
+			<article class="pr" id="docs_strings">
+				<h3 class="ps">String Methods</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_arrays">Array Methods</h3>
+			<article class="pr" id="docs_arrays">
+				<h3 class="ps">Array Methods</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_numbers">Number Methods</h3>
+			<article class="pr" id="docs_numbers">
+				<h3 class="ps">Number Methods</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_functions">Function Methods</h3>
+			<article class="pr" id="docs_functions">
+				<h3 class="ps">Function Methods</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_dates">Date Methods</h3>
+			<article class="pr" id="docs_dates">
+				<h3 class="ps">Date Methods</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_math"><code>M</code>ath Methods</h3>
+			<article class="pr" id="docs_math">
+				<h3 class="ps">Math Methods</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_other"><code>O</code>ther Methods</h3>
+			<article class="pr" id="docs_other">
+				<h3 class="ps">Other Methods</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_flags">Flags</h3>
+			<article class="pr" id="docs_flags">
+				<h3 class="ps">Flags</h3>
 			</article>
-			<article>
-				<h3 class="ps" id="docs_examples">Examples</h3>
+			<article class="pr" id="docs_examples">
+				<h3 class="ps">Examples</h3>
 			</article>
 		</div>
 	</aside>

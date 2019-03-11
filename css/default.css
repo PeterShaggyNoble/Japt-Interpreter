@@ -34,6 +34,12 @@
 ::-webkit-scrollbar{
 	width:0px;
 }
+body{
+	--timing-function:cubic-bezier(.4,0,.2,1);
+	background:var(--background);
+	color:var(--foreground);
+	min-height:100vh;
+}
 body.dark{
 	--background:#424242;
 	--border:#616161;
@@ -48,32 +54,25 @@ body.light{
 	--foreground:#212121;
 	--primary:#fff;
 }
-body{
-	background:var(--background);
-	color:var(--foreground);
-	min-height:100vh;
-	--timing-function:cubic-bezier(.4,0,.2,1);
-}
 svg{
 	fill:currentcolor;
 	height:auto;
 	width:24px;
+}
+svg.spin{
+	animation:spin 1.5s infinite var(--timing-function);
 }
 #header{
 	align-items:center;
 	background:var(--primary);
 	border-bottom:1px solid var(--border);
 	height:51px;
-	justify-content:felx-start;
+	justify-content:flex-start;
 	left:0;
 	padding:0 20px;
 	right:0;
 	top:0;
-	transition:top .375s var(--timing-function);
 	z-index:2;
-}
-body[data-header=false]>#header{
-	top:-51px;
 }
 #header>h1{
 	font-size:18px;
@@ -126,6 +125,7 @@ body[data-header=false]>#header{
 #tools{
 	background:var(--primary);
 	border-bottom:1px solid var(--border);
+	height:33px;
 	left:50%;
 	top:50px;
 	transform:translatex(-50%);
@@ -160,43 +160,43 @@ body.light #tools::after{
 	background:url('data:image/svg+xml;utf-8,<svg height="33" viewBox="0 0 16 33" width="16" xmlns="http://www.w3.org/2000/svg"><path fill="%23bdbdbd" d="M16,0H0V33H1"/><path fill="%23fff" d="M15,0H0V32H0"/></svg>') no-repeat;
 }
 #tools svg{
-	height:32px;
-	padding:4px 8px;
-	width:40px;
+	margin:4px 8px;
+}
+#tools>svg#run{
+	margin:4px;
+	width:72px;
+	transform:translatey(-24px);
+}
+#run>circle:first-of-type{
+	fill:var(--border);
+}
+#run>circle:last-of-type,#run>rect{
+	fill:var(--primary);
 }
 #tools>label>svg{
-	padding-right:2px;
-	width:38px;
+	margin-right:2px;
 }
 #tools>input{
 	background:var(--background);
 	caret-color:var(--caret);
 	font-family:Roboto Mono,Lucida Console,Courier New,monospace;
 	font-size:14px;
-	height:24px;
-	line-height:24px;
-	margin:4px 2px 4px 0;
+	height:22px;
+	line-height:22px;
+	margin:5px 6px 5px 0;
 	padding:0 2px;
-	width:48px;
-}
-body[data-permute=true] #permute>path:first-of-type,
-body[data-permute=false] #permute>path:last-of-type,
-body[data-running=true] #run>path:first-of-type,
-body[data-running=false] #run>path:last-of-type,
-body[data-safemode=false] #safemode>path:last-of-type,
-body[data-safemode=true] #safemode>path:first-of-type{
-	display:none;
+	width:40px;
 }
 #interpreter{
-	padding:87px 20px 20px;
+	padding:110px 20px 20px;
 	z-index:1;
 }
-#interpreter>label,#interpreter>h2{
+#interpreter>label,#interpreter>h2,#interpreter>p{
 	font-size:14px;
 	line-height:24px;
 	margin-bottom:2px;
 }
-#interpreter h2>svg{
+#interpreter svg{
 	margin-left:8px;
 }
 #interpreter>textarea{
@@ -211,20 +211,27 @@ body[data-safemode=true] #safemode>path:first-of-type{
 	resize:none;
 	width:100%;
 }
+#interpreter>textarea::selection{
+	background:var(--caret);
+	color:var(--primary);
+}
 #code{
 	min-height:168px;
 }
 #input{
 	min-height:88px;
 }
-#error{
+#interpreter>p#error{
 	font-size:16px;
-	line-height:24px;
 	margin-top:-12px;
 	margin-bottom:20px;
 }
 #error>svg{
 	margin-right:8px;
+}
+#permute.enabled>path:first-of-type,
+#permute:not(.enabled)>path:last-of-type{
+	display:none;
 }
 #interpreter>textarea#clipboard{
 	height:0;
@@ -275,10 +282,10 @@ body[data-safemode=true] #safemode>path:first-of-type{
 	padding:0 8px;
 	transition:background .375s var(--timing-function);
 }
-#docs li:hover{
+#docs h3 li:hover{
 	background:rgba(0,0,0,.12);
 }
-#docs li:active,#docs li:focus{
+#docs h3 li:active,#docs h3 li:focus{
 	background:rgba(0,0,0,.24);
 }
 #docs h4{
@@ -371,6 +378,14 @@ body.light>#keyboard>h2{
 #keyboard li:hover{
 	background:var(--background);
 }
+@keyframes spin{
+	0%{
+		transform:rotate(0deg);
+	}
+	100%{
+		transform:rotate(359deg);
+	}
+}
 @media(max-width:390px){
 	#links>li:last-child{
 		display:none;
@@ -434,12 +449,7 @@ body.light>#keyboard>h2{
 		height:calc(100vh - 51px);
 		position:sticky;
 		top:51px;
-		transition:height .375s var(--timing-function),top .375s var(--timing-function);
 		width:400px;
-	}
-	body[data-header=false]>#docs{
-		height:100vh;
-		top:0;
 	}
 	#docs>h2>svg{
 		display:none;
