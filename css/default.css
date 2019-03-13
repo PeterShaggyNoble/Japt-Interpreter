@@ -35,6 +35,11 @@
 	width:0px;
 }
 body{
+	--background:#757575;
+	--border:#757575;
+	--caret:#757575;
+	--foreground:#757575;
+	--primary:#757575;
 	--timing-function:cubic-bezier(.4,0,.2,1);
 	background:var(--background);
 	color:var(--foreground);
@@ -237,25 +242,35 @@ body.light #tools::after{
 }
 #interpreter>textarea{
 	background:var(--primary);
+	border:1px solid var(--border);
 	caret-color:var(--caret);
 	font-family:Roboto Mono,Lucida Console,Courier New,monospace;
 	font-size:16px;
-	height:28px;
+	height:30px;
 	line-height:20px;
 	margin-bottom:20px;
 	padding:4px;
 	resize:none;
 	width:100%;
 }
+#interpreter>textarea:read-only{
+	border-color:var(--primary);
+}
 #interpreter>textarea::selection{
 	background:var(--caret);
 	color:var(--primary);
 }
 #code{
-	min-height:168px;
+	min-height:170px;
 }
 #input{
-	min-height:88px;
+	min-height:90px;
+}
+#cache.enabled>path:first-of-type,
+#cache:not(.enabled)>path:last-of-type,
+#permute.enabled>path:first-of-type,
+#permute:not(.enabled)>path:last-of-type{
+	display:none;
 }
 #interpreter>p#error{
 	font-size:16px;
@@ -264,10 +279,6 @@ body.light #tools::after{
 }
 #error>svg{
 	margin-right:8px;
-}
-#permute.enabled>path:first-of-type,
-#permute:not(.enabled)>path:last-of-type{
-	display:none;
 }
 #interpreter>textarea#clipboard{
 	height:0;

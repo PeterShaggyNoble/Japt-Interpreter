@@ -7,7 +7,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500|Roboto:400,500" rel="stylesheet">
 	<link href="css/default.css" rel="stylesheet">
 </head>
-<body class="dark">
+<body>
 	<header class="df pf" id="header">
 		<h1>Japt</h1>
 		<ol class="df oh pr" id="versions" tabindex="-1"></ol>
@@ -41,6 +41,8 @@
 		<textarea autocomplete="off" class="oh" id="input" spellcheck="false" rows="1"></textarea>
 		<h2 class="dib fwm">Output:</h2>
 		<p class="fr pr" data-title="Copy Output"><svg class="cp vam" data-mdi="clipboard-text-outline" id="copy-output" viewBox="0 0 24 24"></svg></p>
+		<p class="fr pr" data-title="Enable Caching"><svg class="cp vam" data-mdi="checkbox-blank-outline,check-box-outline" id="cache" viewBox="0 0 24 24"></svg></p>
+		<p class="dn fr pr" data-title="Clear Cache"><svg class="cp vam" data-mdi="delete" id="clear" viewBox="0 0 24 24"></svg></p>
 		<p class="fr" id="timer"></p>
 		<textarea autocomplete="off" class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
 		<p class="dn" id="error"><svg class="cp vam" data-mdi="alert" id="link" viewBox="0 0 24 24"></svg> <span class="dib vam"></span></p>
@@ -54,7 +56,6 @@
 		<p class="fr dn pr" data-title="Copy Result"><svg class="cp vam" data-mdi="clipboard-text-outline" id="copy-compressed" viewBox="0 0 24 24"></svg></p>
 		<textarea autocomplete="off" class="oh" id="compressor" spellcheck="false" rows="1"></textarea>
 		<textarea autocomplete="off" class="mz oh oz pen" id="clipboard" readonly spellcheck="false" rows="1"></textarea>
-		<input class="dn" id="timeout" type="checkbox">
 	</main>
 	<aside data-open="false" id="docs">
 		<h2 class="ch pa"><svg class="pen vam" data-mdi="file-document" viewBox="0 0 24 24"><title>Documentation</title></svg></h2>
