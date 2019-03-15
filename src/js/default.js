@@ -432,8 +432,8 @@ docs={
 					article.classList.add(`oa`);
 				}
 				article.id=`docs-`+file.url.match(/\/(\w+)\.\w+$/)[1];
-				switch(file.headers.get(`content-type`)){
-					case`application/json`:
+				switch(file.url.split(`.`).pop()){
+					case`json`:
 						json=await file.json();
 						if(heading){
 							heading=heading.cloneNode(1);
@@ -464,9 +464,10 @@ docs={
 							article.append(title,text);
 						}
 						break;
-					case`text/html`:
+					case`html`:
 						article.innerHTML=await file.text();
 						break;
+					default:console.error(`Failed to load documenation:`,file.url)
 				}
 				docs.sidebar.append(article);
 			}
