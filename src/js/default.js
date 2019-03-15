@@ -11,7 +11,59 @@ n=E=>d.createElementNS(`http://www.w3.org/2000/svg`,E),
 q=S=>d.querySelector(S),
 t=T=>d.createTextNode(T),
 characters="$[]^_`{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕ×ßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûü",
-shortcuts={"XYZ{X":`È`,"XYZ{Y":`Ï`,"g ":`Î`,"gJ ":`Ì`,"l ":`Ê`,"Um@":`¡`,"m@":`£`,"m_":`®`,"mDEF{D":`Ë`,"n2 ":`Í`,"o@":`Æ`,"o_":`Ç`,"p2 ":`²`,"p3 ":`³`,"q ":`¬`,"qR ":`·`,"qS ":`¸`,"r*1 ":`×`,"s0,":`¯`,"s1 ":`Å`,"Us2 ":`¢`,"s2 ":`¤`,"w ":`Ô`,"y ":`Õ`,"} ":`Ã`,") ":`¹`,"$new Date($":`Ð`,"+1":`Ä`,"++":`°`,"+=":`±`,"-1":`É`,"--":`´`,"-=":`µ`,"*2":`Ñ`,"!==":`À`,"!=":`¦`,"===":`¶`,"==":`¥`,"<=":`§`,">=":`¨`,"&&!":`«`,"&&":`©`,"||":`ª`,"-~":`Ò`,"~-":`Ó`,"~~":`Â`,">>>":`Á`,".25":`¼`,".5":`½`,".75":`¾`,"(((":`»`,"((":`º`},
+shortcuts={
+	"XYZ{X":{character:`È`,version:`1.4.6`},
+	"XYZ{Y":{character:`Ï`,version:`1.4.6`},
+	"g ":{character:`Î`,version:`1.4.6`},
+	"gJ ":{character:`Ì`,version:`1.4.6`},
+	"l ":{character:`Ê`,version:`1.4.6`},
+	"Um@":{character:`¡`,version:`1.4.6`},
+	"m@":{character:`£`,version:`1.4.6`},
+	"m_":{character:`®`,version:`1.4.6`},
+	"mDEF{D":{character:`Ë`,version:`1.4.6`},
+	"n2 ":{character:`Í`,version:`1.4.6`},
+	"o@":{character:`Æ`,version:`1.4.6`},
+	"o_":{character:`Ç`,version:`1.4.6`},
+	"p2 ":{character:`²`,version:`1.4.6`},
+	"p3 ":{character:`³`,version:`1.4.6`},
+	"q ":{character:`¬`,version:`1.4.6`},
+	"qR ":{character:`·`,version:`1.4.6`},
+	"qS ":{character:`¸`,version:`1.4.6`},
+	"r*1 ":{character:`×`,version:`1.4.6`},
+	"s0,":{character:`¯`,version:`1.4.6`},
+	"s1 ":{character:`Å`,version:`1.4.6`},
+	"Us2 ":{character:`¢`,version:`1.4.6`},
+	"s2 ":{character:`¤`,version:`1.4.6`},
+	"w ":{character:`Ô`,version:`1.4.6`},
+	"y ":{character:`Õ`,version:`1.4.6`},
+	"} ":{character:`Ã`,version:`1.4.6`},
+	") ":{character:`¹`,version:`1.4.6`},
+	"+1":{character:`Ä`,version:`1.4.6`},
+	"++":{character:`°`,version:`1.4.6`},
+	"+=":{character:`±`,version:`1.4.6`},
+	"-1":{character:`É`,version:`1.4.6`},
+	"--":{character:`´`,version:`1.4.6`},
+	"-=":{character:`µ`,version:`1.4.6`},
+	"*2":{character:`Ñ`,version:`1.4.6`},
+	"!==":{character:`À`,version:`1.4.6`},
+	"!=":{character:`¦`,version:`1.4.6`},
+	"===":{character:`¶`,version:`1.4.6`},
+	"==":{character:`¥`,version:`1.4.6`},
+	"<=":{character:`§`,version:`1.4.6`},
+	">=":{character:`¨`,version:`1.4.6`},
+	"&&!":{character:`«`,version:`1.4.6`},
+	"&&":{character:`©`,version:`1.4.6`},
+	"||":{character:`ª`,version:`1.4.6`},
+	"-~":{character:`Ò`,version:`1.4.6`},
+	"~-":{character:`Ó`,version:`1.4.6`},
+	"~~":{character:`Â`,version:`1.4.6`},
+	">>>":{character:`Á`,version:`1.4.6`},
+	".25":{character:`¼`,version:`1.4.6`},
+	".5":{character:`½`,version:`1.4.6`},
+	".75":{character:`¾`,version:`1.4.6`},
+	"(((":{character:`»`,version:`1.4.6`},
+	"((":{character:`º`,version:`1.4.6`}
+},
 version={
 	current:`1.4.6`,
 	list:i(`versions`),
@@ -127,11 +179,11 @@ interpreter={
 	golf(){
 		let 	code=golfed=interpreter.fields.code.value,
 			transpiled=interpreter.fields.transpiled.value,
-			regex=RegExp(Object.keys(shortcuts).map(string=>string.replace(/(?=\W)/g,`\\`)).join(`|`),`g`),
+			regex=RegExp(Object.keys(shortcuts).filter(shortcut=>shortcuts[shortcut].version<=version.selected).map(string=>string.replace(/(?=\W)/g,`\\`)).join(`|`),`g`),
 			offset=0,
 			match,tmp,shortcut;
 		while(match=regex.exec(code)){
-			shortcut=shortcuts[match[0]];
+			shortcut=shortcuts[match[0]].character;
 			tmp=golfed.substring(0,match.index-offset)+shortcut+golfed.slice(match.index+match[0].length-offset);
 			if(transpiled===Japt.transpile(tmp)){
 				golfed=tmp;
@@ -368,50 +420,66 @@ compressor={
 docs={
 	sidebar:i(`docs`),
 	init(){
-		let 	files=[`intro`,`variables`,`shortcuts`,`strings`,`examples`],
-			container=e(`div`),
-			parser=new DOMParser(),
-			doc;
-		return Promise.all(files.map(file=>fetch(`docs/${file}.html`))).then(async files=>{
-			container.classList.add(`oa`);
-			for(doc of files){
-				container.innerHTML+=await doc.text();
-			}
-			docs.sidebar.append(container);
-			let 	articles=docs.sidebar.querySelectorAll(`article`),
-				length=articles.length,
-				list=e(`ol`),
-				article,heaing,item,menu,svg;
-			list.classList.add(`pa`);
-			list.tabIndex=`-1`;
-			for(article of articles){
-				heading=article.firstElementChild;
-				if(svg){
-					svg=svg.cloneNode(1);
-					item=item.cloneNode(1);
-					item.firstChild.nodeValue=heading.firstChild.nodeValue;
+		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`strings.json`,`examples.html`],
+			article,file,json,heading,method,title,text;
+		return Promise.all(files.map(file=>fetch(`docs/`+file))).then(async files=>{
+			for(file of files){
+				if(article){
+					article=article.cloneNode(0);
+					article.classList.add(`dn`);
 				}else{
-					svg=n(`svg`);
-					svg.classList.add(`cp`,`pa`);
-					svg.tabIndex=`-1`;
-					svg.setAttribute(`viewBox`,`0 0 24 24`);
-					svg.dataset.mdi=`dots-vertical`;
-					item=e(`li`);
-					item.classList.add(`cp`,`fwm`,`oh`,`toe`,`wsnw`);
-					item.append(t(heading.firstChild.nodeValue));
+					docs.current=article=e(`article`);
+					article.classList.add(`oa`);
 				}
-				heading.append(svg);
-				article.style.zIndex=length--;
-				item.dataset.section=article.id;
-				list.append(item);
-			}
-			for(article of articles){
-				menu=list.cloneNode(1);
-				menu.querySelector(`[data-section=${article.id}]`).remove();
-				article.firstElementChild.append(menu);
+				article.id=`docs-`+file.url.match(/\/(\w+)\.\w+$/)[1];
+				switch(file.headers.get(`content-type`)){
+					case`application/json`:
+						json=await file.json();
+						if(heading){
+							heading=heading.cloneNode(1);
+							heading.firstChild.nodeValue=json.title;
+						}else{
+							heading=e(`h3`);
+							heading.classList.add(`ps`);
+							heading.append(t(json.title));
+						}
+						article.append(heading);
+						for(method in json.methods){
+							if(title){
+								title=title.cloneNode(1);
+								text=text.cloneNode(0);
+							}else{
+								title=e(`h4`);
+								title.classList.add(`method`,`cp`);
+								title.append(t(``));
+								text=e(`p`);
+							}
+							title.dataset.character=method[0];
+							title.dataset.version=json.methods[method].version;
+							title.firstChild.nodeValue=json.object+`.${method}=`+json.methods[method].returns;
+							text.innerHTML=json.methods[method].description
+								.replace(/`(.+?)`/g,`<code class="dib vam wsnw">$1</code>`)
+								.replace(/\[v\:(.+?)\]/g,`<span class="version dib vam">$1</span>`)
+								.replace(/\[([a-z]+)\:(.+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
+							article.append(title,text);
+						}
+						break;
+					case`text/html`:
+						article.innerHTML=await file.text();
+						break;
+				}
+				docs.sidebar.append(article);
 			}
 			docs.shortcuts();
+			docs.menus();
 		});
+	},
+	change(){
+		if(event.target.dataset.section){
+			docs.current.classList.add(`dn`);
+			docs.current=i(event.target.dataset.section);
+			docs.current.classList.remove(`dn`);
+		}
 	},
 	close(event){
 		general.close(event,docs.toggle);
@@ -425,31 +493,61 @@ docs={
 			interpreter.run();
 		}
 	},
-	scroll(event){
-		if(event.target.dataset.section){
-			event.currentTarget.scroll({
-				behavior:`smooth`,
-				top:i(event.target.dataset.section).offsetTop
-			});
-			event.target.parentNode.blur();
+	menus(){
+		let 	articles=docs.sidebar.querySelectorAll(`article`),
+			length=articles.length,
+			list=e(`ol`),
+			article,heading,item,menu,svg;
+		list.classList.add(`pa`);
+		list.tabIndex=`-1`;
+		for(article of articles){
+			heading=article.firstElementChild;
+			if(svg){
+				svg=svg.cloneNode(1);
+				item=item.cloneNode(1);
+				item.firstChild.nodeValue=heading.firstChild.nodeValue;
+			}else{
+				svg=n(`svg`);
+				svg.classList.add(`cp`,`pa`);
+				svg.tabIndex=`-1`;
+				svg.setAttribute(`viewBox`,`0 0 24 24`);
+				svg.dataset.mdi=`dots-vertical`;
+				item=e(`li`);
+				item.classList.add(`cp`,`fwm`,`oh`,`toe`,`wsnw`);
+				item.append(t(heading.firstChild.nodeValue));
+			}
+			heading.append(svg);
+			article.style.zIndex=length--;
+			item.dataset.section=article.id;
+			list.append(item);
+		}
+		for(article of articles){
+			menu=list.cloneNode(1);
+			menu.querySelector(`[data-section=${article.id}]`).remove();
+			article.firstElementChild.append(menu);
 		}
 	},
 	shortcuts(){
 		let 	table=i(`shortcuts`),
-			shortcut,row,cell,code,value;
+			shortcut,row,cell,code,ver;
 		for(shortcut in shortcuts){
 			if(row){
 				row=row.cloneNode(0);
 				cell=cell.cloneNode(0);
 				code=code.cloneNode(0);
+				ver=ver.cloneNode(1);
+				ver.firstChild.nodeValue=`v`+shortcuts[shortcut].version;
 			}else{
 				row=e(`tr`);
 				cell=e(`td`);
 				code=e(`code`);
 				code.classList.add(`dib`,`vam`,`wsnw`);
+				ver=e(`span`);
+				ver.classList.add(`version`,`dib`,`vam`);
+				ver.append(t(`v`+shortcuts[shortcut].version));
 			}
 			code.classList.add(`cp`);
-			code.append(t(code.dataset.character=shortcuts[shortcut]));
+			code.append(t(code.dataset.character=shortcuts[shortcut].character));
 			cell.append(code);
 			row.append(cell);
 			code=code.cloneNode(0);
@@ -458,6 +556,9 @@ docs={
 			code.append(t(shortcut.replace(` `,`\u00A0`)));
 			cell=cell.cloneNode(0);
 			cell.append(code);
+			row.append(cell);
+			cell=cell.cloneNode(0);
+			cell.append(ver);
 			row.append(cell);
 			table.append(row);
 		}
@@ -553,21 +654,14 @@ general={
 	copy(event){
 		let 	target=event.target.dataset.copy,
 			text;
-		switch(target){
-			case`compressor`:
-				text=compressor.result.string;
-				break;
-			case`link`:
-				text=interpreter.url();
-				break;
-			case`markdown`:
-				text=interpreter.markdown();
-				break;
-			default:
-				text=i(target).value;
-				if(target===`explanation`)
-					text=text.replace(/^/gm,`    `);
-		}
+		if(target===`compressor`)
+			text=compressor.result.string;
+		else if(interpreter[target])
+			text=interpreter[target]();
+		else if(interpreter.fields[target])
+			text=interpreter.fields[target].value;
+		if(target===`explanation`)
+			text=text.replace(/^/gm,`    `);
 		general.clipboard.value=text;
 		general.clipboard.select();
 		d.execCommand(`copy`,false);
@@ -582,7 +676,7 @@ general={
 				"check-box-outline":`M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,5V19H5V5H19M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9`,
 				"checkbox-blank-outline":`M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z`,
 				"clipboard-check-outline":`M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M7.5,13.5L9,12L11,14L15.5,9.5L17,11L11,17L7.5,13.5Z`,
-				"clipboard-outline":`M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7Z`,
+				"clipboard-text-outline":`M19,3H14.82A3,3,0,0,0,9.18,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5a2,2,0,0,0-2-2M12,3a1,1,0,1,1-1,1,1,1,0,0,1,1-1M7,7H17V5h2V19H5V5H7Zm10,4H7V9H17Zm0,3H7V12H17Zm-2,3H7V15h8Z`,
 				"delete":`M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z`,
 				"dots-vertical":`M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z`,
 				"flag":`M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z`,
@@ -647,8 +741,8 @@ general={
 		compressor.buttons.reset.addEventListener(`click`,compressor.reset,false);
 		compressor.field.addEventListener(`input`,()=>general.resize(compressor.field),false);
 		q(`#docs>h2`).addEventListener(`click`,docs.toggle,false);
-		docs.sidebar.lastElementChild.addEventListener(`click`,docs.scroll,false);
-		docs.sidebar.lastElementChild.addEventListener(`click`,keyboard.insert,false);
+		docs.sidebar.addEventListener(`click`,docs.change,false);
+		docs.sidebar.addEventListener(`click`,keyboard.insert,false);
 		i(`docs-examples`).addEventListener(`click`,docs.example,false);
 		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle,false);
 		keyboard.list.addEventListener(`click`,keyboard.insert,false);

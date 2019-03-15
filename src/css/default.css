@@ -6,7 +6,6 @@
 	border:0;
 	border-radius:0;
 	box-sizing:border-box;
-	font-family:Roboto,arial,sans-serif;
 	-webkit-font-smoothing:antialiased;
 	font-style:normal;
 	font-size:0px;
@@ -36,6 +35,8 @@
 	color:var(--primary);
 }
 body{
+	--font:Roboto,Arial,sans-serif;
+	--mono:Roboto Mono,Lucida Console,Courier New,monospace;
 	--background:#757575;
 	--border:#757575;
 	--caret:#757575;
@@ -44,6 +45,7 @@ body{
 	--timing-function:cubic-bezier(.4,0,.2,1);
 	background:var(--background);
 	color:var(--foreground);
+	font-family:var(--font);
 	min-height:100vh;
 }
 body.dark{
@@ -228,7 +230,7 @@ body.light #tools::after{
 #tools>input{
 	background:var(--background);
 	caret-color:var(--caret);
-	font-family:Roboto Mono,Lucida Console,Courier New,monospace;
+	font-family:var(--mono);
 	font-size:14px;
 	height:22px;
 	line-height:22px;
@@ -256,7 +258,7 @@ body.light #tools::after{
 	border:1px solid var(--border);
 	border-radius:2px;
 	caret-color:var(--caret);
-	font-family:Roboto Mono,Lucida Console,Courier New,monospace;
+	font-family:var(--mono);
 	font-size:16px;
 	height:30px;
 	line-height:20px;
@@ -295,13 +297,10 @@ body.light #tools::after{
 	background:var(--primary);
 	border-left:1px solid var(--border);
 }
-#docs>div{
-	max-height:100%;
+#docs>article{
+	height:100%;
 	overscroll-behavior:contain;
 	padding:0 20px 20px;
-}
-#docs article:nth-of-type(n+2){
-	margin-top:20px;
 }
 #docs h3{
 	background:var(--background);
@@ -349,7 +348,10 @@ body.light #tools::after{
 #docs h4.method{
 	background:var(--background);
 	border-radius:2px;
+	font-family:var(--mono);
 	font-size:14px;
+	line-height:22px;
+	text-indent:4px;
 	margin-bottom:5px;
 }
 #docs h4.method:not(:first-child){
@@ -360,6 +362,7 @@ body.light #tools::after{
 	border-radius:2px;
 	content:"v" attr(data-version);
 	display:inline-block;
+	font-family:var(--font);
 	font-size:11px;
 	line-height:16px;
 	float:right;
@@ -397,19 +400,21 @@ body.light #tools::after{
 #docs a{
 	text-decoration:var(--border) underline;
 }
+#docs span.version{
+	border:1px solid var(--border);
+	border-radius:2px;
+	font-size:11px;
+	line-height:16px;
+	padding:0 4px;
+}
 #docs code{
 	background:var(--background);
 	border-radius:2px;
-	font-family:Roboto Mono,Lucida Console,Courier New,monospace;
+	font-family:var(--mono);
 	font-size:12px;
 	line-height:16px;
 	margin:0 2px;
 	padding:0 4px;
-}
-#docs h4.method>code{
-	font-size:14px;
-	line-height:22px;
-	margin-left:0;
 }
 #docs table code{
 	font-size:14px;
