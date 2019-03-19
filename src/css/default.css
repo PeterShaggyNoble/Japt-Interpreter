@@ -137,7 +137,7 @@ svg.spin{
 #versions:focus{
 	background:var(--background);
 	border-color:var(--border);
-	height:66px;
+	height:100px;
 }
 #versions>li{
 	font-size:16px;
@@ -209,9 +209,11 @@ body.light #tools::after{
 #tools svg{
 	margin:4px 8px;
 }
+#tools p:first-of-type{
+	transform:translatey(-24px);
+}
 #tools svg#run{
 	margin:4px;
-	transform:translatey(-24px);
 	width:72px;
 }
 #run>circle:first-of-type{
@@ -297,6 +299,12 @@ body.light #tools::after{
 	background:var(--primary);
 	border-left:1px solid var(--border);
 }
+#loading{
+	color:var(--border);
+	bottom:0;
+	left:10px;
+	line-height:24px;
+}
 #docs>article{
 	height:100%;
 	overscroll-behavior:contain;
@@ -350,7 +358,7 @@ body.light #tools::after{
 	border-radius:2px;
 	font-family:var(--mono);
 	font-size:14px;
-	line-height:22px;
+	line-height:24px;
 	text-indent:4px;
 	margin-bottom:5px;
 }
@@ -364,10 +372,15 @@ body.light #tools::after{
 	display:inline-block;
 	font-family:var(--font);
 	font-size:11px;
-	line-height:16px;
+	font-weight:normal;
+	line-height:18px;
 	float:right;
 	margin:2px;
 	padding:0 4px;
+}
+#docs h4>svg{
+	margin:2px;
+	width:20px;
 }
 #docs .columns{
 	column-gap:10px;
@@ -415,6 +428,7 @@ body.light #tools::after{
 	line-height:16px;
 	margin:0 2px;
 	padding:0 4px;
+	white-space:pre;
 }
 #docs table code{
 	font-size:14px;
@@ -488,7 +502,7 @@ body.light>#keyboard>h2{
 		z-index:2;
 	}
 	#docs{
-		height:100vh;
+		bottom:0;
 		position:fixed;
 		right:0;
 		top:0;
