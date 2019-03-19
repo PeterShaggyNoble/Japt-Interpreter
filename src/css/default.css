@@ -353,6 +353,9 @@ body.light #tools::after{
 	font-size:16px;
 	margin-bottom:10px;
 }
+#docs h4:not(:first-child){
+	margin-top:15px;
+}
 #docs h4.method{
 	background:var(--background);
 	border-radius:2px;
@@ -361,9 +364,6 @@ body.light #tools::after{
 	line-height:24px;
 	text-indent:4px;
 	margin-bottom:5px;
-}
-#docs h4.method:not(:first-child){
-	margin-top:15px;
 }
 #docs h4[data-version]::after{
 	border:1px solid var(--primary);

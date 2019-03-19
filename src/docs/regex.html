@@ -1,1 +1,61 @@
 <h3 class="ps">Regular Expressions</h3>
+<h4 class="fwm">Before <span class="version dib fwn vat">v2.0a0</span></h4>
+<p>Regular Expressions are strings, with <code class="dib vat">%</code> used instead of <code class="dib vat">\</code> for character classes and as the escape character.</p>
+<p>Flags must be passed as a separate string argument to methods that support them.</p>
+<p>The <code class="dib vat">g</code>lobal flag is enabled by default.</p>
+<h4 class="fwm">From <span class="version dib fwn vat">v2.0a0</span> On</h4>
+<p>Regular Expressions use the more familiar <code class="dib vat">/&lt;exp&gt;/&lt;flags&gt;</code> syntax, with <code class="dib vat">\</code> used for character classes and as the escape character.</p>
+<p>The <code class="dib vat">g</code>lobal flag is enabled by default.</p>
+<p>Missing parentheses or square brackets at the beginning or end of an expression are inserted automatically.</p>
+<p><code class="dib vat">.</code> is automatically inserted before any of <code class="dib vat">+</code>, <code class="dib vat">*</code>, or <code class="dib vat">?</code> that would otherwise cause a syntax error.</p>
+<p>The enclosing <code class="dib vat">/</code>s can be omitted from expression containing only a single character class. For example <code clas="dib vat">\w</code> transpiles to <code>/\w/g</code>.</p>
+<p>The <code class="dib vat">s</code> (<code class="dib vat">dotAll</code>) flag has been implemented for browsers that don't yet support it, which forces <code class="dib vat">.</code> to include newlines in matches.</p>
+<h4 class="fwm">Character Classes</h4>
+<p>Use <code class="dib vat">%</code> instead of <code class="dib vat">\</code> prior to <span class="version dib vat">v2.0a0</span>.</p>
+<table>
+	<thead class="fwm">
+		<tr>
+			<th>Class</th>
+			<th>Matches</th>
+			<th>Version</th>
+		</tr>
+	</thead>
+	<tbody id="regex"></tbody>
+</table>
+<p>The following shortcut classes are also available in <span class="version dib fwn vat">v2.0a0</span> and above.</p>
+<table>
+	<thead class="fwm">
+		<tr>
+			<th>Class</th>
+			<th>Transpiled</th>
+			<th>Version</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th><code class="dib vam">\.</code></th>
+			<th><code class="dib vam">/./g</code></th>
+			<th><span class="version dib fwn vat">v2.0a0</span></th>
+		</tr>
+		<tr>
+			<th><code class="dib vam">\*</code></th>
+			<th><code class="dib vam">/.*/g</code></th>
+			<th><span class="version dib fwn vat">v2.0a0</span></th>
+		</tr>
+		<tr>
+			<th><code class="dib vam">\+</code></th>
+			<th><code class="dib vam">/.+/g</code></th>
+			<th><span class="version dib fwn vat">v2.0a0</span></th>
+		</tr>
+		<tr>
+			<th><code class="dib vam">\?</code></th>
+			<th><code class="dib vam">/.?/g</code></th>
+			<th><span class="version dib fwn vat">v2.0a0</span></th>
+		</tr>
+		<tr>
+			<th><code class="dib vam">\^</code></th>
+			<th><code class="dib vam">/[^]/g</code></th>
+			<th><span class="version dib fwn vat">v2.0a0</span></th>
+		</tr>
+	</tbody>
+</table>

@@ -1,15 +1,33 @@
 <h3 class="ps">Basics</h3>
-<h4 class="fwm">Variables &amp; Functions</h4>
-<p>The uppercase letters <code class="dib vam">A-Z</code> are pre-defined variables. See the "<span class="cp tdu" data-section="docs-variables">Variables</span>" section for more information.</p>
-<p>The lowercase letters <code class="dib vam">a-z</code> and accented lowercase letters are various methods, which transpile to <code class="dib vam">.a(</code>, etc. See the individual "Methods" sections for more information.</p>
-<p>Anonymous functions take the form <code class="dib vam">XYZ{</code>, which transpiles to <code class="dib vam">function(X,Y,Z){</code> with <code class="dib vam">X</code>, <code class="dib vam">Y</code> &amp; <code class="dib vam">Z</code> being the parameters.</p>
-<p><code class="dib vam">@</code> is equivalent to <code class="dib vam">XYZ{</code> and <code class="dib vam">_</code> is equivalent to <code class="dib vam">Z{Z</code>.</p>
+<h4 class="fwm">Japt is JavaScript</h4>
+<p>As Japt is based on JavaScript, anything that holds true in JS also holds true in Japt. This includes things like 0-based indexing and which values are considered truthy or falsey. Unlike JS, though, Japt supports index wrapping.</p>
+<h4 class="fwm">Variables, Methods &amp; Functions</h4>
+<p>The uppercase letters <code class="dib vat">A-Z</code> are pre-defined variables. See the "<span class="cp tdu" data-section="docs-variables">Variables</span>" section for more information.</p>
+<p>The lowercase letters <code class="dib vat">a-z</code> and accented lowercase letters are various methods, which transpile to <code class="dib vat">.a(</code>, etc. See the individual "Methods" sections for more information.</p>
+<p>Anonymous functions take the form <code class="dib vat">XYZ{</code>, which transpiles to <code class="dib vat">function(X,Y,Z){</code> with <code class="dib vat">X</code>, <code class="dib vat">Y</code> &amp; <code class="dib vat">Z</code> being the parameters.</p>
+<p><code class="dib vat">@</code> is equivalent to <code class="dib vat">XYZ{</code> and <code class="dib vat">_</code> is equivalent to <code class="dib vat">Z{Z</code>.</p>
+<p>If a lowercase letter or infix operator is passed as the first argument of a method expecting a function as an argument then it is treated as a method itself. If it is preceded by a <code class="dib vat">!</code> then its arguments are reversed. See <a href="https://codegolf.stackexchange.com/a/124037/">this tip</a> for a more in-depth explanation of these "auto-methods".</p>
 <h4 class="fwm">Parentheses</h4>
+<p>Use <code class="dib vat"> </code> to insert <code class="dib vat">)</code> and close a single method.</p>
+<p>Use <code class="dib vat">)</code> to insert <code class="dib vat">))</code> and close two methods.</p>
+<p>Use <code class="cp dib vat" data-character="¹">¹</code> to insert <code class="dib vat">)))</code> and close three methods.</p>
 <h4 class="fwm">Shortcuts</h4>
+<p>Various characters between <code class="cp dib vat" data-character="¡">¡</code> and <code class="cp dib vat" data-character="×">×</code> transpile to sequences of 2 or more characters. See the <span class="cp tdu" data-section="docs-shortcuts">Shortcuts</span> section for the complete list.</p>
+<p>Outside of string literals, any character preceded by a <code class="dib vat">'</code> is treated as a single character string. For example <code class="dib vat">'a</code> transpiles to <code class="dib vat">"a"</code>.</p>
+<p>Any character preceded by a <code class="dib vat">#</code> is converted to the number corresponding to that character's codepoint. For example <code class="dib vat">#z</code> transpiles to <code class="dib vat">122</code>.</p>
+<p>Multiple codepoints can be chained together to create larger numbers. For example <code class="dib vat">#x#y#z</code> transpiles to <code class="dib vat">120121122</code>.</p>
+<h4 class="fwm">Auto-Insertion</h4>
+<p>If a function or a line of a programme begins with a method name, mathematical operator, comparative operator, <code class="dib vat">&&</code> or <code class="dib vat">||</code> then the first input variable <code class="dib vat">U</code> is automatically inserted before it.</p>
+<p>Similarly, if a variable name immediately precedes a mathematical operator, comparative operator, <code class="dib vat">&&</code> or <code class="dib vat">||</code> followed by a method call on the same variable then the variable name after the operator may be omitted (e.g., <code class="dib vat">U*x</code> is the same as <code class="dib vat">U*Ux</code>).</p>
+<p>Any parentheses omitted before <code class="dib vat">}</code>, <code class="dib vat">]</code>, <code class="dib vat">;</code>, <code class="dib vat">:</code> or the end of a programme will be inserted automatically.</p>
+<p>Any of <code class="dib vat"> </code>, <code class="dib vat">}</code>, <code class="dib vat">"</code>, <code class="dib vat">`</code>, <code class="dib vat">$</code> &amp; <code class="dib vat">/</code> may be omitted at the end of a programme and will be inserted automatically.</p>
 <h4 class="fwm">String Interpolation</h4>
+<p>String interpolation is achieved similarly to JavaScript's template literals. For example <code class="dib vat">"abc{X}xyz"</code> transpiles to <code class="dib vat">"abc"+(X)+"xyz"</code>.</p>
+<p>String interpolation may also be nested, with no limit to the number of levels. For example <code class="dib vat">"abc{"123{X}456"}xyz"</code> transpiles to <code class="dib vat">"abc"+("123"+(X)+"456")+"xyz"</code>.</p>
 <h4 class="fwm">String Compression</h4>
+<p>Japt uses the <a href="http://ed-von-schleck.github.io/shoco/">shoco library</a> to compress runs of lowercase letters in strings. See the "<span class="cp tdu" data-section="docs-sompression">Compression</span>" section for more information and details on how to use the interpreter's built-in compressor.
 <h4 class="fwm">Miscellaneous</h4>
-<p>Anything wrapped in <code class="dib vam">$</code>s is evaluated as pure JavaScript.</p>
-<p>Any of <code class="dib vam"> </code>, <code class="dib vam">}</code>, <code class="dib vam">"</code>, <code class="dib vam">`</code>, <code class="dib vam">$</code> &amp; <code class="dib vam">/</code> may be omitted at the end of a programme and will be inserted automatically.</p>
-<p>Use <code class="dib vam">ß</code> to re-run a programme. Arguments passed to it will be used as the input variables. If any arguments are ommitted the the current value of those input variables will be passed instead.</p>
-<p>In <span class="version dib vam">v2.0a0</span> and above <code class="dib vam">/</code> is used to enclose <span class="cp tdu" data-section="docs-regex">Regular Expressions</span> so <code class="dib vam">÷</code> is used for division instead.</p>
+<p>Whenever you start a new line in programme the result of the previous line is automatically assigned to one of the input variables <code class="dib vat">U-Z</code> in order before wrapping back around to <code class="dib vat">A</code>.
+<p>Anything wrapped in <code class="dib vat">$</code>s is evaluated as pure JavaScript.</p>
+<p>Use <code class="dib vat">ß</code> to re-run a programme. Arguments passed to it will be used as the input variables. If any arguments are ommitted the the current value of those input variables will be passed instead.</p>
+<p>In <span class="version dib vat">v2.0a0</span> and above <code class="dib vat">/</code> is used to enclose <span class="cp tdu" data-section="docs-regex">Regular Expressions</span> so <code class="dib vat">÷</code> is used for division instead.</p>

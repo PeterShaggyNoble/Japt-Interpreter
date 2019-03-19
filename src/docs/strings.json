@@ -210,7 +210,7 @@
 			"version":"1.4.5"
 		},
 		"â(r/s/n)":{
-			"description":"Returns the first index of `r/s/n` in `S`, or `-1` if not found. Replaced in [v:2.0a0] (See below)",
+			"description":"Returns the first index of `r/s/n` in `S`, or `-1` if not found. Moved to `S.b(r)` in [v:2.0a0] (See below)",
 			"returns":"N",
 			"version":"1.4.5"
 		},

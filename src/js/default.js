@@ -64,6 +64,32 @@ shortcuts={
 	"(((":{character:`»`,version:`1.4.5`},
 	"((":{character:`º`,version:`1.4.5`}
 },
+regexes={
+	"w":{match:`A-Z, a-z & 0-9`,version:`1.4.5`},
+	"W":{match:`Everything else`,version:`1.4.5`},
+	"d":{match:`0-9`,version:`1.4.5`},
+	"D":{match:`Everything else`,version:`1.4.5`},
+	"s":{match:`Whitespace`,version:`1.4.5`},
+	"S":{match:`Everything else`,version:`1.4.5`},
+	"n":{match:`Newline`,version:`1.4.5`},
+	"t":{match:`Tab`,version:`1.4.5`},
+	"b":{match:`Word boundary`,version:`1.4.5`},
+	"B":{match:`Everything else`,version:`1.4.5`},
+	"a":{match:`a-z`,version:`1.4.5`},
+	"A":{match:`A-Z`,version:`1.4.5`},
+	"l":{match:`A-Z & a-z`,version:`1.4.5`},
+	"L":{match:`Everything else`,version:`1.4.5`},
+	"p":{match:`ASCII`,version:`1.4.5`},
+	"P":{match:`Everything else`,version:`1.4.5`},
+	"q":{match:`ASCII & newline`,version:`1.4.5`},
+	"Q":{match:`Everything else`,version:`1.4.5`},
+	"v":{match:`Vowels`,version:`1.4.5`},
+	"V":{match:`Everything else`,version:`1.4.5`},
+	"y":{match:`Vowels & Yy`,version:`1.4.5`},
+	"Y":{match:`Everything else`,version:`1.4.5`},
+	"c":{match:`Consonants`,version:`1.4.5`},
+	"C":{match:`Everything else`,version:`1.4.5`}
+},
 version={
 	current:`1.4.6`,
 	list:i(`versions`),
@@ -418,7 +444,7 @@ compressor={
 docs={
 	sidebar:i(`docs`),
 	init(){
-		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`strings.json`,`examples.html`],
+		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`regex.html`,`strings.json`,`examples.html`],
 			article,file,json,heading,method,svg,title,text;
 		return Promise.all(files.map(file=>fetch(`docs/`+file))).then(async files=>{
 			for(file of files){
@@ -478,6 +504,7 @@ docs={
 				docs.sidebar.append(article);
 			}
 			docs.shortcuts();
+			docs.regex();
 			docs.menus();
 			general.icons(docs.sidebar);
 			i(`docs-examples`).addEventListener(`click`,docs.example,false);
@@ -546,6 +573,36 @@ docs={
 			.replace(/\\([`[\]()])/g,`$1`);
 
 	},
+	regex(){
+		let 	table=i(`regex`),
+			regex,row,cell,code,ver;
+		for(regex in regexes){
+			if(row){
+				row=row.cloneNode(0);
+				cell=cell.cloneNode(0);
+				code=code.cloneNode(0);
+				ver=ver.cloneNode(0);
+			}else{
+				row=e(`tr`);
+				cell=e(`td`);
+				code=e(`code`);
+				code.classList.add(`dib`,`vam`);
+				ver=e(`span`);
+				ver.classList.add(`version`,`dib`,`vam`);
+			}
+			code.append(t(`\\`+regex));
+			cell.append(code);
+			row.append(cell);
+			cell=cell.cloneNode(0);
+			cell.append(t(regexes[regex].match));
+			row.append(cell);
+			cell=cell.cloneNode(0);
+			ver.append(t(`v`+regexes[regex].version));
+			cell.append(ver);
+			row.append(cell);
+			table.append(row);
+		}
+	},
 	shortcuts(){
 		let 	table=i(`shortcuts`),
 			shortcut,row,cell,code,ver;
@@ -554,8 +611,7 @@ docs={
 				row=row.cloneNode(0);
 				cell=cell.cloneNode(0);
 				code=code.cloneNode(0);
-				ver=ver.cloneNode(1);
-				ver.firstChild.nodeValue=`v`+shortcuts[shortcut].version;
+				ver=ver.cloneNode(0);
 			}else{
 				row=e(`tr`);
 				cell=e(`td`);
@@ -563,7 +619,6 @@ docs={
 				code.classList.add(`dib`,`vam`);
 				ver=e(`span`);
 				ver.classList.add(`version`,`dib`,`vam`);
-				ver.append(t(`v`+shortcuts[shortcut].version));
 			}
 			code.classList.add(`cp`);
 			code.append(t(code.dataset.character=shortcuts[shortcut].character));
@@ -577,6 +632,7 @@ docs={
 			cell.append(code);
 			row.append(cell);
 			cell=cell.cloneNode(0);
+			ver.append(t(`v`+shortcuts[shortcut].version));
 			cell.append(ver);
 			row.append(cell);
 			table.append(row);
