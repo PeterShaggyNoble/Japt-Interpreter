@@ -442,6 +442,13 @@ docs={
 							heading.append(t(json.title));
 						}
 						article.append(heading);
+						if(json.intro){
+							if(text)
+								text=text.cloneNode(0);
+							else text=e(`p`);
+							text.innerHTML=docs.parse(json.intro);
+							article.append(text);
+						}
 						for(method in json.methods){
 							if(title){
 								title=title.cloneNode(0);
@@ -459,12 +466,7 @@ docs={
 							title.dataset.character=method[0];
 							title.dataset.version=json.methods[method].version;
 							title.append(t(json.object+`.`+method),svg,t(json.methods[method].returns));
-							text.innerHTML=json.methods[method].description
-								.replace(/`(.+?)`(.+?)``/g,`<code class="cp dib vam" data-character="$1">$2</code>`)
-								.replace(/`(.+?)`/g,`<code class="dib vam">$1</code>`)
-								.replace(/\[(.+?)\]\((.+?)\)/g,`<a href="$2">$1</a>`)
-								.replace(/\[v\:(.+?)\]/g,`<span class="version dib vam">$1</span>`)
-								.replace(/\[([a-z]+)\:(.+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
+							text.innerHTML=docs.parse(json.methods[method].description);
 							article.append(title,text);
 						}
 						break;
@@ -534,6 +536,15 @@ docs={
 			menu.querySelector(`[data-section=${article.id}]`).remove();
 			article.firstElementChild.append(menu);
 		}
+	},
+	parse(text){
+		return text.replace(/(?<!\\)`(.+?)(?<!\\)`(.+?)(?<!\\)`(?<!\\)`/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
+			.replace(/(?<!\\)`(.+?)(?<!\\)`/g,`<code class="dib vat">$1</code>`)
+			.replace(/(?<!\\)\[(.+?)(?<!\\)\](?<!\\)\((.+?)(?<!\\)\)/g,`<a href="$2">$1</a>`)
+			.replace(/(?<!\\)\[v\:(.+?)(?<!\\)\]/g,`<span class="version dib vat">v$1</span>`)
+			.replace(/(?<!\\)\[([a-z]+)\:(.+?)(?<!\\)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`)
+			.replace(/\\([`[\]()])/g,`$1`);
+
 	},
 	shortcuts(){
 		let 	table=i(`shortcuts`),
@@ -650,12 +661,12 @@ general={
 		"undo":`M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z`
 	},
 	init(){
+		general.theme();
 		interpreter.init();
 		version.init();
 		general.icons(b);
-		general.theme();
 		keyboard.init();
-		let 	file=`https://cdn.jsdelivr.net/gh/ETHproductions/japt@`,
+		let 	file=`https://cdn.jsdelivr.net/gh/ETHproductions/japt`,
 			js=file=>new Promise((resolve,reject)=>{
 				let script=e(`script`);
 				script.async=true;
@@ -664,8 +675,7 @@ general={
 				script.addEventListener(`load`,resolve,{capture:false,once:true});
 				script.addEventListener(`error`,reject,{capture:false,once:true});
 			});
-		file+=`${version.selected===version.current||version.two?`master`:`v`+version.selected}/src/${version.two?`japt`:`japt-interpreter`}.js`;
-		file+=`?`+new Date().toISOString().replace(/\D/g,``).slice(2,12);
+		file+=`@${version.selected===version.current||version.two?`master@{${new Date().toISOString().replace(/(\:\d\d){2}\.\d+.+?$/,``)}}`:`v`+version.selected}/src/${version.two?`japt`:`japt-interpreter`}.js`;
 		js(`https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js`).then(()=>{
 			js(file).then(()=>{
 				Japt.stdout=interpreter.fields.output;
@@ -675,7 +685,7 @@ general={
 					interpreter.run();
 				}
 				general.listeners();
-				docs.init();
+				docs.init().catch(err=>console.error(`Failed to load documentation:`,err));
 			}).catch(err=>console.error(`Failed to load interpreter:`,err));
 		}).catch(err=>console.error(`Failed to load schoco:`,err));
 	},

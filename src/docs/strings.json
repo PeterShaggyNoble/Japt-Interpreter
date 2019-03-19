@@ -2,6 +2,7 @@
 	"type":"methods",
 	"title":"String Methods",
 	"object":"S",
+	"intro":"",
 	"methods":{
 		"a(s/n)":{
 			"description":"Returns the last index of `s/n` in `S`, or `-1` if not found.",
@@ -74,12 +75,12 @@
 			"version":"1.4.6"
 		},
 		"h(s,n=0)":{
-			"description":"Returns the result of replacing the characters starting at index `n` in `S` with `s`. Arguments may be provided in any order.",
+			"description":"Returns the result of replacing the characters starting at index `n` in `S` with `s`. Arguments may be passed in any order.",
 			"returns":"S",
 			"version":"1.4.5"
 		},
 		"i(s,n=0)":{
-			"description":"Returns the result of inserting `s` in `S` at index `n`. Arguments may be provided in any order.",
+			"description":"Returns the result of inserting `s` in `S` at index `n`. Arguments may be passed in any order.",
 			"returns":"S",
 			"version":"1.4.5"
 		},
@@ -134,7 +135,7 @@
 			"version":"1.4.5"
 		},
 		"p(f)":{
-			"description":"Returns the result of appending the result of passing `S` through `f` to the original `S`.",
+			"description":"Returns the result of passing `S` through `f` and appending it to the original `S`.",
 			"returns":"S",
 			"version":"1.4.5"
 		},
@@ -195,6 +196,156 @@
 		},
 		"z(n=1)":{
 			"description":"Returns the result of splitting `S` on newlines, rotating clockwise by `n*90` degrees and then rejoining with newlines.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"à(n?)":{
+			"description":"Returns all combinations of `S`. If `n` is passed, returns all combinations of length `n`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"á(n?)":{
+			"description":"Returns all unique permutations of `S`. If `n` is passed, returns all permutations of length `n`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"â(r/s/n)":{
+			"description":"Returns the first index of `r/s/n` in `S`, or `-1` if not found. Replaced in [v:2.0a0] (See below)",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"â()":{
+			"description":"Returns the unique characters in `S` in the order they first appear.",
+			"returns":"S",
+			"version":"2.0a0"
+		},
+		"ã(n?,s/a?)":{
+			"description":"Returns all substrings of `S`. If `n` is passed, returns all substrings of length `n`. Prior to [v:1.4.6] `n` defaults to `2`. If `s/a` is also passed then it is first prepended to the array.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"ã(f)":{
+			"description":"Returns all substrings of `S` after passing each through `f`.",
+			"returns":"A",
+			"version":"1.4.6"
+		},
+		"ä(f,s/a?)":{
+			"description":"Returns the result of passing each consecutive pair of characters `x,y` in `S` through `f` with arguments `(x,y,x+y)`. If `s/a` is passed then it is first prepended to the array.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"å(f)":{
+			"description":"Returns the result of splitting `S` and cumulatively reducing it by `f`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"ç(s)":{
+			"description":"Returns `S` with each character replaced with `s`.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"è(r/s/n)":{
+			"description":"Returns the number of occurrences of `r/s/n` in `S`.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"é(n=1)":{
+			"description":"Returns the result of rotating `S` right by `n` characters.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"ê(n=0)":{
+			"description":"Returns `S` palindromised if `n%2=0`, or the reverse of `S` appended to `S`.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"ë(n1=2,n2=0)":{
+			"description":"Returns every `n1`th character of `S` starting from index `n2`.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"í(s/a?,f=+)":{
+			"description":"Returns the result of pairing each character in `S` with the corresponding character in `s`, or element in `a`, and reducing each pair by `f`. If `s/a` is not passed then the characters' indices are used instead.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"î(s=\" \")":{
+			"description":"Returns `s` repeated and sliced to the length of `S`.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"ï(s/a=S,f=+)":{
+			"description":"Returns the result of pairing each character in `S` with the each character in `s`, or element in `a`, and reducing each pair by `f`.",
+			"returns":"A",
+			"version":"1.4.6"
+		},
+		"ð(r/s/n,x?)":{
+			"description":"Returns the indices of `S` where a match for `r/s/n` begins. Case-sensitive unless `x` is truthy.",
+			"returns":"A",
+			"version":"1.4.6"
+		},
+		"ñ(f?)":{
+			"description":"Returns the characters of `S` sorted as though they had been passed through `f`.",
+			"returns":"S",
+			"version":"1.4.6"
+		},
+		"ò(n=2)":{
+			"description":"Returns `S` partitioned into strings of length `n`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"ò(f)":{
+			"description":"Returns `S` partitioned between each pair of characters that return a truthy value when passed through `f`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"ó(n=2)":{
+			"description":"Returns `S` split into `n` strings each containing every `n`th character of `S`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"ó(f)":{
+			"description":"Returns `S` partitioned between each pair of characters that return a falsey value when passed through `f`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"ô(f)":{
+			"description":"Returns `S` partitioned at each character that returns a truthy value when passed through `f`.",
+			"returns":"A",
+			"version":"1.4.5"
+		},
+		"ö(n=1)":{
+			"description":"Returns `n` random characters from `S` with `n` rounded up to the nearest whole number, if necessary.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"ö(x)":{
+			"description":"Returns a random permutation of `S`.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"ø(s/n)":{
+			"description":"Returns `true` if `S` contains `s`, or `false` if it doesn't.",
+			"returns":"B",
+			"version":"1.4.5"
+		},
+		"ø(a)":{
+			"description":"Returns `true` if `S` contains any element of `a`, or `false` if it doesn't.",
+			"returns":"B",
+			"version":"1.4.5"
+		},
+		"ù(s=\" \",n?)":{
+			"description":"Returns the result of left-padding each line in `S` with `s` to length `n`. If `n` is not passed then the length of the longest line is used.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"ú(s=\" \",n?)":{
+			"description":"Returns the result of right-padding each line in `S` with `s` to length `n`. If `n` is not passed then the length of the longest line is used.",
+			"returns":"S",
+			"version":"1.4.5"
+		},
+		"û(s=\" \",n?)":{
+			"description":"Returns the result of centre-padding each line in `S` with `s` to length `n`. If `n` is not passed then the length of the longest line is used.",
 			"returns":"S",
 			"version":"1.4.5"
 		}

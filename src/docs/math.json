@@ -2,6 +2,7 @@
 	"type":"methods",
 	"title":"Math Methods",
 	"object":"M",
+	"intro":"",
 	"methods":{
 	}
 }
