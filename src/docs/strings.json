@@ -15,7 +15,7 @@
 			"version":"2.0a0"
 		},
 		"a(f)":{
-			"description":"Returns the index of the last character in `S` to return a thuthy value when passed through `f`, or `-1` if none do.",
+			"description":"Returns the index of the last character in `S` to return a truthy value when passed through `f`, or `-1` if none do.",
 			"returns":"N",
 			"version":"1.4.5"
 		},
@@ -30,7 +30,7 @@
 			"version":"2.0a0"
 		},
 		"b(f)":{
-			"description":"Returns the index of the first character in `S` to return a thuthy value when passed through `f`, or `-1` if none do.",
+			"description":"Returns the index of the first character in `S` to return a truthy value when passed through `f`, or `-1` if none do.",
 			"returns":"N",
 			"version":"1.4.5"
 		},
@@ -234,8 +234,8 @@
 			"returns":"A",
 			"version":"1.4.5"
 		},
-		"å(f)":{
-			"description":"Returns the result of splitting `S` and cumulatively reducing it by `f`.",
+		"å(f,x=S[0])":{
+			"description":"Returns the result of splitting `S` and cumulatively reducing it by `f` with an initial value of `x`.",
 			"returns":"A",
 			"version":"1.4.5"
 		},
@@ -259,13 +259,18 @@
 			"returns":"S",
 			"version":"1.4.5"
 		},
+		"ê(s)":{
+			"description":"Returns `true` if `S` is a palindrome, or `false` if it isn't",
+			"returns":"B",
+			"version":"1.4.5"
+		},
 		"ë(n1=2,n2=0)":{
 			"description":"Returns every `n1`th character of `S` starting from index `n2`.",
 			"returns":"S",
 			"version":"1.4.5"
 		},
 		"í(s/a?,f=+)":{
-			"description":"Returns the result of pairing each character in `S` with the corresponding character in `s`, or element in `a`, and reducing each pair by `f`. If `s/a` is not passed then the characters' indices are used instead.",
+			"description":"Returns the result of pairing each character in `S` with the corresponding character in `s`, or element in `a`, and reducing each pair by `f`. If `s/a` is not passed then indices of the characters in `S` are used instead.",
 			"returns":"S",
 			"version":"1.4.5"
 		},
@@ -275,7 +280,7 @@
 			"version":"1.4.5"
 		},
 		"ï(s/a=S,f=+)":{
-			"description":"Returns the result of pairing each character in `S` with the each character in `s`, or element in `a`, and reducing each pair by `f`.",
+			"description":"Returns the result of pairing each character in `S` with each character in `s`, or element in `a`, and reducing each pair by `f`.",
 			"returns":"A",
 			"version":"1.4.6"
 		},
@@ -290,7 +295,7 @@
 			"version":"1.4.6"
 		},
 		"ò(n=2)":{
-			"description":"Returns `S` partitioned into strings of length `n`.",
+			"description":"Returns `S` partitioned into strings of length `n`. If `n` is negative then partitions from the end of `S`",
 			"returns":"A",
 			"version":"1.4.5"
 		},
@@ -325,7 +330,7 @@
 			"version":"1.4.5"
 		},
 		"ø(s/n)":{
-			"description":"Returns `true` if `S` contains `s`, or `false` if it doesn't.",
+			"description":"Returns `true` if `S` contains `s/n`, or `false` if it doesn't.",
 			"returns":"B",
 			"version":"1.4.5"
 		},

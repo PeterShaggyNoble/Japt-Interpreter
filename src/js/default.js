@@ -444,10 +444,11 @@ compressor={
 docs={
 	sidebar:i(`docs`),
 	init(){
-		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`regex.html`,`strings.json`,`examples.html`],
+		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`regex.html`,`strings.json`,`arrays.json`,`other.json`,`examples.html`],
 			article,file,json,heading,method,svg,title,text;
 		return Promise.all(files.map(file=>fetch(`docs/`+file))).then(async files=>{
 			for(file of files){
+				console.log(file);
 				if(article){
 					article=article.cloneNode(0);
 					article.classList.add(`dn`);
@@ -565,11 +566,11 @@ docs={
 		}
 	},
 	parse(text){
-		return text.replace(/(?<!\\)`(.+?)(?<!\\)`(.+?)(?<!\\)`(?<!\\)`/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
-			.replace(/(?<!\\)`(.+?)(?<!\\)`/g,`<code class="dib vat">$1</code>`)
-			.replace(/(?<!\\)\[(.+?)(?<!\\)\](?<!\\)\((.+?)(?<!\\)\)/g,`<a href="$2">$1</a>`)
-			.replace(/(?<!\\)\[v\:(.+?)(?<!\\)\]/g,`<span class="version dib vat">v$1</span>`)
-			.replace(/(?<!\\)\[([a-z]+)\:(.+?)(?<!\\)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`)
+		return text.replace(/`(.+?)`(.+?)``/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
+			.replace(/`(.+?)`/g,`<code class="dib vat">$1</code>`)
+			.replace(/\[(.+?)\]\((.+?)\)/g,`<a href="$2">$1</a>`)
+			.replace(/\[(v)\:(.+?)\]/g,`<span class="version dib vat">$1$2</span>`)
+			.replace(/\[([a-z]+)\:(.+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`)
 			.replace(/\\([`[\]()])/g,`$1`);
 
 	},
@@ -656,6 +657,7 @@ keyboard={
 			else{
 				item=e(`li`);
 				item.classList.add(`cp`,`df`);
+				item.tabIndex=`-1`;
 				item.append(t(``));
 			}
 			item.dataset.character=item.firstChild.nodeValue=key;
@@ -670,6 +672,10 @@ keyboard={
 			interpreter.fields.code.focus();
 			d.execCommand(`insertText`,false,event.target.dataset.character);
 			interpreter.update();
+			console.log(event.currentTarget);
+			console.log(event.currentTarget===keyboard.list);
+			if(event.currentTarget===keyboard.list)
+				event.target.focus();
 		}
 	},
 	toggle(){
@@ -693,8 +699,7 @@ general={
 		"check":`M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z`,
 		"check-box-outline":`M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,5V19H5V5H19M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9`,
 		"checkbox-blank-outline":`M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z`,
-		"clipboard-check-outline":`M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M7.5,13.5L9,12L11,14L15.5,9.5L17,11L11,17L7.5,13.5Z`,
-		"clipboard-text-outline":`M19,3H14.82A3,3,0,0,0,9.18,3H5A2,2,0,0,0,3,5V19a2,2,0,0,0,2,2H19a2,2,0,0,0,2-2V5a2,2,0,0,0-2-2M12,3a1,1,0,1,1-1,1,1,1,0,0,1,1-1M7,7H17V5h2V19H5V5H7Zm10,4H7V9H17Zm0,3H7V12H17Zm-2,3H7V15h8Z`,
+		"clipboard-text-outline":`M19,3H14.82C14.25,1.44 12.53,0.64 11,1.2C10.14,1.5 9.5,2.16 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M17,11H7V9H17V11M15,15H7V13H15V15Z`,
 		"delete":`M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z`,
 		"dots-vertical":`M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z`,
 		"flag":`M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z`,
