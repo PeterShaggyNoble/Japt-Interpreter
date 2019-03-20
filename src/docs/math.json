@@ -4,5 +4,75 @@
 	"object":"M",
 	"intro":"",
 	"methods":{
+		"a(n1,n2)":{
+			"description":"Returns the counterclockwise angle, in radians, between the positive `X`-axis and the point on the plane at coordinates `(n2,n1)`. Equivalent to JavaScript's [`Math.atan2`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"c(n)":{
+			"description":"Returns the cosine of `n`, assuming `n` to be an angle in radians. Equivalent to JavaScript's [`Math.cos`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cos) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"e(n)":{
+			"description":"Returns Euler's Constant raised to the power of `n`. Equivalent to JavaScript's [`Math.exp`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/exp) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"g(n)":{
+			"description":"Returns the `n`th number in the Fibonacci sequence.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"h(n/a,...,n/a)":{
+			"description":"Returns the result of concatenating all arguments to a single array and calculating the square root of the sum of its squares. Could only accept numeric arguments prior to [v:1.4.6]. Similar to JavaScript's [`Math.hypot`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/hypot) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"l(n)":{
+			"description":"Returns the natural logarithm of `n`. Equivalent to JavaScript's [`Math.log`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"m(n)":{
+			"description":"Returns the base-2 logarithm of `n`. Equivalent to JavaScript's [`Math.log2`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log2) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"n(n)":{
+			"description":"Returns the base-10 logarithm of `n`. Equivalent to JavaScript's [`Math.log10`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log10) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"q(n=2)":{
+			"description":"Returns a random integer from the range `[0,n)` if `n` is positive, or `[n,0)` if `n` is negative.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"q(n1,n2,n3=1)":{
+			"description":"Returns a random multiple of `n3`, relative to `n1`, from the range `[n1,n2)`.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"r(n=1)":{
+			"description":"Returns a random float from the range `[0,n)`.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"r(n1,n2)":{
+			"description":"Returns a random float from the range `[n1,n2)`.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"s(n)":{
+			"description":"Returns the sine of `n`, assuming `n` to be an angle in radians. Equivalent to JavaScript's [`Math.sin`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sin) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"t(n)":{
+			"description":"Returns the tangent of `n`, assuming `n` to be an angle in radians. Equivalent to JavaScript's [`Math.tan`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/tan) method.",
+			"returns":"N",
+			"version":"1.4.5"
+		}
 	}
 }

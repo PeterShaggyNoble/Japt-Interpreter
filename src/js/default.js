@@ -189,6 +189,7 @@ interpreter={
 		}
 		interpreter.fields.counter.append(t(``));
 		interpreter.fields.timer.append(t(``));
+		interpreter.regex=RegExp(Object.keys(shortcuts).filter(shortcut=>shortcuts[shortcut].version<=version.selected).map(string=>string.replace(/(?=\W)/g,`\\`)).join(`|`),`g`);
 	},
 	decode(text){
 		return atob(text).replace(/\\u[0-9A-F]{4}/gi,chr=>String.fromCharCode(parseInt(chr.slice(2),16)));
@@ -205,16 +206,16 @@ interpreter={
 	golf(){
 		let 	code=golfed=interpreter.fields.code.value,
 			transpiled=interpreter.fields.transpiled.value,
-			regex=RegExp(Object.keys(shortcuts).filter(shortcut=>shortcuts[shortcut].version<=version.selected).map(string=>string.replace(/(?=\W)/g,`\\`)).join(`|`),`g`),
 			offset=0,
 			match,tmp,shortcut;
-		while(match=regex.exec(code)){
+		while(match=interpreter.regex.exec(code)){
+			console.log(match[0]);
 			shortcut=shortcuts[match[0]].character;
 			tmp=golfed.substring(0,match.index-offset)+shortcut+golfed.slice(match.index+match[0].length-offset);
 			if(transpiled===Japt.transpile(tmp)){
 				golfed=tmp;
 				offset+=match[0].length-shortcut.length;
-			}else regex.lastIndex=match.index+1;
+			}else interpreter.regex.lastIndex=match.index+1;
 		}
 		if(code!==golfed){
 			interpreter.fields.code.select();
@@ -222,6 +223,7 @@ interpreter={
 			interpreter.update();
 			interpreter.fields.code.selectionStart=interpreter.fields.code.selectionEnd=golfed.length;
 		}else interpreter.fields.code.focus();
+		interpreter.regex.lastIndex=0;
 	},
 	markdown(){
 		let markdown=`#[Japt](https://github.com/ETHproductions/japt) v`+version.selected;
@@ -444,8 +446,8 @@ compressor={
 docs={
 	sidebar:i(`docs`),
 	init(){
-		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`regex.html`,`strings.json`,`arrays.json`,`other.json`,`examples.html`],
-			article,file,json,heading,method,svg,title,text;
+		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`regex.html`,`strings.json`,`arrays.json`,`numbers.json`,`math.json`,`other.json`,`flags.json`,`examples.html`],
+			article,file,json,heading,key,object,svg,title,text;
 		return Promise.all(files.map(file=>fetch(`docs/`+file))).then(async files=>{
 			for(file of files){
 				console.log(file);
@@ -476,24 +478,33 @@ docs={
 							text.innerHTML=docs.parse(json.intro);
 							article.append(text);
 						}
-						for(method in json.methods){
+						for(key in object=json.methods||json.flags){
 							if(title){
 								title=title.cloneNode(0);
 								svg=svg.cloneNode(1);
 								text=text.cloneNode(0);
 							}else{
 								title=e(`h4`);
-								title.classList.add(`method`,`cp`,`fwm`);
+								title.classList.add(`method`,`fwm`);
 								svg=n(`svg`);
 								svg.classList.add(`vat`);
 								svg.setAttribute(`viewBox`,`0 0 24 24`);
 								svg.dataset.mdi=`arrow-right`;
 								text=e(`p`);
 							}
-							title.dataset.character=method[0];
-							title.dataset.version=json.methods[method].version;
-							title.append(t(json.object+`.`+method),svg,t(json.methods[method].returns));
-							text.innerHTML=docs.parse(json.methods[method].description);
+							title.dataset.version=object[key].version;
+							switch(json.type){
+								case`flags`:
+									title.classList.remove(`cp`);
+									title.removeAttribute(`data-character`);
+									title.append(t(`-`+key));
+									break;
+								default:
+									title.classList.add(`cp`);
+									title.dataset.character=key[0];
+									title.append(t(json.object+`.`+key),svg,t(object[key].returns));
+							}
+							text.innerHTML=docs.parse(object[key].description);
 							article.append(title,text);
 						}
 						break;
@@ -570,8 +581,7 @@ docs={
 			.replace(/`(.+?)`/g,`<code class="dib vat">$1</code>`)
 			.replace(/\[(.+?)\]\((.+?)\)/g,`<a href="$2">$1</a>`)
 			.replace(/\[(v)\:(.+?)\]/g,`<span class="version dib vat">$1$2</span>`)
-			.replace(/\[([a-z]+)\:(.+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`)
-			.replace(/\\([`[\]()])/g,`$1`);
+			.replace(/\[([a-z]+)\:(.+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
 
 	},
 	regex(){
@@ -591,7 +601,7 @@ docs={
 				ver=e(`span`);
 				ver.classList.add(`version`,`dib`,`vam`);
 			}
-			code.append(t(`\\`+regex));
+			code.append(t((version.selected<`2.0a0`?`%`:`\\`)+regex));
 			cell.append(code);
 			row.append(cell);
 			cell=cell.cloneNode(0);

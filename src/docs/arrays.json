@@ -79,7 +79,7 @@
 			"returns":"X",
 			"version":"1.4.6"
 		},
-		"g(n,...,n,f)":{
+		"g(n,...,n?,f)":{
 			"description":"Returns `A` after first passing the element at index `n,...,n` through `f`. Modifies the original `A`.",
 			"returns":"A",
 			"version":"1.4.6"
@@ -155,7 +155,7 @@
 			"version":"1.4.5"
 		},
 		"o(n=1)":{
-			"description":"Returns the last `n` elements of `A`. If `n=1` then element itself is returned. Modifies the original `A` by removing those elements.",
+			"description":"Returns the last `n` elements of `A`. If `n=1` then the element itself is returned. Modifies the original `A` by removing those elements.",
 			"returns":"A/X",
 			"version":"1.4.5"
 		},
@@ -365,7 +365,7 @@
 			"version":"1.4.5"
 		},
 		"ö(n=1)":{
-			"description":"Returns `n` random elements from `A` with `n` rounded up to the nearest whole number, if necessary.",
+			"description":"Returns `n` random elements from `A` with `n` rounded up to the nearest whole number, if necessary. If `n=1` then the element itself is returned.",
 			"returns":"A/X",
 			"version":"1.4.5"
 		},
