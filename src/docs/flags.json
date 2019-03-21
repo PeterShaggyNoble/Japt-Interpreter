@@ -8,6 +8,14 @@
 			"description":"Outputs the logical `NOT` of the value returned by the programme; i.e., `true` if falsey, or `false` if truthy.",
 			"version":"1.4.5"
 		},
+		"E\"s\"":{
+			"description":"Outputs `s` if the programme throws an error. Considered to be a \"cheating\" flag - use at your own discretion.",
+			"version":"1.4.6"
+		},
+		"F\"s\"":{
+			"description":"Outputs `s` if the programme returns a falsey value. Considered to be a \"cheating\" flag - use at your own discretion.",
+			"version":"1.4.6"
+		},
 		"N":{
 			"description":"Converts the value returned by the programme to a number. If that value is an array, it is first joined to a string.",
 			"version":"1.4.5"

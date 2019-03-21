@@ -209,7 +209,6 @@ interpreter={
 			offset=0,
 			match,tmp,shortcut;
 		while(match=interpreter.regex.exec(code)){
-			console.log(match[0]);
 			shortcut=shortcuts[match[0]].character;
 			tmp=golfed.substring(0,match.index-offset)+shortcut+golfed.slice(match.index+match[0].length-offset);
 			if(transpiled===Japt.transpile(tmp)){
@@ -226,7 +225,9 @@ interpreter={
 		interpreter.regex.lastIndex=0;
 	},
 	markdown(){
-		let markdown=`#[Japt](https://github.com/ETHproductions/japt) v`+version.selected;
+		let markdown=`#[Japt](https://github.com/ETHproductions/japt)`;
+		if(version.current!==version.selected)
+			markdown+=` v`+version.selected;
 		if(interpreter.fields.flags.value)
 			markdown+=` [\`${interpreter.fields.flags.value}\`](https://codegolf.meta.stackexchange.com/a/14339/)`;
 		markdown+=`, ${interpreter.bytes} ${`bytes`.slice(0,interpreter.bytes!==1?5:4)}\n\n${interpreter.fields.code.value.replace(/^/gm,`    `)}\n\n[Try it](${interpreter.url()})`;
@@ -450,7 +451,6 @@ docs={
 			article,file,json,heading,key,object,svg,title,text;
 		return Promise.all(files.map(file=>fetch(`docs/`+file))).then(async files=>{
 			for(file of files){
-				console.log(file);
 				if(article){
 					article=article.cloneNode(0);
 					article.classList.add(`dn`);
@@ -523,7 +523,7 @@ docs={
 			i(`loading`).remove();
 		});
 	},
-	change(){
+	change(event){
 		if(event.target.dataset.section){
 			docs.current.classList.add(`dn`);
 			docs.current=i(event.target.dataset.section);
@@ -682,8 +682,6 @@ keyboard={
 			interpreter.fields.code.focus();
 			d.execCommand(`insertText`,false,event.target.dataset.character);
 			interpreter.update();
-			console.log(event.currentTarget);
-			console.log(event.currentTarget===keyboard.list);
 			if(event.currentTarget===keyboard.list)
 				event.target.focus();
 		}
