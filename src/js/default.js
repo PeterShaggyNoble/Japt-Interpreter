@@ -446,11 +446,26 @@ compressor={
 },
 docs={
 	sidebar:i(`docs`),
+	files:[
+		`docs/intro.html`,
+		`docs/basics.html`,
+		`docs/variables.html`,
+		`docs/shortcuts.html`,
+		`docs/regex.html`,
+		`docs/string.json`,
+		`docs/array.json`,
+		`docs/number.json`,
+		`docs/function.json`,
+		`docs/date.json`,
+		`docs/math.json`,
+		`docs/other.json`,
+		`docs/flags.json`,
+		`docs/examples.html`
+	],
 	init(){
-		let 	files=[`intro.html`,`basics.html`,`variables.html`,`shortcuts.html`,`regex.html`,`strings.json`,`arrays.json`,`numbers.json`,`math.json`,`other.json`,`flags.json`,`examples.html`],
-			article,file,json,heading,key,object,svg,title,text;
-		return Promise.all(files.map(file=>fetch(`docs/`+file))).then(async files=>{
-			for(file of files){
+		let article;
+		return Promise.all(docs.files.map(file=>fetch(file))).then(async files=>{
+			for(let [index,file] of files.entries()){
 				if(article){
 					article=article.cloneNode(0);
 					article.classList.add(`dn`);
@@ -458,55 +473,10 @@ docs={
 					docs.current=article=e(`article`);
 					article.classList.add(`oa`);
 				}
-				article.id=`docs-`+file.url.match(/\/(\w+)\.\w+$/)[1];
-				switch(file.url.slice(-4)){
+				article.id=`docs-`+docs.files[index].slice(5,-5);
+				switch(docs.files[index].slice(-4)){
 					case`json`:
-						json=await file.json();
-						if(heading){
-							heading=heading.cloneNode(1);
-							heading.firstChild.nodeValue=json.title;
-						}else{
-							heading=e(`h3`);
-							heading.classList.add(`ps`);
-							heading.append(t(json.title));
-						}
-						article.append(heading);
-						if(json.intro){
-							if(text)
-								text=text.cloneNode(0);
-							else text=e(`p`);
-							text.innerHTML=docs.parse(json.intro);
-							article.append(text);
-						}
-						for(key in object=json.methods||json.flags){
-							if(title){
-								title=title.cloneNode(0);
-								svg=svg.cloneNode(1);
-								text=text.cloneNode(0);
-							}else{
-								title=e(`h4`);
-								title.classList.add(`method`,`fwm`);
-								svg=n(`svg`);
-								svg.classList.add(`vat`);
-								svg.setAttribute(`viewBox`,`0 0 24 24`);
-								svg.dataset.mdi=`arrow-right`;
-								text=e(`p`);
-							}
-							title.dataset.version=object[key].version;
-							switch(json.type){
-								case`flags`:
-									title.classList.remove(`cp`);
-									title.removeAttribute(`data-character`);
-									title.append(t(`-`+key));
-									break;
-								default:
-									title.classList.add(`cp`);
-									title.dataset.character=key[0];
-									title.append(t(json.object+`.`+key),svg,t(object[key].returns));
-							}
-							text.innerHTML=docs.parse(object[key].description);
-							article.append(title,text);
-						}
+						docs.json(await file.json(),article);
 						break;
 					case`html`:
 						article.innerHTML=await file.text();
@@ -540,6 +510,53 @@ docs={
 			d.execCommand(`insertText`,false,dataset.code);
 			interpreter.update();
 			interpreter.run();
+		}
+	},
+	json(json,article){
+		let 	object=json[json.type],
+			heading,intro,key,svg,title,text;
+		heading=e(`h3`);
+		heading.classList.add(`ps`);
+		heading.append(t(json.title));
+		article.append(heading);
+		if(json.intro){
+			for(intro of json.intro){
+				if(text)
+					text=text.cloneNode(0);
+				else text=e(`p`);
+				text.innerHTML=docs.parse(intro);
+				article.append(text);
+			}
+		}
+		for(key in object){
+			if(title){
+				title=title.cloneNode(0);
+				if(json.type===`methods`)
+					svg=svg.cloneNode(1);
+				text=text.cloneNode(0);
+			}else{
+				title=e(`h4`);
+				title.classList.add(`method`,`fwm`);
+				if(json.type===`methods`){
+					title.classList.add(`cp`);
+					svg=n(`svg`);
+					svg.classList.add(`vat`);
+					svg.setAttribute(`viewBox`,`0 0 24 24`);
+					svg.dataset.mdi=`arrow-right`;
+				}
+				text=e(`p`);
+			}
+			title.dataset.version=object[key].version;
+			switch(json.type){
+				case`flags`:
+					title.append(t(`-`+key));
+					break;
+				default:
+					title.dataset.character=key[0];
+					title.append(t(json.object+`.`+key),svg,t(object[key].returns));
+			}
+			text.innerHTML=docs.parse(object[key].description);
+			article.append(title,text);
 		}
 	},
 	menus(){
@@ -577,8 +594,10 @@ docs={
 		}
 	},
 	parse(text){
-		return text.replace(/`(.+?)`(.+?)``/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
-			.replace(/`(.+?)`/g,`<code class="dib vat">$1</code>`)
+		return text
+			.replace(/\n/g,`<br>`)
+			.replace(/`([^`]+?)`([^`]+?)``/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
+			.replace(/`([^`]+?)`/g,`<code class="dib vat">$1</code>`)
 			.replace(/\[(.+?)\]\((.+?)\)/g,`<a href="$2">$1</a>`)
 			.replace(/\[(v)\:(.+?)\]/g,`<span class="version dib vat">$1$2</span>`)
 			.replace(/\[([a-z]+)\:(.+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
@@ -744,6 +763,7 @@ general={
 				script.addEventListener(`load`,resolve,{capture:false,once:true});
 				script.addEventListener(`error`,reject,{capture:false,once:true});
 			});
+		console.log(u);
 		file+=`@${version.selected===version.current||version.two?`master@{${new Date().toISOString().replace(/(\:\d\d){2}\.\d+.+?$/,``)}}`:`v`+version.selected}/src/${version.two?`japt`:`japt-interpreter`}.js`;
 		js(`https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js`).then(()=>{
 			js(file).then(()=>{

@@ -2,7 +2,7 @@
 	"type":"methods",
 	"title":"Array Methods",
 	"object":"A",
-	"intro":"",
+	"intro":[],
 	"methods":{
 		"a(s/n)":{
 			"description":"Returns the last index of `x`s/n`` in `A`, or `-1` if not found.",
@@ -74,7 +74,7 @@
 			"returns":"X",
 			"version":"1.4.5"
 		},
-		"g(n,...,n)":{
+		"g(n,&hellip;,n)":{
 			"description":"Returns the element in multi-dimensional `A` at index `n,...,n`.",
 			"returns":"X",
 			"version":"1.4.6"

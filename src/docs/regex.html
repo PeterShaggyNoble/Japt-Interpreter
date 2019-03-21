@@ -10,6 +10,7 @@
 <p><code class="dib vat">.</code> is automatically inserted before any of <code class="dib vat">+</code>, <code class="dib vat">*</code>, or <code class="dib vat">?</code> that would otherwise cause a syntax error.</p>
 <p>The enclosing <code class="dib vat">/</code>s can be omitted from expression containing only a single character class. For example <code clas="dib vat">\w</code> transpiles to <code>/\w/g</code>.</p>
 <p>The <code class="dib vat">s</code> (<code class="dib vat">dotAll</code>) flag has been implemented for browsers that don't yet support it, which forces <code class="dib vat">.</code> to include newlines in matches.</p>
+<p>The <code class="dib vat" data-character="t">R.t(s)</code> methid is available for testing if <code class="dib vat">s</code> contains any matches for <code class="dib vat">R</code>, returning <code class="dib vat">true</code> if it does, or <code class="dib vat">false</code> if not.</p>
 <h4 class="fwm">Character Classes</h4>
 <table>
 	<thead class="fwm">

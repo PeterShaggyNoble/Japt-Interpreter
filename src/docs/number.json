@@ -2,7 +2,7 @@
 	"type":"methods",
 	"title":"Number Methods",
 	"object":"N",
-	"intro":"",
+	"intro":[],
 	"methods":{
 		"a(n=0)":{
 			"description":"Returns the absolute difference of `N` and `n`.",
@@ -59,9 +59,9 @@
 			"returns":"S",
 			"version":"1.4.5"
 		},
-		"h(n=1)":{
-			"description":"Returns `N` rounded `n` significant decimals.",
-			"returns":"S",
+		"i(s)":{
+			"description":"Returns an `intervalID` and evaluates `s` as JavaScript every `N` milliseconds.",
+			"returns":"N",
 			"version":"1.4.5"
 		},
 		"j(n=1)":{
@@ -121,6 +121,11 @@
 		},
 		"s(f)":{
 			"description":"Returns the result of converting `N` to a string, passing it through `f` and then converting it back to a number.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"t(f)":{
+			"description":"Returns an `timeoutID` and executes `f` after `N` milliseconds.",
 			"returns":"N",
 			"version":"1.4.5"
 		},

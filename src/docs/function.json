@@ -1,0 +1,33 @@
+{
+	"type":"methods",
+	"title":"Function Methods",
+	"object":"F",
+	"intro":[],
+	"methods":{
+		"a(n=0,f?)":{
+			"description":"Returns the first integer `>=n` that returns a truthy value when passed through `F`. If `f` is passed then the value returned by first passing `n` through `f` is used instead.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"c(n=0,f?)":{
+			"description":"Returns the first integer in the sequence `n,n-1,n+1,n-2,n+2,n-3,...` that returns a truthy value when passed through `F`. If `f` is passed then the value returned by first passing `n` through `f` is used instead.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"f(n=0,f?)":{
+			"description":"Returns the first integer `>=n` that returns a falsey value when passed through `F`. If `f` is passed then the value returned by first passing `n` through `f` is used instead.",
+			"returns":"N",
+			"version":"1.4.5"
+		},
+		"g(n=U,a=[0,1])":{
+			"description":"Returns the element in `a` at index `n` after repeatedly taking the last element of `a`, passing it through `F` and then appending the result to `a`.",
+			"returns":"X",
+			"version":"1.4.5"
+		},
+		"h(n=U,a=[0,1])":{
+			"description":"Returns the first `n` elements of `a` after repeatedly taking the last element of `a`, passing it through `F` and then appending the result to `a`.",
+			"returns":"A",
+			"version":"1.4.6"
+		}
+	}
+}

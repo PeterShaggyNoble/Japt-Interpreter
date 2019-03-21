@@ -2,7 +2,7 @@
 	"type":"methods",
 	"title":"String Methods",
 	"object":"S",
-	"intro":"",
+	"intro":[],
 	"methods":{
 		"a(s/n)":{
 			"description":"Returns the last index of `s/n` in `S`, or `-1` if not found.",
