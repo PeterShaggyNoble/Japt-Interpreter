@@ -104,7 +104,7 @@ version={
 		version.two=/^2/.test(version.selected);
 		for(ver of version.numbers){
 			if(item)
-				item=item.cloneNode(1);
+				item=item.cloneNode(true);
 			else{
 				svg=n(`svg`);
 				svg.classList.add(`fr`);
@@ -306,7 +306,7 @@ interpreter={
 	}
 },
 compressor={
-	bases:[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36],
+	bases:[11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36],
 	delimiters:` \nabcdefghijklmnopqrstuvwxyz`,
 	golfables:`gnpqswy`,
 	shortcuts:`ÎÍ²¬¤ÔÕ`,
@@ -430,7 +430,7 @@ compressor={
 			else compressor.result.string+=`q${compressor.result.delimiter} `;
 		}
 		if(compressor.result.base)
-			compressor.result.string+=`mn${compressor.result.base=compressor.result.base%16?compressor.result.base:`GH`[compressor.result.base/16-1]} `;
+			compressor.result.string+=`mn${compressor.result.base=compressor.result.base<17?`ABCDEFG`[compressor.result.base%10]:compressor.result.base===32?`H`:compressor.result.base} `;
 		compressor.field.value=`Original:    ${original}\n`;
 		if(compressor.result.permutation)
 			compressor.field.value+=`Permutation: ${JSON.stringify(compressor.result.permutation).replace(array?quotes:``,array?`$1"`:``)}\n`;
@@ -447,17 +447,18 @@ compressor={
 			compressor.buttons.reset.addEventListener(`animationiteration`,()=>compressor.buttons.reset.classList.remove(`spin`),{capture:false,once:true});
 	},
 	weigh(obj){
-		obj.weight=obj.string.length-` \n`.includes(obj.delimiter)-` \n${compressor.golfables}`.includes(obj.delimiter)-[16,32].includes(obj.base);
+		obj.weight=obj.string.length-` \n`.includes(obj.delimiter)-` \n${compressor.golfables}`.includes(obj.delimiter)-(obj.base<17||obj.base===32);
 		return obj;
 	}
 },
 docs={
 	sidebar:i(`docs`),
-	files:[
+	files:l[`japt-docs`]?JSON.parse(l[`japt-docs`]):[
 		`docs/intro.html`,
 		`docs/basics.html`,
 		`docs/variables.html`,
 		`docs/shortcuts.html`,
+		`docs/compression.html`,
 		`docs/regex.html`,
 		`docs/string.json`,
 		`docs/array.json`,
@@ -468,43 +469,71 @@ docs={
 		`docs/other.json`,
 		`docs/flags.json`,
 		`docs/examples.html`,
+		`docs/settings.html`
 	],
 	init(){
-		let article;
+		let 	menu=e(`ol`),
+			sort=e(`ol`),
+			article,item,order;
 		return Promise.all(docs.files.map(file=>fetch(file))).then(async files=>{
 			for(let [index,file] of files.entries()){
 				if(article){
-					article=article.cloneNode(0);
+					article=article.cloneNode(false);
 					article.classList.add(`dn`);
+					item=item.cloneNode(true);
+					order=order.cloneNode(true);
 				}else{
-					docs.current=article=e(`article`);
+					article=e(`article`);
 					article.classList.add(`oa`);
+					item=e(`li`);
+					item.classList.add(`cp`,`fwm`,`oh`,`toe`,`wsnw`);
+					item.append(t(``));
+					order=e(`li`);
+					order.classList.add(`pr`);
+					order.append(e(`span`),t(``));
+					order.firstChild.classList.add(`cm`,`dib`,`vat`);
+					let svg=n(`svg`);
+					svg.classList.add(`pen`,`vat`);
+					svg.dataset.mdi=`drag-vertical`;
+					svg.setAttribute(`viewBox`,`0 0 24 24`);
+					order.firstChild.append(svg);
+					docs.current={article,item};
 				}
-				article.id=`docs-`+docs.files[index].slice(5,-5);
+				article.id=item.dataset.section=`docs-`+docs.files[index].slice(5,-5);
 				switch(docs.files[index].slice(-4)){
 					case`json`:
 						docs.json(await file.json(),article);
 						break;
 					case`html`:
-						article.innerHTML=await file.text();
+						article.innerHTML=docs.parse(await file.text());
 						break;
 					default:console.error(`Failed to load documenation:`,file.url)
 				}
 				docs.sidebar.append(article);
+				item.firstChild.nodeValue=order.lastChild.nodeValue=article.firstChild.firstChild.nodeValue;
+				menu.append(item);
+				order.dataset.file=docs.files[index];
+				sort.append(order);
 			}
-			i(`docs-examples`).addEventListener(`click`,docs.example,false);
+			docs.menu(menu);
 			docs.shortcuts();
 			docs.regex();
-			docs.menus();
+			i(`docs-examples`).addEventListener(`click`,docs.example,false);
+			docs.settings(sort);
 			general.icons(docs.sidebar);
 			i(`loading`).remove();
 		});
 	},
 	change(event){
 		if(event.target.dataset.section){
-			docs.current.classList.add(`dn`);
-			docs.current=i(event.target.dataset.section);
-			docs.current.classList.remove(`dn`);
+			docs.current.article.classList.add(`dn`);
+			docs.current.article=i(event.target.dataset.section);
+			docs.current.article.classList.remove(`dn`);
+			docs.current.item.classList.remove(`current`);
+			docs.current.item=docs.sidebar.querySelector(`#menu+ol>li[data-section=${event.target.dataset.section}]`);
+			docs.current.item.classList.add(`current`);
+			if(event.target===docs.current.item)
+				event.target.parentNode.blur();
 		}
 	},
 	close(event){
@@ -529,7 +558,7 @@ docs={
 		if(json.intro){
 			for(intro of json.intro){
 				if(text)
-					text=text.cloneNode(0);
+					text=text.cloneNode(false);
 				else text=e(`p`);
 				text.innerHTML=docs.parse(intro);
 				article.append(text);
@@ -537,10 +566,10 @@ docs={
 		}
 		for(key in object){
 			if(title){
-				title=title.cloneNode(0);
+				title=title.cloneNode(false);
 				if(json.type===`methods`)
-					svg=svg.cloneNode(1);
-				text=text.cloneNode(0);
+					svg=svg.cloneNode(true);
+				text=text.cloneNode(false);
 			}else{
 				title=e(`h4`);
 				title.classList.add(`method`,`fwm`);
@@ -566,48 +595,27 @@ docs={
 			article.append(title,text);
 		}
 	},
-	menus(){
-		let 	articles=docs.sidebar.querySelectorAll(`article`),
-			length=articles.length,
-			list=e(`ol`),
-			article,heading,item,menu,svg;
+	menu(list){
+		let svg=n(`svg`);
+		svg.classList.add(`cp`,`pa`);
+		svg.dataset.mdi=`dots-vertical`;
+		svg.id=`menu`;
+		svg.tabIndex=`-1`;
+		svg.setAttribute(`viewBox`,`0 0 24 24`);
 		list.classList.add(`pa`);
 		list.tabIndex=`-1`;
-		for(article of articles){
-			heading=article.firstElementChild;
-			if(svg){
-				svg=svg.cloneNode(1);
-				item=item.cloneNode(1);
-				item.firstChild.nodeValue=heading.firstChild.nodeValue;
-			}else{
-				svg=n(`svg`);
-				svg.classList.add(`cp`,`pa`);
-				svg.tabIndex=`-1`;
-				svg.setAttribute(`viewBox`,`0 0 24 24`);
-				svg.dataset.mdi=`dots-vertical`;
-				item=e(`li`);
-				item.classList.add(`cp`,`fwm`,`oh`,`toe`,`wsnw`);
-				item.append(t(heading.firstChild.nodeValue));
-			}
-			heading.append(svg);
-			article.style.zIndex=length--;
-			item.dataset.section=article.id;
-			list.append(item);
-		}
-		for(article of articles){
-			menu=list.cloneNode(1);
-			menu.querySelector(`[data-section=${article.id}]`).remove();
-			article.firstElementChild.append(menu);
-		}
+		docs.current.item.classList.add(`current`);
+		docs.sidebar.prepend(svg,list);
 	},
 	parse(text){
 		return text
 			.replace(/\n/g,`<br>`)
 			.replace(/`([^`]+?)`([^`]+?)``/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
 			.replace(/`([^`]+?)`/g,`<code class="dib vat">$1</code>`)
-			.replace(/\[(.+?)\]\((.+?)\)/g,`<a href="$2">$1</a>`)
-			.replace(/\[(v)\:(.+?)\]/g,`<span class="version dib vat">$1$2</span>`)
-			.replace(/\[([a-z]+)\:(.+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
+			.replace(/\[([^\]]+?)\]\(([^)]+?)\)/g,`<a href="$2">$1</a>`)
+			.replace(/\[(v)\:([^\]]+?)\]/g,`<span class="version dib vat">$1$2</span>`)
+			.replace(/\[icon\:([^\]]+?)\]/g,`<svg class="vat" data-mdi="$1" viewBox="0 0 24 24"></svg>`)
+			.replace(/\[([a-z]+)\:([^\]]+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
 
 	},
 	regex(){
@@ -615,10 +623,10 @@ docs={
 			regex,row,cell,code,ver;
 		for(regex in regexes){
 			if(row){
-				row=row.cloneNode(0);
-				cell=cell.cloneNode(0);
-				code=code.cloneNode(0);
-				ver=ver.cloneNode(0);
+				row=row.cloneNode(false);
+				cell=cell.cloneNode(false);
+				code=code.cloneNode(false);
+				ver=ver.cloneNode(false);
 			}else{
 				row=e(`tr`);
 				cell=e(`td`);
@@ -630,25 +638,42 @@ docs={
 			code.append(t((version.selected<`2.0a0`?`%`:`\\`)+regex));
 			cell.append(code);
 			row.append(cell);
-			cell=cell.cloneNode(0);
+			cell=cell.cloneNode(false);
 			cell.append(t(regexes[regex].match));
 			row.append(cell);
-			cell=cell.cloneNode(0);
+			cell=cell.cloneNode(false);
 			ver.append(t(`v`+regexes[regex].version));
 			cell.append(ver);
 			row.append(cell);
 			table.append(row);
 		}
 	},
+	settings(list){
+		list.lastChild.remove();
+		list.id=`sort`;
+		i(`docs-settings`).append(list);
+		general.js(`https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js`).then(()=>{
+			Sortable.create(list,{
+				animation:150,
+				chosenClass:`sorting`,
+				handle:`span`,
+				onChoose:event=>event.target.classList.add(`sorting`),
+				onUnchoose:event=>event.target.classList.remove(`sorting`),
+				onEnd:event=>{
+				}
+			});
+		});
+	},
+
 	shortcuts(){
 		let 	table=i(`shortcuts`),
 			shortcut,row,cell,code,ver;
 		for(shortcut in shortcuts){
 			if(row){
-				row=row.cloneNode(0);
-				cell=cell.cloneNode(0);
-				code=code.cloneNode(0);
-				ver=ver.cloneNode(0);
+				row=row.cloneNode(false);
+				cell=cell.cloneNode(false);
+				code=code.cloneNode(false);
+				ver=ver.cloneNode(false);
 			}else{
 				row=e(`tr`);
 				cell=e(`td`);
@@ -661,14 +686,14 @@ docs={
 			code.append(t(code.dataset.character=shortcuts[shortcut].character));
 			cell.append(code);
 			row.append(cell);
-			code=code.cloneNode(0);
+			code=code.cloneNode(false);
 			code.classList.remove(`cp`);
 			code.removeAttribute(`data-character`);
 			code.append(t(shortcut));
-			cell=cell.cloneNode(0);
+			cell=cell.cloneNode(false);
 			cell.append(code);
 			row.append(cell);
-			cell=cell.cloneNode(0);
+			cell=cell.cloneNode(false);
 			ver.append(t(`v`+shortcuts[shortcut].version));
 			cell.append(ver);
 			row.append(cell);
@@ -689,7 +714,7 @@ keyboard={
 		let item,key;
 		for(key of characters){
 			if(item)
-				item=item.cloneNode(1);
+				item=item.cloneNode(true);
 			else{
 				item=e(`li`);
 				item.classList.add(`cp`,`df`);
@@ -736,6 +761,7 @@ general={
 		"clipboard-text-outline":`M19,3H14.82C14.25,1.44 12.53,0.64 11,1.2C10.14,1.5 9.5,2.16 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M17,11H7V9H17V11M15,15H7V13H15V15Z`,
 		"delete":`M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z`,
 		"dots-vertical":`M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z`,
+		"drag-vertical":`M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z`,
 		"flag":`M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z`,
 		"file-document":`M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z`,
 		"golf":`M19.5,18A1.5,1.5 0 0,1 21,19.5A1.5,1.5 0 0,1 19.5,21A1.5,1.5 0 0,1 18,19.5A1.5,1.5 0 0,1 19.5,18M17,5.92L11,9V18.03C13.84,18.19 16,19 16,20C16,21.1 13.31,22 10,22C6.69,22 4,21.1 4,20C4,19.26 5.21,18.62 7,18.27V20H9V2L17,5.92Z`,
@@ -806,7 +832,7 @@ general={
 				svg.setAttribute(`viewBox`,`0 0 24 24`);
 			for(icon of svg.dataset.mdi.split(`,`)){
 				if(path)
-					path=path.cloneNode(1);
+					path=path.cloneNode(true);
 				else{
 					path=n(`path`);
 					path.classList.add(`pen`);

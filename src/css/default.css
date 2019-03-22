@@ -298,6 +298,10 @@ body.light #tools::after{
 #permute:not(.enabled)>path:last-of-type{
 	display:none;
 }
+.wip{
+	border:1px solid var(--border);
+	padding:10px;
+}
 #docs{
 	background:var(--primary);
 	border-left:1px solid var(--border);
@@ -307,6 +311,38 @@ body.light #tools::after{
 	bottom:0;
 	left:10px;
 	line-height:24px;
+}
+#menu{
+	right:6px;
+	top:6px;
+	z-index:3;
+}
+#menu+ol{
+	background:var(--background);
+	border:1px solid var(--border);
+	font-size:14px;
+	opacity:0;
+	pointer-events:none;
+	right:6px;
+	top:6px;
+	transition:opacity .225s var(--timing-function);
+	z-index:4;
+}
+#menu:focus+ol,#menu+ol:focus{
+	opacity:1;
+	pointer-events:initial;
+	z-index:3;
+}
+#menu+ol>li{
+	line-height:30px;
+	padding:0 8px;
+	transition:background .375s var(--timing-function);
+}
+#menu+ol>li:hover{
+	background:rgba(0,0,0,.12);
+}
+#menu+ol>li:active,#menu+ol>li:focus,#menu+ol>li.current{
+	background:rgba(0,0,0,.24);
 }
 #docs>article{
 	height:100%;
@@ -320,37 +356,6 @@ body.light #tools::after{
 	margin:0 -20px 20px;
 	padding:0 36px 0 20px;
 	top:0;
-}
-#docs h3>svg{
-	right:6px;
-	top:6px;
-}
-#docs h3>ol{
-	background:var(--background);
-	border:1px solid var(--border);
-	font-size:14px;
-	opacity:0;
-	pointer-events:none;
-	right:6px;
-	top:6px;
-	transition:opacity .225s var(--timing-function);
-	z-index:1;
-}
-#docs h3>svg:focus+ol,#docs h3>ol:focus{
-	opacity:1;
-	pointer-events:initial;
-	z-index:3;
-}
-#docs h3 li{
-	line-height:30px;
-	padding:0 8px;
-	transition:background .375s var(--timing-function);
-}
-#docs h3 li:hover{
-	background:rgba(0,0,0,.12);
-}
-#docs h3 li:active,#docs h3 li:focus{
-	background:rgba(0,0,0,.24);
 }
 #docs h4{
 	font-size:16px;
@@ -394,10 +399,12 @@ body.light #tools::after{
 	line-height:18px;
 	margin-bottom:10px;
 }
-#docs article>ol{
+#docs article>ol,
+#docs article>ul{
 	margin-bottom:5px;
 }
-#docs article>ol>li{
+#docs article>ol>li,
+#docs article>ul>li{
 	font-size:14px;
 	line-height:20px;
 	margin-bottom:5px;
@@ -416,13 +423,6 @@ body.light #tools::after{
 #docs a{
 	text-decoration:var(--border) underline;
 }
-#docs span.version{
-	border:1px solid var(--border);
-	border-radius:2px;
-	font-size:11px;
-	line-height:16px;
-	padding:0 4px;
-}
 #docs code{
 	background:var(--background);
 	border-radius:2px;
@@ -437,6 +437,47 @@ body.light #tools::after{
 	font-size:14px;
 	line-height:18px;
 	margin-left:0;
+}
+#docs span.version{
+	border:1px solid var(--border);
+	border-radius:2px;
+	font-size:11px;
+	line-height:16px;
+	padding:0 4px;
+}
+#docs p>svg,#docs li>svg{
+	width:18px;
+}
+#docs-intro ul>li{
+	padding-left:10px;
+}
+#docs-intro ul>li::before{
+	content:"•";
+	left:0;
+	position:absolute;
+}
+#sort{
+	border:1px solid var(--border);
+}
+#docs>article>ol#sort>li{
+	background:var(--primary);
+	border:1px solid var(--border);
+	line-height:24px;
+	margin:-1px;
+	padding:6px 4px 6px 0;
+	transition:opacity .125s var(--timing-function),transform .125s var(--timing-function);
+}
+#sort.sorting>li{
+	opacity:.6;
+}
+#sort>li.sorting{
+	border:1px solid var(--primary);
+	border-radius:2px;
+	opacity:1;
+	transform:translate(-5px,-5px);
+}
+#sort span{
+	padding:0 4px;
 }
 #keyboard{
 	background:var(--primary);

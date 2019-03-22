@@ -1,16 +1,16 @@
 <h3 class="ps">Regular Expressions</h3>
-<h4 class="fwm">Before <span class="version dib fwn vat">v2.0a0</span></h4>
-<p>Regular Expressions are strings, with <code class="dib vat">%</code> used instead of <code class="dib vat">\</code> for character classes and as the escape character.</p>
+<h4 class="fwm">Before [v:2.0a0]</h4>
+<p>Regular Expressions are strings, with `%` used instead of `\` for character classes and as the escape character.</p>
 <p>Flags must be passed as a separate string argument to methods that support them.</p>
-<p>The <code class="dib vat">g</code>lobal flag is enabled by default.</p>
-<h4 class="fwm">From <span class="version dib fwn vat">v2.0a0</span> On</h4>
-<p>Regular Expressions use the more familiar <code class="dib vat">/&lt;exp&gt;/&lt;flags&gt;</code> syntax, with <code class="dib vat">\</code> used for character classes and as the escape character.</p>
-<p>The <code class="dib vat">g</code>lobal flag is enabled by default.</p>
+<p>The `g`lobal flag is enabled by default.</p>
+<h4 class="fwm">From [v:2.0a0] On</h4>
+<p>Regular Expressions use the more familiar `/&lt;exp&gt;/&lt;flags&gt;` syntax, with `\` used for character classes and as the escape character.</p>
+<p>The `g`lobal flag is enabled by default.</p>
 <p>Missing parentheses or square brackets at the beginning or end of an expression are inserted automatically.</p>
-<p><code class="dib vat">.</code> is automatically inserted before any of <code class="dib vat">+</code>, <code class="dib vat">*</code>, or <code class="dib vat">?</code> that would otherwise cause a syntax error.</p>
-<p>The enclosing <code class="dib vat">/</code>s can be omitted from expression containing only a single character class. For example <code clas="dib vat">\w</code> transpiles to <code>/\w/g</code>.</p>
-<p>The <code class="dib vat">s</code> (<code class="dib vat">dotAll</code>) flag has been implemented for browsers that don't yet support it, which forces <code class="dib vat">.</code> to include newlines in matches.</p>
-<p>The <code class="dib vat" data-character="t">R.t(s)</code> methid is available for testing if <code class="dib vat">s</code> contains any matches for <code class="dib vat">R</code>, returning <code class="dib vat">true</code> if it does, or <code class="dib vat">false</code> if not.</p>
+<p>`.` is automatically inserted before any of `+`, `*`, or `?` that would otherwise cause a syntax error.</p>
+<p>The enclosing `/`s can be omitted from expression containing only a single character class. For example `\w` transpiles to `/\w/g`.</p>
+<p>The `s` (`dotAll`) flag has been implemented for browsers that don't yet support it, which forces `.` to include newlines in matches.</p>
+<p>The `t`R.t(s)`` methid is available for testing if `s` contains any matches for `R`, returning `true` if it does, or `false` if not.</p>
 <h4 class="fwm">Character Classes</h4>
 <table>
 	<thead class="fwm">
@@ -22,7 +22,7 @@
 	</thead>
 	<tbody id="regex"></tbody>
 </table>
-<p>The following shortcut classes are also available in <span class="version dib fwn vat">v2.0a0</span> and above.</p>
+<p>The following shortcut classes are also available in [v:2.0a0] and above.</p>
 <table>
 	<thead class="fwm">
 		<tr>
@@ -33,29 +33,29 @@
 	</thead>
 	<tbody>
 		<tr>
-			<th><code class="dib vam">\.</code></th>
-			<th><code class="dib vam">/./g</code></th>
-			<th><span class="version dib fwn vat">v2.0a0</span></th>
+			<th>`\.`</th>
+			<th>`/./g`</th>
+			<th>[v:2.0a0]</th>
 		</tr>
 		<tr>
-			<th><code class="dib vam">\*</code></th>
-			<th><code class="dib vam">/.*/g</code></th>
-			<th><span class="version dib fwn vat">v2.0a0</span></th>
+			<th>`\*`</th>
+			<th>`/.*/g`</th>
+			<th>[v:2.0a0]</th>
 		</tr>
 		<tr>
-			<th><code class="dib vam">\+</code></th>
-			<th><code class="dib vam">/.+/g</code></th>
-			<th><span class="version dib fwn vat">v2.0a0</span></th>
+			<th>`\+`</th>
+			<th>`/.+/g`</th>
+			<th>[v:2.0a0]</th>
 		</tr>
 		<tr>
-			<th><code class="dib vam">\?</code></th>
-			<th><code class="dib vam">/.?/g</code></th>
-			<th><span class="version dib fwn vat">v2.0a0</span></th>
+			<th>`\?`</th>
+			<th>`/.?/g`</th>
+			<th>[v:2.0a0]</th>
 		</tr>
 		<tr>
-			<th><code class="dib vam">\^</code></th>
-			<th><code class="dib vam">/[^]/g</code></th>
-			<th><span class="version dib fwn vat">v2.0a0</span></th>
+			<th>`\^`</th>
+			<th>`/[^]/g`</th>
+			<th>[v:2.0a0]</th>
 		</tr>
 	</tbody>
 </table>
