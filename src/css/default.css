@@ -354,8 +354,17 @@ body.light #tools::after{
 	font-size:20px;
 	line-height:36px;
 	margin:0 -20px 20px;
-	padding:0 36px 0 20px;
+	padding:0 36px 0 0;
 	top:0;
+}
+#docs h3>svg{
+	margin:10px 4px;
+	opacity:0;
+	transition:opacity .375s var(--timing-function);
+	width:16px;
+}
+#docs h3:hover>svg{
+	opacity:1;
 }
 #docs h4{
 	font-size:16px;

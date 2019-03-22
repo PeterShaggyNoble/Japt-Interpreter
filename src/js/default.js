@@ -387,7 +387,7 @@ compressor={
 	},
 	run(){
 		try{
-			let array=compressor.value.slice(0,2)===`["`;
+			let array=compressor.value.startsWith(`["`);
 			if(array)
 				compressor.value=compressor.value.replace(/([^\\[]")"/g,`$1,"`);
 			compressor.value=eval(compressor.value);
@@ -474,14 +474,14 @@ docs={
 	init(){
 		let 	menu=e(`ol`),
 			sort=e(`ol`),
-			article,item,order;
+			article,current,item,order,svg;
 		return Promise.all(docs.files.map(file=>fetch(file))).then(async files=>{
 			for(let [index,file] of files.entries()){
 				if(article){
 					article=article.cloneNode(false);
-					article.classList.add(`dn`);
 					item=item.cloneNode(true);
 					order=order.cloneNode(true);
+					svg=svg.cloneNode(true);
 				}else{
 					article=e(`article`);
 					article.classList.add(`oa`);
@@ -492,14 +492,23 @@ docs={
 					order.classList.add(`pr`);
 					order.append(e(`span`),t(``));
 					order.firstChild.classList.add(`cm`,`dib`,`vat`);
-					let svg=n(`svg`);
+					svg=n(`svg`);
 					svg.classList.add(`pen`,`vat`);
 					svg.dataset.mdi=`drag-vertical`;
 					svg.setAttribute(`viewBox`,`0 0 24 24`);
 					order.firstChild.append(svg);
-					docs.current={article,item};
+					svg=n(`svg`);
+					svg.classList.add(`cp`,`vat`);
+					svg.dataset.mdi=`link-variant,check`;
+					svg.setAttribute(`viewBox`,`0 0 24 24`);
 				}
-				article.id=item.dataset.section=`docs-`+docs.files[index].slice(5,-5);
+				article.id=item.dataset.section=svg.dataset.copy=`docs-`+docs.files[index].slice(5,-5);
+				current=!index&&!u.hash.startsWith(`#docs-`)||u.hash.slice(1)===article.id;
+				if(current)
+					docs.current={article,item};
+				article.classList.toggle(`dn`,!current);
+				item.classList.toggle(`current`,current);
+				svg.addEventListener(`click`,general.copy,false);
 				switch(docs.files[index].slice(-4)){
 					case`json`:
 						docs.json(await file.json(),article);
@@ -511,6 +520,7 @@ docs={
 				}
 				docs.sidebar.append(article);
 				item.firstChild.nodeValue=order.lastChild.nodeValue=article.firstChild.firstChild.nodeValue;
+				article.firstChild.prepend(svg);
 				menu.append(item);
 				order.dataset.file=docs.files[index];
 				sort.append(order);
@@ -604,7 +614,6 @@ docs={
 		svg.setAttribute(`viewBox`,`0 0 24 24`);
 		list.classList.add(`pa`);
 		list.tabIndex=`-1`;
-		docs.current.item.classList.add(`current`);
 		docs.sidebar.prepend(svg,list);
 	},
 	parse(text){
@@ -811,12 +820,15 @@ general={
 	copy(event){
 		let 	target=event.target.dataset.copy,
 			text;
+		console.log(target.startsWith(`docs-`));
 		if(target===`compressor`)
 			text=compressor.result.string;
 		else if(interpreter[target])
 			text=interpreter[target]();
 		else if(interpreter.fields[target])
 			text=interpreter.fields[target].value;
+		else if(target.startsWith(`docs-`))
+			text=interpreter.url()+`#`+target;
 		if(target===`explanation`)
 			text=text.replace(/^/gm,`    `);
 		general.clipboard.value=text;
