@@ -387,6 +387,9 @@ compressor={
 	},
 	run(){
 		try{
+			let array=compressor.value.slice(0,2)===`["`;
+			if(array)
+				compressor.value=compressor.value.replace(/([^\\[]")"/g,`$1,"`);
 			compressor.value=eval(compressor.value);
 			if(compressor.value.constructor===String)
 				compressor.result={string:`\`${shoco.c(compressor.value).replace(/(?=`)/g,`\\`)}\``};
@@ -403,13 +406,17 @@ compressor={
 				}
 				compressor.result=compressor.get(compressor.result);
 			}
-			compressor.update();
+			compressor.update(array);
 		}catch(err){
 			console.error(err);
 			compressor.reset();
 		}
 	},
-	update(){
+	update(array){
+		let 	original=compressor.original,
+			quotes=/([^\\]"),"/g;
+		if(array)
+			original=original.replace(quotes,`$1"`);
 		if(compressor.result.delimiter){
 			if(compressor.result.delimiter===` `){
 				compressor.result.delimiter=`S`;
@@ -424,10 +431,10 @@ compressor={
 		}
 		if(compressor.result.base)
 			compressor.result.string+=`mn${compressor.result.base=compressor.result.base%16?compressor.result.base:`GH`[compressor.result.base/16-1]} `;
-		compressor.field.value=`Original:    ${compressor.original}\n`;
+		compressor.field.value=`Original:    ${original}\n`;
 		if(compressor.result.permutation)
-			compressor.field.value+=`Permutation: ${JSON.stringify(compressor.result.permutation)}\n`;
-		compressor.field.value+=`Bytes:       ${compressor.original.length}\n`;
+			compressor.field.value+=`Permutation: ${JSON.stringify(compressor.result.permutation).replace(array?quotes:``,array?`$1"`:``)}\n`;
+		compressor.field.value+=`Bytes:       ${original.length}\n`;
 		compressor.field.value+=`Compressed:  ${compressor.result.string}\n`;
 		if(compressor.result.base)
 			compressor.field.value+=`Base:        ${compressor.result.base}\n`;
@@ -460,7 +467,7 @@ docs={
 		`docs/math.json`,
 		`docs/other.json`,
 		`docs/flags.json`,
-		`docs/examples.html`
+		`docs/examples.html`,
 	],
 	init(){
 		let article;
@@ -485,11 +492,11 @@ docs={
 				}
 				docs.sidebar.append(article);
 			}
+			i(`docs-examples`).addEventListener(`click`,docs.example,false);
 			docs.shortcuts();
 			docs.regex();
 			docs.menus();
 			general.icons(docs.sidebar);
-			i(`docs-examples`).addEventListener(`click`,docs.example,false);
 			i(`loading`).remove();
 		});
 	},
@@ -754,19 +761,10 @@ general={
 		version.init();
 		general.icons(b);
 		keyboard.init();
-		let 	file=`https://cdn.jsdelivr.net/gh/ETHproductions/japt`,
-			js=file=>new Promise((resolve,reject)=>{
-				let script=e(`script`);
-				script.async=true;
-				script.src=file;
-				b.append(script);
-				script.addEventListener(`load`,resolve,{capture:false,once:true});
-				script.addEventListener(`error`,reject,{capture:false,once:true});
-			});
-		console.log(u);
+		let file=`https://cdn.jsdelivr.net/gh/ETHproductions/japt`;
 		file+=`@${version.selected===version.current||version.two?`master@{${new Date().toISOString().replace(/(\:\d\d){2}\.\d+.+?$/,``)}}`:`v`+version.selected}/src/${version.two?`japt`:`japt-interpreter`}.js`;
-		js(`https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js`).then(()=>{
-			js(file).then(()=>{
+		general.js(`https://cdn.jsdelivr.net/gh/ETHproductions/japt/dependencies/shoco.js`).then(()=>{
+			general.js(file).then(()=>{
 				Japt.stdout=interpreter.fields.output;
 				Japt.stderr=interpreter.fields.error;
 				if(interpreter.fields.code.value){
@@ -818,6 +816,16 @@ general={
 			}
 			svg.removeAttribute(`data-mdi`);
 		}
+	},
+	js(file){
+		return new Promise((resolve,reject)=>{
+			let script=e(`script`);
+			script.async=true;
+			script.src=file;
+			b.append(script);
+			script.addEventListener(`load`,resolve,{capture:false,once:true});
+			script.addEventListener(`error`,reject,{capture:false,once:true});
+		});
 	},
 	listeners(){
 		b.addEventListener(`keydown`,general.run,false);

@@ -621,6 +621,7 @@ body.light>#keyboard>h2{
 .ttu{text-transform:uppercase;}
 .wsnw{white-space:nowrap;}
 .ch{cursor:help;}
+.cm{cursor:move;}
 .cp{cursor:pointer;}
 .cw{cursor:wait;}
 .pen{pointer-events:none;}
