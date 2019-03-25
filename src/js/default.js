@@ -630,9 +630,13 @@ docs={
 		for(key in object){
 			if(title){
 				title=title.cloneNode(false);
-				if(json.type===`methods`)
-					svg=svg.cloneNode(true);
 				text=text.cloneNode(false);
+				if(json.type===`methods`){
+					title.removeAttribute(`data-object`);
+					title.classList.remove(`dn`);
+					text.classList.remove(`dn`);
+					svg=svg.cloneNode(true);
+				}
 			}else{
 				title=e(`h4`);
 				title.classList.add(`method`,`fwm`);
