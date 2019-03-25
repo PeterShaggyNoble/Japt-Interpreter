@@ -481,16 +481,18 @@ docs={
 			docs.search.form.addEventListener(`input`,docs.search.wait,true);
 		},
 		exec(){
-			let hide,title,text;
+			let 	methods=docs.search.methods.map(input=>input.checked&&input.value),
+				value=docs.search.input.value.toLowerCase(),
+				hide,title,text;
 			docs.search.article.scrollTo({
 				behavior:`smooth`,
 				top:0
 			});
 			for(title of docs.search.titles){
 				text=title.nextElementSibling;
-				hide=	!docs.search.input.value||
-					!text.firstChild.nodeValue.replace(/^Returns |\<[^>]+?\>/g,``).toLowerCase().includes(docs.search.input.value.toLowerCase())||
-					!docs.search.methods.map(input=>input.checked&&input.value).includes(title.dataset.object);
+				hide=	!value||
+					!methods.includes(title.dataset.object)||
+					!text.innerHTML.replace(/^Returns |\<[^>]+?\>/g,``).toLowerCase().includes(value);
 				title.classList.toggle(`dn`,hide);
 				text.classList.toggle(`dn`,hide);
 			}
