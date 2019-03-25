@@ -268,7 +268,7 @@ interpreter={
 							Japt.output(output);
 						general.resize(interpreter.fields.output);
 						interpreter.reset();
-						if(interpreter.cache.enabled)
+						if(interpreter.cache.enabled&&timer>100)
 							interpreter.cache.add(code,flags,input,output,timer);
 					},
 					err=>{
@@ -455,6 +455,7 @@ docs={
 	sidebar:i(`docs`),
 	files:l[`japt-docs`]?JSON.parse(l[`japt-docs`]):[
 		`docs/intro.html`,
+		`docs/interpreter.html`,
 		`docs/basics.html`,
 		`docs/variables.html`,
 		`docs/shortcuts.html`,
@@ -685,6 +686,7 @@ docs={
 			.replace(/`([^`]+?)`([^`]+?)``/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
 			.replace(/`([^`]+?)`/g,`<code class="dib vat">$1</code>`)
 			.replace(/\[([^\]]+?)\]\(([^)]+?)\)/g,`<a href="$2">$1</a>`)
+			.replace(/\[(v)\:current\]/g,`<span class="version dib vat">$1${version.current}</span>`)
 			.replace(/\[(v)\:([^\]]+?)\]/g,`<span class="version dib vat">$1$2</span>`)
 			.replace(/\[icon\:([^\]]+?)\]/g,`<svg class="vat" data-mdi="$1" viewBox="0 0 24 24"></svg>`)
 			.replace(/\[([a-z]+)\:([^\]]+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
