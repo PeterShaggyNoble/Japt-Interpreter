@@ -74,7 +74,7 @@
 			"returns":"X",
 			"version":"1.4.5"
 		},
-		"g(n,&hellip;,n)":{
+		"g(n,...,n)":{
 			"description":"Returns the element in multi-dimensional `A` at index `n,...,n`.",
 			"returns":"X",
 			"version":"1.4.6"

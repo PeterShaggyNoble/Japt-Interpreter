@@ -1,4 +1,4 @@
-{
+{const 
 w=window,
 d=document,
 b=d.body,
@@ -471,10 +471,43 @@ docs={
 		`docs/examples.html`,
 		`docs/settings.html`
 	],
+	search:{
+		article:i(`docs-search`),
+		form:q(`#docs-search>form`),
+		input:q(`#docs-search>form>input[type=text]`),
+		init(){
+			docs.search.titles=docs.search.article.querySelectorAll(`h4`);
+			docs.search.methods=[...docs.search.form.querySelectorAll(`input[type=checkbox]`)];
+			docs.search.form.addEventListener(`input`,docs.search.wait,true);
+		},
+		exec(){
+			let hide,title,text;
+			docs.search.article.scrollTo({
+				behavior:`smooth`,
+				top:0
+			});
+			for(title of docs.search.titles){
+				text=title.nextElementSibling;
+				hide=	!docs.search.input.value||
+					!text.firstChild.nodeValue.replace(/^Returns |\<[^>]+?\>/g,``).toLowerCase().includes(docs.search.input.value.toLowerCase())||
+					!docs.search.methods.map(input=>input.checked&&input.value).includes(title.dataset.object);
+				title.classList.toggle(`dn`,hide);
+				text.classList.toggle(`dn`,hide);
+			}
+		},
+		toggle(){
+			docs.search.article.classList.toggle(`dn`);
+		},
+		wait(){
+			if(docs.search.timer)
+				clearTimeout(docs.search.timer);
+			docs.search.timer=setTimeout(docs.search.exec,100);
+		}
+	},
 	init(){
 		let 	menu=e(`ol`),
 			sort=e(`ol`),
-			article,current,item,order,svg;
+			article,current,input,item,json,label,order,svg;
 		return Promise.all(docs.files.map(file=>fetch(file))).then(async files=>{
 			for(let [index,file] of files.entries()){
 				if(article){
@@ -482,6 +515,8 @@ docs={
 					item=item.cloneNode(true);
 					order=order.cloneNode(true);
 					svg=svg.cloneNode(true);
+					input=input.cloneNode(true);
+					label=label.cloneNode(true);
 				}else{
 					article=e(`article`);
 					article.classList.add(`oa`);
@@ -497,6 +532,17 @@ docs={
 					svg.dataset.mdi=`drag-vertical`;
 					svg.setAttribute(`viewBox`,`0 0 24 24`);
 					order.firstChild.append(svg);
+					input=e(`input`);
+					input.checked=true;
+					input.name=`methods`;
+					input.type=`checkbox`;
+					label=e(`label`);
+					label.classList.add(`dib`,`cp`); 
+					svg=n(`svg`);
+					svg.classList.add(`cp`,`vat`);
+					svg.dataset.mdi=`check-box-outline,checkbox-blank-outline`;
+					svg.setAttribute(`viewBox`,`0 0 24 24`);
+					label.append(svg,t(``));
 					svg=n(`svg`);
 					svg.classList.add(`cp`,`vat`);
 					svg.dataset.mdi=`link-variant,check`;
@@ -511,7 +557,13 @@ docs={
 				svg.addEventListener(`click`,general.copy,false);
 				switch(docs.files[index].slice(-4)){
 					case`json`:
-						docs.json(await file.json(),article);
+						docs.json(json=await file.json(),article);
+						if(json.type===`methods`){
+							label.setAttribute(`for`,input.id=`method-`+json.object);
+							input.value=json.object;
+							label.lastChild.nodeValue=article.firstChild.firstChild.nodeValue.match(/[^ ]+/);
+							docs.search.form.append(input,label);
+						}
 						break;
 					case`html`:
 						article.innerHTML=docs.parse(await file.text());
@@ -531,6 +583,7 @@ docs={
 			i(`docs-examples`).addEventListener(`click`,docs.example,false);
 			docs.settings(sort);
 			general.icons(docs.sidebar);
+			docs.search.init();
 			i(`loading`).remove();
 		});
 	},
@@ -593,6 +646,8 @@ docs={
 				text=e(`p`);
 			}
 			title.dataset.version=object[key].version;
+			text.innerHTML=docs.parse(object[key].description);
+			article.append(title,text);
 			switch(json.type){
 				case`flags`:
 					title.append(t(`-`+key));
@@ -600,9 +655,11 @@ docs={
 				default:
 					title.dataset.character=key[0];
 					title.append(t(json.object+`.`+key),svg,t(object[key].returns));
+					docs.search.article.append(title=title.cloneNode(true),text=text.cloneNode(true));
+					title.dataset.object=json.object;
+					title.classList.add(`dn`);
+					text.classList.add(`dn`);
 			}
-			text.innerHTML=docs.parse(object[key].description);
-			article.append(title,text);
 		}
 	},
 	menu(list){
@@ -673,7 +730,6 @@ docs={
 			});
 		});
 	},
-
 	shortcuts(){
 		let 	table=i(`shortcuts`),
 			shortcut,row,cell,code,ver;
@@ -768,6 +824,7 @@ general={
 		"check-box-outline":`M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,5V19H5V5H19M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9`,
 		"checkbox-blank-outline":`M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z`,
 		"clipboard-text-outline":`M19,3H14.82C14.25,1.44 12.53,0.64 11,1.2C10.14,1.5 9.5,2.16 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M17,11H7V9H17V11M15,15H7V13H15V15Z`,
+		"close":`M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z`,
 		"delete":`M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z`,
 		"dots-vertical":`M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z`,
 		"drag-vertical":`M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z`,
@@ -779,6 +836,7 @@ general={
 		"keyboard":`M19,10H17V8H19M19,13H17V11H19M16,10H14V8H16M16,13H14V11H16M16,17H8V15H16M7,10H5V8H7M7,13H5V11H7M8,11H10V13H8M8,8H10V10H8M11,11H13V13H11M11,8H13V10H11M20,5H4C2.89,5 2,5.89 2,7V17A2,2 0 0,0 4,19H20A2,2 0 0,0 22,17V7C22,5.89 21.1,5 20,5Z`,
 		"link-variant":`M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z`,
 		"loading":`M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z`,
+		"magnify":`M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z`,
 		"markdown":`M2,16V8H4L7,11L10,8H12V16H10V10.83L7,13.83L4,10.83V16H2M16,8H19V12H21.5L17.5,16.5L13.5,12H16V8Z`,
 		"menu-down":`M7,10L12,15L17,10H7Z`,
 		"play":`M8,5.14V19.14L19,12.14L8,5.14Z`,
@@ -895,6 +953,7 @@ general={
 		q(`#docs>h2`).addEventListener(`click`,docs.toggle,false);
 		docs.sidebar.addEventListener(`click`,docs.change,false);
 		docs.sidebar.addEventListener(`click`,keyboard.insert,false);
+		i(`search`).addEventListener(`click`,docs.search.toggle,false);
 		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle,false);
 		keyboard.list.addEventListener(`click`,keyboard.insert,false);
 		w.addEventListener(`resize`,()=>{
