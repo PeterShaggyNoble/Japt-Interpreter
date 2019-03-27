@@ -97,7 +97,7 @@ version={
 	change(event){
 		let ver=event.target.dataset.version;
 		if(ver&&ver!==version.selected)
-			window.location.href=interpreter.url(ver);
+			w.location.href=interpreter.url(ver);
 	},
 	init(){
 		let item,menu,svg,ver;
@@ -139,10 +139,13 @@ interpreter={
 	button:i(`run`),
 	cache:{
 		enabled:false,
-		array:l[`json-cache`]?JSON.parse(l[`json-cache`]):[],
+		storage:`japt-cache`,
 		buttons:{
-			clear:i(`clear`),
+			empty:i(`empty`),
 			toggle:i(`cache`)
+		},
+		init(){
+			interpreter.cache.array=l[interpreter.cache.storage]?JSON.parse(l[interpreter.cache.storage]):[];
 		},
 		add(code,flags,input,output,timer){
 			interpreter.cache.array.push({
@@ -154,48 +157,47 @@ interpreter={
 				version:version.selected
 			});
 			if(interpreter.cache.array.length===1)
-				interpreter.cache.buttons.clear.parentNode.classList.remove(`dn`);
+				interpreter.cache.buttons.empty.parentNode.classList.remove(`dn`);
 			interpreter.cache.array=interpreter.cache.array.slice(-50);
-			l.setItem(`json-cache`,JSON.stringify(interpreter.cache.array));
+			l.setItem(interpreter.cache.storage,JSON.stringify(interpreter.cache.array));
 		},
-		clear(){
+		empty(){
 			interpreter.cache.array=[];
-			l.removeItem(`json-cache`);
-			interpreter.cache.buttons.clear.parentNode.classList.add(`dn`);
+			l.removeItem(interpreter.cache.storage);
+			interpreter.cache.buttons.empty.parentNode.classList.add(`dn`);
 		},
-		find(code,flags,input){
-			return interpreter.cache.array.find(obj=>obj.code===code&&obj.flags===flags&&obj.input===input&&obj.version===version.selected);
+		find(index,code,flags,input){
+			return interpreter.cache.array[index?`findIndex`:`find`](obj=>obj.code===code&&obj.flags===flags&&obj.input===input&&obj.version===version.selected);
 		},
 		toggle(){
 			interpreter.cache.enabled=!interpreter.cache.enabled;
 			interpreter.cache.buttons.toggle.classList.toggle(`enabled`,interpreter.cache.enabled);
-			interpreter.cache.buttons.clear.parentNode.classList.toggle(`dn`,!interpreter.cache.enabled||!interpreter.cache.array.length);
+			interpreter.cache.buttons.empty.parentNode.classList.toggle(`dn`,!interpreter.cache.enabled||!interpreter.cache.array.length);
 			interpreter.cache.buttons.toggle.parentNode.dataset.title=`${interpreter.cache.enabled?`Disable`:`Enable`} Caching`;
 		},
+		update(index){
+			interpreter.cache.array.push(interpreter.cache.array.splice(index,1)[0]);
+			l.setItem(interpreter.cache.storage,JSON.stringify(interpreter.cache.array));
+		}
 	},
 	init(){
 		let params=u.searchParams;
 		version.selected=version.numbers.includes(params.get(`v`))?params.get(`v`):version.current;
 		q(`title`).firstChild.nodeValue=`Japt v${version.selected} Interpreter`;
 		if(params.get(`flags`))
-			interpreter.fields.flags.value=interpreter.decode(params.get(`flags`));
+			interpreter.fields.flags.value=general.decode(params.get(`flags`));
 		if(params.get(`code`)){
-			interpreter.fields.code.value=interpreter.decode(params.get(`code`));
+			interpreter.fields.code.value=general.decode(params.get(`code`));
 			general.resize(interpreter.fields.code);
 		}
 		if(params.get(`input`)){
-			interpreter.fields.input.value=interpreter.decode(params.get(`input`));
+			interpreter.fields.input.value=general.decode(params.get(`input`));
 			general.resize(interpreter.fields.input);
 		}
 		interpreter.fields.counter.append(t(``));
 		interpreter.fields.timer.append(t(``));
 		interpreter.regex=RegExp(Object.keys(shortcuts).filter(shortcut=>shortcuts[shortcut].version<=version.selected).map(string=>string.replace(/(?=\W)/g,`\\`)).join(`|`),`g`);
-	},
-	decode(text){
-		return atob(text).replace(/\\u[0-9A-F]{4}/gi,chr=>String.fromCharCode(parseInt(chr.slice(2),16)));
-	},
-	encode(text){
-		return btoa(text.replace(/./g,chr=>chr.charCodeAt(0)<256?chr:`\\u`+chr.charCodeAt(0).toString(16).padStart(4,0)));
+		interpreter.cache.init();
 	},
 	flags(event){
 		if(event.type===`focus`&&!interpreter.fields.flags.value)
@@ -247,10 +249,11 @@ interpreter={
 				result,timer;
 			interpreter.fields.error.parentNode.classList.add(`dn`);
 			if(interpreter.cache.enabled)
-				result=interpreter.cache.find(code,flags,input);
+				result=interpreter.cache.find(false,code,flags,input);
 			if(interpreter.cache.enabled&&result){
 				interpreter.fields.timer.firstChild.nodeValue=`cached`;
 				interpreter.fields.output.value=result.output;
+				interpreter.cache.update(interpreter.cache.find(true,code,flags,input));
 				general.resize(interpreter.fields.output);
 			}else{
 				interpreter.running=true;
@@ -297,11 +300,11 @@ interpreter={
 	url(v=version.selected){
 		let url=u.protocol+`//${u.hostname+u.pathname}?v=`+v;
 		if(interpreter.fields.flags.value)
-			url+=`&flags=`+interpreter.encode(interpreter.fields.flags.value);
+			url+=`&flags=`+general.encode(interpreter.fields.flags.value);
 		if(interpreter.fields.code.value)
-			url+=`&code=`+interpreter.encode(interpreter.fields.code.value);
+			url+=`&code=`+general.encode(interpreter.fields.code.value);
 		if(interpreter.fields.input.value)
-			url+=`&input=`+interpreter.encode(interpreter.fields.input.value);
+			url+=`&input=`+general.encode(interpreter.fields.input.value);
 		return url.replace(/\+/g,`%2b`).replace(/ /g,`%20`);
 	}
 },
@@ -451,31 +454,50 @@ compressor={
 		return obj;
 	}
 },
+keyboard={
+	list:q(`#keyboard>ol`),
+	init(){
+		let item,key;
+		for(key of characters){
+			if(item)
+				item=item.cloneNode(true);
+			else{
+				item=e(`li`);
+				item.classList.add(`cp`,`df`);
+				item.tabIndex=`-1`;
+				item.append(t(``));
+			}
+			item.dataset.character=item.firstChild.nodeValue=key;
+			keyboard.list.append(item);
+		}
+	},
+	close(event){
+		general.close(event,keyboard.toggle);
+	},
+	insert(event){
+		if(event.target.dataset.character){
+			interpreter.fields.code.focus();
+			d.execCommand(`insertText`,false,event.target.dataset.character);
+			interpreter.update();
+			if(event.currentTarget===keyboard.list)
+				event.target.focus();
+		}
+	},
+	toggle(){
+		keyboard.open=keyboard.list.parentNode.dataset.open!==`true`;
+		keyboard.list.parentNode.dataset.open=keyboard.open;
+		if(keyboard.open)
+			b.addEventListener(`keydown`,keyboard.close,false);
+		else b.removeEventListener(`keydown`,keyboard.close);
+	}
+},
 docs={
 	sidebar:i(`docs`),
-	files:l[`japt-docs`]?JSON.parse(l[`japt-docs`]):[
-		`docs/intro.html`,
-		`docs/interpreter.html`,
-		`docs/basics.html`,
-		`docs/variables.html`,
-		`docs/shortcuts.html`,
-		`docs/compression.html`,
-		`docs/regex.html`,
-		`docs/string.json`,
-		`docs/array.json`,
-		`docs/number.json`,
-		`docs/function.json`,
-		`docs/date.json`,
-		`docs/math.json`,
-		`docs/other.json`,
-		`docs/flags.json`,
-		`docs/examples.html`,
-		`docs/settings.html`
-	],
+	storage:`japt-docs`,
 	search:{
 		article:i(`docs-search`),
-		form:q(`#docs-search>form`),
-		input:q(`#docs-search>form>input[type=text]`),
+		form:q(`#docs-search>div`),
+		input:q(`#docs-search>div>input[type=text]`),
 		init(){
 			docs.search.titles=docs.search.article.querySelectorAll(`h4`);
 			docs.search.methods=[...docs.search.form.querySelectorAll(`input[type=checkbox]`)];
@@ -508,6 +530,25 @@ docs={
 		}
 	},
 	init(){
+		docs.files=l[docs.storage]?JSON.parse(l[docs.storage]):[
+			`docs/intro.html`,
+			`docs/interpreter.html`,
+			`docs/basics.html`,
+			`docs/variables.html`,
+			`docs/shortcuts.html`,
+			`docs/compression.html`,
+			`docs/regex.html`,
+			`docs/string.json`,
+			`docs/array.json`,
+			`docs/number.json`,
+			`docs/function.json`,
+			`docs/date.json`,
+			`docs/math.json`,
+			`docs/other.json`,
+			`docs/flags.json`,
+			`docs/examples.html`,
+			`docs/settings.html`
+		];
 		let 	menu=e(`ol`),
 			sort=e(`ol`),
 			article,current,input,item,json,label,order,svg;
@@ -682,7 +723,6 @@ docs={
 	},
 	parse(text){
 		return text
-			.replace(/\n/g,`<br>`)
 			.replace(/`([^`]+?)`([^`]+?)``/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
 			.replace(/`([^`]+?)`/g,`<code class="dib vat">$1</code>`)
 			.replace(/\[([^\]]+?)\]\(([^)]+?)\)/g,`<a href="$2">$1</a>`)
@@ -776,46 +816,245 @@ docs={
 	toggle(){
 		docs.open=docs.sidebar.dataset.open!==`true`;
 		docs.sidebar.dataset.open=docs.open;
-		if(docs.open)
+		if(docs.open){
+			if(projects.open)
+				projects.toggle();
 			b.addEventListener(`keydown`,docs.close,false);
+		}
 		else b.removeEventListener(`keydown`,docs.close);
 	}
 },
-keyboard={
-	list:q(`#keyboard>ol`),
+projects={
+	sidebar:i(`projects`),
+	fields:{
+		name:i(`name`),
+		url:i(`challenge`)
+	},
+	buttons:{
+		save:i(`save`),
+		upload:i(`upload`),
+		download:i(`download`),
+		clear:i(`clear`)
+	},
+	list:q(`#projects ol`),
+	storage:`japt-projects`,
 	init(){
-		let item,key;
-		for(key of characters){
-			if(item)
-				item=item.cloneNode(true);
-			else{
-				item=e(`li`);
-				item.classList.add(`cp`,`df`);
-				item.tabIndex=`-1`;
-				item.append(t(``));
+		projects.data=l[projects.storage]?JSON.parse(l[projects.storage]):{};
+		let key=u.searchParams.get(`project`);
+		if(Object.keys(projects.data).length){
+			projects.buttons.download.classList.remove(`dn`);
+			projects.buttons.clear.classList.remove(`dn`);
+		}
+		if(key)
+			if(projects.data[key=general.decode(key)])
+				projects.run(key);
+		projects.items=projects.list.children;
+		for(key in projects.data)
+			projects.add(key);
+		general.icons(projects.list);
+	},
+	add(key){
+		let 	item=e(`li`),
+			menu=e(`ul`),
+			action=e(`li`),
+			link=e(`a`),
+			svg=n(`svg`),
+			insert;
+		item.classList.add(`oh`,`pr`,`toe`,`wsnw`);
+		item.dataset.project=key;
+		item.append(t(key),menu);
+		menu.classList.add(`oh`,`pa`);
+		action.classList.add(`dib`,`tac`);
+		svg.classList.add(`cp`,`vat`);
+		svg.setAttribute(`viewBox`,`0 0 24 24`);
+		svg.dataset.mdi=`play-circle`;
+		svg.addEventListener(`click`,projects.load,false);
+		action.append(svg);
+		menu.append(action);
+		action=action.cloneNode(false);
+		svg=svg.cloneNode(true);
+		link.href=projects.data[key].url;
+		if(!projects.data[key].url)
+			link.classList.add(`pen`);
+		svg.dataset.mdi=`launch`;
+		link.append(svg);
+		action.append(link);
+		menu.append(action);
+		action=action.cloneNode(false);
+		svg=svg.cloneNode(true);
+		svg.dataset.mdi=`delete`;
+		svg.addEventListener(`click`,projects.delete,false);
+		action.append(svg);
+		menu.append(action);
+		for(let child of projects.items)
+			if(child.dataset.project>key){
+				insert=child;
+				break;
 			}
-			item.dataset.character=item.firstChild.nodeValue=key;
-			keyboard.list.append(item);
+		projects.list.insertBefore(item,insert);
+		return item;
+	},
+	clear(){
+		if(confirm(`Are you sure you wish to delete all your projects?`)){
+			projects.data={};
+			l.removeItem(projects.storage);
+			while(projects.items.length)
+				projects.list.firstElementChild.remove();
+			projects.buttons.download.classList.add(`dn`);
+			projects.buttons.clear.classList.add(`dn`);
 		}
 	},
 	close(event){
-		general.close(event,keyboard.toggle);
+		general.close(event,projects.toggle);
 	},
-	insert(event){
-		if(event.target.dataset.character){
-			interpreter.fields.code.focus();
-			d.execCommand(`insertText`,false,event.target.dataset.character);
-			interpreter.update();
-			if(event.currentTarget===keyboard.list)
-				event.target.focus();
+	delete(event){
+		if(confirm(`Are you sure you wish to delete this project?`)){
+			let 	item=event.target.parentNode.parentNode.parentNode,
+				count=Object.keys(projects.data).length-1;
+			delete projects.data[item.dataset.project];
+			if(count)
+				l.setItem(projects.storage,JSON.stringify(projects.data));
+			else l.removeItem(projects.storage);
+			item.remove();
+			projects.buttons.download.classList.toggle(`dn`,!count);
+			projects.buttons.clear.classList.toggle(`dn`,!count);
 		}
 	},
+	download(){
+		general.download(`data:text/plain;base64,${general.encode(general.encode(JSON.stringify(projects.data)))}`,`japt-projects.txt`);
+	},
+	filter(event){
+		for(let item of projects.items)
+			item.classList.toggle(`dn`,!item.dataset.project.toLowerCase().startsWith(event.target.value.toLowerCase()));
+	},
+	import(event){
+		let 	list=JSON.parse(general.decode(event.target.result)),
+			key,project;
+		for(key in list){
+			let add=true;
+			project=list[key];
+			if(projects.data[key]){
+				let count=0;
+				if(Object.keys(projects.data[key]).length!==Object.keys(project).length||Object.entries(projects.data[key]).some(([key,value])=>key!==`timestamp`&&value!==project[key])){
+					while(projects.data[key+` (${++count})`]);
+					key+=` (${count})`;
+				}else add=false
+			}
+			if(add){
+				projects.data[key]=project;
+				projects.add(key);
+			}
+		}
+		if(key){
+			l.setItem(projects.storage,JSON.stringify(projects.data));
+			projects.buttons.download.classList.remove(`dn`);
+			projects.buttons.clear.classList.remove(`dn`);
+			general.icons(projects.list);
+		}
+		general.confirm(projects.buttons.upload);
+	},
+	load(event){
+		let 	key=event.target.parentNode.parentNode.parentNode.dataset.project,
+			url=u.protocol+`//${u.hostname+u.pathname}?v=${projects.data[key].version}&project=`+general.encode(key);
+		window.location.href=url.replace(/\+/g,`%2b`).replace(/ /g,`%20`);
+	},
+	save(){
+		let key=projects.fields.name.value.trim();
+		if(key&&interpreter.fields.code.value){
+			let 	url=projects.fields.url.value.trim(),
+				compress=compressor.field.readOnly?compressor.original:compressor.field.value.trim(),
+				link;
+			if(projects.data[key])
+				if(!confirm(`You already have a project saved with the name "${key}"; would you like to overwrite it with your current project?`))
+					return;
+				else for(let item of projects.items)
+					if(item.dataset.project===key){
+						link=item.querySelector(`a`);
+						break;
+					}
+			projects.data[key]={
+				"timestamp":new Date().getTime(),
+				"version":version.selected,
+				"code":general.encode(interpreter.fields.code.value)
+			};
+			if(url)
+				projects.data[key].url=url;
+			if(link){
+				link.href=url;
+				link.classList.toggle(`pen`,!url);
+			}
+			if(interpreter.fields.flags.value)
+				projects.data[key].flags=general.encode(interpreter.fields.flags.value);
+			if(interpreter.fields.input.value)
+				projects.data[key].input=general.encode(interpreter.fields.input.value);
+			if(interpreter.cache.enabled)
+				projects.data[key].cache=1;
+			if(interpreter.fields.explanation.value)
+				projects.data[key].explanation=general.encode(interpreter.fields.explanation.value);
+			if(compressor.permutations.enabled)
+				projects.data[key].permutations=1;
+			if(compressor)
+				projects.data[key].compressor=compress;
+			l.setItem(projects.storage,JSON.stringify(projects.data));
+			if(!link)
+				general.icons(projects.add(key));
+			projects.buttons.download.classList.remove(`dn`);
+			projects.buttons.clear.classList.remove(`dn`);
+			general.confirm(projects.buttons.save);
+		}
+	},
+	read(event){
+		if(event.target.files[0].type===`text/plain`){
+			let reader=new FileReader();
+			reader.addEventListener(`load`,projects.import,{capture:false,once:true}),
+			reader.readAsText(event.target.files[0]);
+		}
+		event.target.remove();
+	},
+	run(key){
+		let project=projects.data[key];
+		if(project.flags)
+			interpreter.fields.flags.value=general.decode(project.flags);
+		interpreter.fields.code.value=general.decode(project.code);
+		interpreter.update();
+		if(project.input){
+			interpreter.fields.input.value=general.decode(project.input);
+			general.resize(interpreter.fields.input);
+		}
+		if(project.cache)
+			interpreter.cache.buttons.toggle.dispatchEvent(new Event(`click`));
+		interpreter.run();
+		if(project.explanation){
+			interpreter.fields.explanation.value=general.decode(project.explanation);
+			general.resize(interpreter.fields.explanation);
+		}
+		if(project.permutations)
+			compressor.buttons.permute.dispatchEvent(new Event(`click`));
+		if(project.compressor){
+			compressor.field.value=general.decode(project.compressor);
+			general.resize(compressor.field);
+		}
+		projects.fields.name.value=key;
+		if(project.url)
+			projects.fields.url.value=project.url;
+	},
 	toggle(){
-		keyboard.open=keyboard.list.parentNode.dataset.open!==`true`;
-		keyboard.list.parentNode.dataset.open=keyboard.open;
-		if(keyboard.open)
-			b.addEventListener(`keydown`,keyboard.close,false);
-		else b.removeEventListener(`keydown`,keyboard.close);
+		projects.open=projects.sidebar.dataset.open!==`true`;
+		projects.sidebar.dataset.open=projects.open;
+		if(projects.open){
+			if(docs.open)
+				docs.toggle();
+			b.addEventListener(`keydown`,projects.close,false);
+		}
+		else b.removeEventListener(`keydown`,projects.close);
+	},
+	upload(){
+		let input=e(`input`);
+		input.accept=`.txt,text/plain`;
+		input.type=`file`;
+		input.addEventListener(`change`,projects.read,{capture:false,once:true});
+		b.append(input);
+		input.click();
 	}
 },
 general={
@@ -833,28 +1072,34 @@ general={
 		"checkbox-blank-outline":`M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z`,
 		"clipboard-text-outline":`M19,3H14.82C14.25,1.44 12.53,0.64 11,1.2C10.14,1.5 9.5,2.16 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M17,11H7V9H17V11M15,15H7V13H15V15Z`,
 		"close":`M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z`,
+		"content-save":`M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z`,
 		"delete":`M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z`,
 		"dots-vertical":`M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z`,
+		"download":`M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z`,
 		"drag-vertical":`M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z`,
 		"flag":`M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z`,
 		"file-document":`M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z`,
+		"forum":`M17,12V3A1,1 0 0,0 16,2H3A1,1 0 0,0 2,3V17L6,13H16A1,1 0 0,0 17,12M21,6H19V15H6V17A1,1 0 0,0 7,18H18L22,22V7A1,1 0 0,0 21,6Z`,
 		"golf":`M19.5,18A1.5,1.5 0 0,1 21,19.5A1.5,1.5 0 0,1 19.5,21A1.5,1.5 0 0,1 18,19.5A1.5,1.5 0 0,1 19.5,18M17,5.92L11,9V18.03C13.84,18.19 16,19 16,20C16,21.1 13.31,22 10,22C6.69,22 4,21.1 4,20C4,19.26 5.21,18.62 7,18.27V20H9V2L17,5.92Z`,
 		"github-circle":`M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z`,
 		"invert-colors":`M12,19.58V19.58C10.4,19.58 8.89,18.96 7.76,17.83C6.62,16.69 6,15.19 6,13.58C6,12 6.62,10.47 7.76,9.34L12,5.1M17.66,7.93L12,2.27V2.27L6.34,7.93C3.22,11.05 3.22,16.12 6.34,19.24C7.9,20.8 9.95,21.58 12,21.58C14.05,21.58 16.1,20.8 17.66,19.24C20.78,16.12 20.78,11.05 17.66,7.93Z`,
 		"keyboard":`M19,10H17V8H19M19,13H17V11H19M16,10H14V8H16M16,13H14V11H16M16,17H8V15H16M7,10H5V8H7M7,13H5V11H7M8,11H10V13H8M8,8H10V10H8M11,11H13V13H11M11,8H13V10H11M20,5H4C2.89,5 2,5.89 2,7V17A2,2 0 0,0 4,19H20A2,2 0 0,0 22,17V7C22,5.89 21.1,5 20,5Z`,
+		"launch":`M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z`,
 		"link-variant":`M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z`,
 		"loading":`M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z`,
 		"magnify":`M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z`,
 		"markdown":`M2,16V8H4L7,11L10,8H12V16H10V10.83L7,13.83L4,10.83V16H2M16,8H19V12H21.5L17.5,16.5L13.5,12H16V8Z`,
 		"menu-down":`M7,10L12,15L17,10H7Z`,
+		"menu-right":`M10,17L15,12L10,7V17Z`,
 		"play":`M8,5.14V19.14L19,12.14L8,5.14Z`,
 		"play-circle":`M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z`,
 		"redo":`M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z`,
 		"shuffle":`M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z`,
 		"shuffle-disabled":`M16,4.5V7H5V9H16V11.5L19.5,8M16,12.5V15H5V17H16V19.5L19.5,16`,
-		"stack-exchange":`M4,14.04V11H20V14.04H4M4,10V7H20V10H4M17.46,2C18.86,2 20,3.18 20,4.63V6H4V4.63C4,3.18 5.14,2 6.54,2H17.46M4,15H20V16.35C20,17.81 18.86,19 17.46,19H16.5L13,22V19H6.54C5.14,19 4,17.81 4,16.35V15Z`,
 		"text":`M21,6V8H3V6H21M3,18H12V16H3V18M3,13H21V11H3V13Z`,
-		"undo":`M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z`
+		"undo":`M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z`,
+		"upload":`M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z`,
+		"xml":`M12.89,3L14.85,3.4L11.11,21L9.15,20.6L12.89,3M19.59,12L16,8.41V5.58L22.42,12L16,18.41V15.58L19.59,12M1.58,12L8,5.58V8.41L4.41,12L8,15.58V18.41L1.58,12Z`
 	},
 	init(){
 		general.theme();
@@ -874,6 +1119,7 @@ general={
 				}
 				general.listeners();
 				docs.init().catch(err=>console.error(`Failed to load documentation:`,err));
+				projects.init();
 			}).catch(err=>console.error(`Failed to load interpreter:`,err));
 		}).catch(err=>console.error(`Failed to load schoco:`,err));
 	},
@@ -883,10 +1129,13 @@ general={
 			event.stopPropagation();
 		}
 	},
+	confirm(button){
+		button.classList.add(`confirm`);
+		button.addEventListener(`transitionend`,general.unconfirm,{capture:false,once:true});
+	},
 	copy(event){
 		let 	target=event.target.dataset.copy,
 			text;
-		console.log(target.startsWith(`docs-`));
 		if(target===`compressor`)
 			text=compressor.result.string;
 		else if(interpreter[target])
@@ -900,8 +1149,22 @@ general={
 		general.clipboard.value=text;
 		general.clipboard.select();
 		d.execCommand(`copy`,false);
-		event.target.classList.add(`confirm`);
-		event.target.addEventListener(`transitionend`,()=>event.target.classList.remove(`confirm`),{capture:false,once:false});
+		general.confirm(event.target);
+	},
+	decode(text){
+		return atob(text).replace(/\\u[0-9A-F]{4}/gi,chr=>String.fromCharCode(parseInt(chr.slice(2),16)));
+	},
+	download(data,name){
+		let link=e(`a`);
+		link.href=data;
+		link.download=name;
+		b.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(link.href);
+	},
+	encode(text){
+		return btoa(text.replace(/./g,chr=>chr.charCodeAt(0)<256?chr:`\\u`+chr.charCodeAt(0).toString(16).padStart(4,0))).replace(/=+$/,``);
 	},
 	icons(parent){
 		let icon,path,svg;
@@ -931,8 +1194,15 @@ general={
 			script.addEventListener(`error`,reject,{capture:false,once:true});
 		});
 	},
+	keys(event){
+		if(event.keyCode==13)
+			if(event.ctrlKey)
+				interpreter.button.dispatchEvent(new Event(`click`));
+			else if(event.target===projects.fields.name||event.target===projects.fields.url)
+				projects.buttons.save.dispatchEvent(new Event(`click`));
+	},
 	listeners(){
-		b.addEventListener(`keydown`,general.run,false);
+		b.addEventListener(`keydown`,general.keys,false);
 		version.list.addEventListener(`click`,version.change,false);
 		general.buttons.theme.addEventListener(`click`,general.theme,false);
 		interpreter.fields.flags.addEventListener(`focus`,interpreter.flags,false);
@@ -950,7 +1220,7 @@ general={
 		interpreter.fields.input.addEventListener(`input`,()=>general.resize(interpreter.fields.input),false);
 		i(`copy-output`).addEventListener(`click`,general.copy,false);
 		interpreter.cache.buttons.toggle.addEventListener(`click`,interpreter.cache.toggle,false);
-		interpreter.cache.buttons.clear.addEventListener(`click`,interpreter.cache.clear,false);
+		interpreter.cache.buttons.empty.addEventListener(`click`,interpreter.cache.empty,false);
 		i(`copy-explanation`).addEventListener(`click`,general.copy,false);
 		interpreter.fields.explanation.addEventListener(`input`,()=>general.resize(interpreter.fields.explanation),false);
 		compressor.buttons.compress.addEventListener(`click`,compressor.init,false);
@@ -958,12 +1228,18 @@ general={
 		compressor.buttons.copy.addEventListener(`click`,general.copy,false);
 		compressor.buttons.reset.addEventListener(`click`,compressor.reset,false);
 		compressor.field.addEventListener(`input`,()=>general.resize(compressor.field),false);
+		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle,false);
+		keyboard.list.addEventListener(`click`,keyboard.insert,false);
 		q(`#docs>h2`).addEventListener(`click`,docs.toggle,false);
 		docs.sidebar.addEventListener(`click`,docs.change,false);
 		docs.sidebar.addEventListener(`click`,keyboard.insert,false);
+		q(`#projects>h2`).addEventListener(`click`,projects.toggle,false);
 		i(`search`).addEventListener(`click`,docs.search.toggle,false);
-		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle,false);
-		keyboard.list.addEventListener(`click`,keyboard.insert,false);
+		projects.buttons.save.addEventListener(`click`,projects.save,false);
+		projects.buttons.upload.addEventListener(`click`,projects.upload,false);
+		projects.buttons.download.addEventListener(`click`,projects.download,false);
+		projects.buttons.clear.addEventListener(`click`,projects.clear,false);
+		i(`filter`).addEventListener(`input`,projects.filter,false);
 		w.addEventListener(`resize`,()=>{
 			general.resize(interpreter.fields.code);
 			general.resize(interpreter.fields.transpiled);
@@ -977,10 +1253,6 @@ general={
 		general.clipboard.value=field.value;
 		field.style.height=2+general.clipboard.scrollHeight+`px`;
 	},
-	run(event){
-		if(event.ctrlKey&&event.keyCode==13)
-			interpreter.run();
-	},
 	theme(loaded=false){
 		if(loaded){
 			b.classList.toggle(`light`);
@@ -991,6 +1263,9 @@ general={
 		general.buttons.theme.parentNode.dataset.title=`${light?`Dark`:`Light`} Theme`;
 		if(loaded)
 			l.setItem(`japt-theme`,light?`light`:`dark`);
+	},
+	unconfirm(event){
+		event.currentTarget.classList.remove(`confirm`);
 	}
 };
 general.init();
