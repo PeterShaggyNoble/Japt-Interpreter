@@ -5,7 +5,7 @@
 	"intro":[],
 	"methods":{
 		"a(s/n)":{
-			"description":"Returns the last index of `x`s/n`` in `A`, or `-1` if not found.",
+			"description":"Returns the last index of `s/n` in `A`, or `-1` if not found.",
 			"returns":"N",
 			"version":"1.4.5"
 		},
