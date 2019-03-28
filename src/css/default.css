@@ -248,7 +248,7 @@ body.light #tools::after{
 #interpreter [data-title]::after{
 	right:0;
 }
-#interpreter>label,#interpreter>h2,#interpreter>p{
+#interpreter>h2,#interpreter>p{
 	font-size:14px;
 	line-height:24px;
 	margin-bottom:2px;
@@ -356,10 +356,6 @@ body.light>#keyboard>h2{
 }
 #keyboard li:hover{
 	background:var(--background);
-}
-.wip{
-	border:1px solid var(--border);
-	padding:10px;
 }
 #docs{
 	background:var(--primary);
@@ -607,7 +603,6 @@ body.light>#keyboard>h2{
 	background:var(--primary);
 	border-right:1px solid var(--border);
 	bottom:0;
-	flex-direction:column;
 	left:0;
 	padding-bottom:20px;
 	top:0;
@@ -706,6 +701,9 @@ input#filter{
 	margin:0 20px -1px;
 	padding-left:30px;
 	width:calc(100% - 40px);
+}
+#projects>ol{
+	max-height:calc(100% - 290px);
 }
 #projects>ol:not(:empty){
 	border:1px solid var(--border);

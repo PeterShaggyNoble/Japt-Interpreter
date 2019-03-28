@@ -546,7 +546,7 @@ docs={
 			`docs/math.json`,
 			`docs/other.json`,
 			`docs/flags.json`,
-			`docs/examples.html`,
+			`docs/examples.json`,
 			`docs/settings.html`
 		];
 		let 	menu=e(`ol`),
@@ -601,12 +601,21 @@ docs={
 				svg.addEventListener(`click`,general.copy,false);
 				switch(docs.files[index].slice(-4)){
 					case`json`:
-						docs.json(json=await file.json(),article);
-						if(json.type===`methods`){
-							label.setAttribute(`for`,input.id=`method-`+json.object);
-							input.value=json.object;
-							label.lastChild.nodeValue=article.firstChild.firstChild.nodeValue.match(/[^ ]+/);
-							docs.search.form.append(input,label);
+						json=await file.json();
+						switch(json.type){
+							case`examples`:
+								docs.examples(json,article);
+								break;
+							case`flags`:
+								docs.methods(json,article);
+								break;
+							case`methods`:
+								docs.methods(json,article);
+								label.setAttribute(`for`,input.id=`method-`+json.object);
+								input.value=json.object;
+								label.lastChild.nodeValue=article.firstChild.firstChild.nodeValue.match(/[^ ]+/);
+								docs.search.form.append(input,label);
+								break;
 						}
 						break;
 					case`html`:
@@ -624,7 +633,7 @@ docs={
 			docs.menu(menu);
 			docs.shortcuts();
 			docs.regex();
-			i(`docs-examples`).addEventListener(`click`,docs.example,false);
+			i(`docs-examples`).addEventListener(`click`,docs.run,false);
 			docs.settings(sort);
 			general.icons(docs.sidebar);
 			docs.search.init();
@@ -646,31 +655,41 @@ docs={
 	close(event){
 		general.close(event,docs.toggle);
 	},
-	example(event){
-		let dataset=event.target.dataset;
-		if(dataset.code){
-			interpreter.fields.code.select();
-			d.execCommand(`insertText`,false,dataset.code);
-			interpreter.update();
-			interpreter.run();
-		}
-	},
-	json(json,article){
-		let 	object=json[json.type],
-			heading,intro,key,svg,title,text;
-		heading=e(`h3`);
-		heading.classList.add(`ps`);
-		heading.append(t(json.title));
-		article.append(heading);
-		if(json.intro){
-			for(intro of json.intro){
-				if(text)
-					text=text.cloneNode(false);
-				else text=e(`p`);
-				text.innerHTML=docs.parse(intro);
-				article.append(text);
+	examples(json,article){
+		let 	object=docs.prep(json,article),
+			list=e(`ol`),
+			item,span;
+		for(key in object){
+			if(item){
+				item=item.cloneNode(false);
+				span=span.cloneNode(true);
+			}else{
+				item=e(`li`);
+				span=e(`span`);
+				span.classList.add(`cp`,`tdu`);
+				span.append(t(``));
 			}
+			span.dataset.code=general.encode(object[key]);
+			span.firstChild.nodeValue=key;
+			item.append(span,t(` (${object[key].length} byte${`s`.slice(object[key].length===1)})`));
+			list.append(item);
 		}
+		article.append(list);
+	},
+	menu(list){
+		let svg=n(`svg`);
+		svg.classList.add(`cp`,`pa`);
+		svg.dataset.mdi=`dots-vertical`;
+		svg.id=`menu`;
+		svg.tabIndex=`-1`;
+		svg.setAttribute(`viewBox`,`0 0 24 24`);
+		list.classList.add(`pa`);
+		list.tabIndex=`-1`;
+		docs.sidebar.prepend(svg,list);
+	},
+	methods(json,article){
+		let 	object=docs.prep(json,article),
+			key,svg,title,text;
 		for(key in object){
 			if(title){
 				title=title.cloneNode(false);
@@ -710,17 +729,6 @@ docs={
 			}
 		}
 	},
-	menu(list){
-		let svg=n(`svg`);
-		svg.classList.add(`cp`,`pa`);
-		svg.dataset.mdi=`dots-vertical`;
-		svg.id=`menu`;
-		svg.tabIndex=`-1`;
-		svg.setAttribute(`viewBox`,`0 0 24 24`);
-		list.classList.add(`pa`);
-		list.tabIndex=`-1`;
-		docs.sidebar.prepend(svg,list);
-	},
 	parse(text){
 		return text
 			.replace(/`([^`]+?)`([^`]+?)``/g,`<code class="cp dib vat" data-character="$1">$2</code>`)
@@ -731,6 +739,23 @@ docs={
 			.replace(/\[icon\:([^\]]+?)\]/g,`<svg class="vat" data-mdi="$1" viewBox="0 0 24 24"></svg>`)
 			.replace(/\[([a-z]+)\:([^\]]+?)\]/g,`<span class="cp tdu" data-section="docs-$1">$2</span>`);
 
+	},
+	prep(json,article){
+		let heading,intro,text;
+		heading=e(`h3`);
+		heading.classList.add(`ps`);
+		heading.append(t(json.title));
+		article.append(heading);
+		if(json.intro){
+			for(intro of json.intro){
+				if(text)
+					text=text.cloneNode(false);
+				else text=e(`p`);
+				text.innerHTML=docs.parse(intro);
+				article.append(text);
+			}
+		}
+		return json[json.type];
 	},
 	regex(){
 		let 	table=i(`regex`),
@@ -762,6 +787,15 @@ docs={
 			table.append(row);
 		}
 	},
+	run(event){
+		let dataset=event.target.dataset;
+		if(dataset.code){
+			interpreter.fields.code.select();
+			d.execCommand(`insertText`,false,general.decode(dataset.code));
+			interpreter.update();
+			interpreter.run();
+		}
+	},
 	settings(list){
 		list.lastChild.remove();
 		list.id=`sort`;
@@ -774,6 +808,8 @@ docs={
 				onChoose:event=>event.target.classList.add(`sorting`),
 				onUnchoose:event=>event.target.classList.remove(`sorting`),
 				onEnd:event=>{
+					if(event.oldIndex!==event.newIndex)
+						l.setItem(docs.storage,JSON.stringify([...event.target.children].map(child=>child.dataset.file).concat(docs.files[docs.files.length-1])));
 				}
 			});
 		});
@@ -909,15 +945,14 @@ projects={
 	},
 	delete(event){
 		if(confirm(`Are you sure you wish to delete this project?`)){
-			let 	item=event.target.parentNode.parentNode.parentNode,
-				count=Object.keys(projects.data).length-1;
+			let item=event.target.parentNode.parentNode.parentNode;
 			delete projects.data[item.dataset.project];
-			if(count)
+			item.remove();
+			if(project.items.length)
 				l.setItem(projects.storage,JSON.stringify(projects.data));
 			else l.removeItem(projects.storage);
-			item.remove();
-			projects.buttons.download.classList.toggle(`dn`,!count);
-			projects.buttons.clear.classList.toggle(`dn`,!count);
+			projects.buttons.download.classList.toggle(`dn`,!project.items.length);
+			projects.buttons.clear.classList.toggle(`dn`,!project.items.length);
 		}
 	},
 	download(){
@@ -1077,6 +1112,7 @@ general={
 		"dots-vertical":`M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z`,
 		"download":`M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z`,
 		"drag-vertical":`M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z`,
+		"file-document-edit":`M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H10V20.09L12.09,18H6V16H14.09L16.09,14H6V12H18.09L20,10.09V8L14,2H6M13,3.5L18.5,9H13V3.5M20.15,13C20,13 19.86,13.05 19.75,13.16L18.73,14.18L20.82,16.26L21.84,15.25C22.05,15.03 22.05,14.67 21.84,14.46L20.54,13.16C20.43,13.05 20.29,13 20.15,13M18.14,14.77L12,20.92V23H14.08L20.23,16.85L18.14,14.77Z`,
 		"flag":`M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z`,
 		"file-document":`M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z`,
 		"forum":`M17,12V3A1,1 0 0,0 16,2H3A1,1 0 0,0 2,3V17L6,13H16A1,1 0 0,0 17,12M21,6H19V15H6V17A1,1 0 0,0 7,18H18L22,22V7A1,1 0 0,0 21,6Z`,
@@ -1085,7 +1121,7 @@ general={
 		"invert-colors":`M12,19.58V19.58C10.4,19.58 8.89,18.96 7.76,17.83C6.62,16.69 6,15.19 6,13.58C6,12 6.62,10.47 7.76,9.34L12,5.1M17.66,7.93L12,2.27V2.27L6.34,7.93C3.22,11.05 3.22,16.12 6.34,19.24C7.9,20.8 9.95,21.58 12,21.58C14.05,21.58 16.1,20.8 17.66,19.24C20.78,16.12 20.78,11.05 17.66,7.93Z`,
 		"keyboard":`M19,10H17V8H19M19,13H17V11H19M16,10H14V8H16M16,13H14V11H16M16,17H8V15H16M7,10H5V8H7M7,13H5V11H7M8,11H10V13H8M8,8H10V10H8M11,11H13V13H11M11,8H13V10H11M20,5H4C2.89,5 2,5.89 2,7V17A2,2 0 0,0 4,19H20A2,2 0 0,0 22,17V7C22,5.89 21.1,5 20,5Z`,
 		"launch":`M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z`,
-		"link-variant":`M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z`,
+		"link-variant":`M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17A5,5 0 0,0 22,12A5,5 0 0,0 17,7Z`,
 		"loading":`M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z`,
 		"magnify":`M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z`,
 		"markdown":`M2,16V8H4L7,11L10,8H12V16H10V10.83L7,13.83L4,10.83V16H2M16,8H19V12H21.5L17.5,16.5L13.5,12H16V8Z`,
@@ -1098,8 +1134,7 @@ general={
 		"shuffle-disabled":`M16,4.5V7H5V9H16V11.5L19.5,8M16,12.5V15H5V17H16V19.5L19.5,16`,
 		"text":`M21,6V8H3V6H21M3,18H12V16H3V18M3,13H21V11H3V13Z`,
 		"undo":`M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z`,
-		"upload":`M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z`,
-		"xml":`M12.89,3L14.85,3.4L11.11,21L9.15,20.6L12.89,3M19.59,12L16,8.41V5.58L22.42,12L16,18.41V15.58L19.59,12M1.58,12L8,5.58V8.41L4.41,12L8,15.58V18.41L1.58,12Z`
+		"upload":`M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z`
 	},
 	init(){
 		general.theme();

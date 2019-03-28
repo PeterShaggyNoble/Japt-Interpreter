@@ -8,14 +8,14 @@
 <p>The interpreter also includes a built-in tool for compressing strings &amp; arrays.</p>
 <p>If the order of elements in an array is irrelevant then you can have the compressor try different permutations and delimiters by clicking the [icon:shuffle] icon before running it. The permutation used will be returned in the results along with the original array.</p>
 <p>After running the compressor, clicking the [icon:clipboard-text-outline] icon will copy the compressed string to your clipboard, ready to be pasted into your code and clicking the [icon:autorenew] icon will reset the compressor with your original input.</p>
-<h4>Compressing Strings</h4>
+<h4 class="fwm">Compressing Strings</h4>
 <p>Enter a string enclosed in `"`s, click the [icon:play] icon and the compressor will return the original string &amp; its size, including enclosing quotation marks, and the compressed string &amp; its size, including enclosing backticks.</p>
-<h4>Compressing String Arrays</h4>
+<h4 class="fwm">Compressing String Arrays</h4>
 <p>Joining an array of strings to a single string with a space, newline or lowercase letter not contained in any of the strings, which can then be split back to an array on the character used, usually works out a lot shorter than compressing each string in the array individually. The compressor takes the effort out of testing each possible delimiter individually to see which gives the best results, especially when trying to factor in the shortcuts available in Japt that might save another byte or 2.</p>
 <p>Enter an array enclosed in `[]` and with each string enclosed in `"`s (delimiting `,`s are optional), click the [icon:play] icon and the compressor will return the original array without delimiting commas, the permutation used, its size, including square brackets &amp; quotation marks, the compressed string, the delimiter used and the size of the compressed string, including backticks, the split method and, where applicable, a trailing space to close the split method.</p>
-<h4>Compressing Integer Arrays</h4>
+<h4 class="fwm">Compressing Integer Arrays</h4>
 <p>Arrays of large integers can be compressed in a similar way to string arrays with the compressor first converting each integer to a string in all bases between `11` &amp; `36`.</p>
 <p>Enter an array of integers enclosed in `[]`, click the [icon:play] icon and the compressor will return the original array, the permutation used, its size, including square brackets, the compressed string, the base &amp; delimiter used and the size of the compressed string, including backticks, the split method, the map method (to convert each string back to an integer) and a trailing space to close the map method.</p>
 <p>Note that, if you are mapping over the array in your code anyway, you will probably save a few more bytes by moving the base conversion method into that map.</p>
-<h4>Limitations</h4>
+<h4 class="fwm">Limitations</h4>
 <p>There is a limit to the number of strings shoco can compress at the same time so be aware that, when compressing an array with permutations enabled, it will throw an error when the number of elements in the original array reaches 7 or 8 and then stop working altogether until the page is reloaded.</p>
