@@ -47,6 +47,7 @@ The following lists are in no particular order other than what was most likely t
 ## DOCUMENTATION
 - [ ] Add a `CONTRIBUTING.md` file.
 - [ ] Figure out *exactly* what `F.b()` does(!) and add it to `functions.json`.
+- [ ] Include method names when searching.
 - [ ] Deemphasise, in some way, methods that are not supported in the currently selected version of Japt and remove highlighting.
 - [ ] Collapse the content below each heading in `.html` docs.
 - [ ] Add "alias" (array) & "summary" (string) keys to all method JSON files.
