@@ -3,7 +3,7 @@
 	"title":"Flags",
 	"object":"",
 	"intro":[
-		"Flags can be entered either in the dedicated field in the header or directly in the input box. Some flags may be combined in the form `-mR`. When a flag runs the programme on each element in the first input and that input is a number then it is first converted to the range `[0,N)` or, if that input is a string, it is first split into an array of characters and rejoined again afterwards."
+		"Flags can be entered either in the dedicated field or directly in the input box. Some flags may be combined in the form `-mR`. When a flag runs the programme on each element in the first input and that input is a number then it is first converted to the range `[0,N)` or, if that input is a string, it is first split into an array of characters and rejoined again afterwards."
 	],
 	"flags":{
 		"!":{

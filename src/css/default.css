@@ -40,6 +40,8 @@ body{
 	--background:#757575;
 	--border:#757575;
 	--caret:#757575;
+	--confirm:#2e7b32;
+	--error:#b00020;
 	--foreground:#757575;
 	--primary:#757575;
 	--timing-function:cubic-bezier(.4,0,.2,1);
@@ -100,7 +102,7 @@ svg.spin{
 		white-space:nowrap;
 		z-index:1;
 	}
-	[data-title]:hover::after{
+	[data-title]:hover:not(:active):not(:focus)::after{
 		opacity:1;
 		transition:opacity .195s var(--timing-function) .5s;
 		max-width:250px;
@@ -208,9 +210,10 @@ body.light #tools::after{
 	background:url('data:image/svg+xml;utf-8,<svg height="33" viewBox="0 0 16 33" width="16" xmlns="http://www.w3.org/2000/svg"><path fill="%23bdbdbd" d="M16,0H0V33H1"/><path fill="%23fff" d="M15,0H0V32H0"/></svg>') no-repeat;
 }
 #tools svg{
-	margin:4px 8px;
+	margin:2px 6px;
+	width:28px;
 }
-#tools p:first-of-type{
+#tools p:nth-of-type(3){
 	transform:translatey(-24px);
 }
 #tools svg#run{
@@ -227,20 +230,6 @@ body.light #tools::after{
 	transform:scale(.925);
 	transform-origin:50%;
 }
-#tools>label>svg{
-	margin-right:2px;
-}
-#tools>input{
-	background:var(--background);
-	caret-color:var(--caret);
-	font-family:var(--mono);
-	font-size:14px;
-	height:22px;
-	line-height:22px;
-	margin:5px 6px 5px 0;
-	padding:0 2px;
-	width:40px;
-}
 #interpreter{
 	padding:110px 20px 20px;
 	z-index:1;
@@ -255,6 +244,19 @@ body.light #tools::after{
 }
 #interpreter svg{
 	margin-left:8px;
+}
+#interpreter>input{
+	background:var(--primary);
+	border:1px solid var(--border);
+	border-radius:2px;
+	caret-color:var(--caret);
+	font-family:var(--mono);
+	font-size:16px;
+	height:30px;
+	line-height:28px;
+	margin-bottom:20px;
+	padding:4px;
+	width:100%;
 }
 #interpreter>textarea{
 	background:var(--primary);
@@ -413,6 +415,7 @@ body.light>#keyboard>h2{
 	margin:0 -20px 20px;
 	padding-right:66px;
 	top:0;
+	z-index:1;
 }
 #docs h3>svg{
 	margin:10px 4px;
@@ -440,7 +443,7 @@ body.light>#keyboard>h2{
 	margin-bottom:5px;
 }
 #docs h4[data-version]::after{
-	border:1px solid var(--primary);
+	border:1px solid var(--confirm);
 	border-radius:2px;
 	content:"v" attr(data-version);
 	display:inline-block;
@@ -451,6 +454,9 @@ body.light>#keyboard>h2{
 	float:right;
 	margin:2px;
 	padding:0 4px;
+}
+#docs h4.unavailable[data-version]::after{
+	border-color:var(--error);
 }
 #docs h4>svg{
 	margin:2px;
@@ -487,7 +493,7 @@ body.light>#keyboard>h2{
 	padding:5px;
 }
 #docs a{
-	text-decoration:var(--border) underline;
+	text-decoration:underline;
 }
 #docs code{
 	background:var(--background);
@@ -504,6 +510,11 @@ body.light>#keyboard>h2{
 	line-height:18px;
 	margin-left:0;
 }
+#docs h3>code{
+	background:var(--border);
+	font-size:inherit;
+	margin-left:0;
+}
 #docs span.version{
 	border:1px solid var(--border);
 	border-radius:2px;
@@ -514,10 +525,10 @@ body.light>#keyboard>h2{
 #docs p>svg,#docs li>svg{
 	width:18px;
 }
-#docs-intro ul>li{
+#docs-interpreter>ul:last-of-type>li{
 	padding-left:10px;
 }
-#docs-intro ul>li::before{
+#docs-interpreter>ul:last-of-type>li::before{
 	content:"•";
 	left:0;
 	position:absolute;

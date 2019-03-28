@@ -613,18 +613,19 @@ docs={
 								docs.methods(json,article);
 								label.setAttribute(`for`,input.id=`method-`+json.object);
 								input.value=json.object;
-								label.lastChild.nodeValue=article.firstChild.firstChild.nodeValue.match(/[^ ]+/);
+								label.lastChild.nodeValue=article.firstChild.innerText.match(/[^ ]+/)[0];
 								docs.search.form.append(input,label);
 								break;
 						}
+						item.firstChild.nodeValue=order.lastChild.nodeValue=json.title;
 						break;
 					case`html`:
 						article.innerHTML=docs.parse(await file.text());
+						item.firstChild.nodeValue=order.lastChild.nodeValue=article.firstChild.firstChild.nodeValue;
 						break;
 					default:console.error(`Failed to load documenation:`,file.url)
 				}
 				docs.sidebar.append(article);
-				item.firstChild.nodeValue=order.lastChild.nodeValue=article.firstChild.firstChild.nodeValue;
 				article.firstChild.prepend(svg);
 				menu.append(item);
 				order.dataset.file=docs.files[index];
@@ -706,12 +707,13 @@ docs={
 				if(json.type===`methods`){
 					title.classList.add(`cp`);
 					svg=n(`svg`);
-					svg.classList.add(`vat`);
+					svg.classList.add(`pen`,`vat`);
 					svg.setAttribute(`viewBox`,`0 0 24 24`);
 					svg.dataset.mdi=`arrow-right`;
 				}
 				text=e(`p`);
 			}
+			title.classList.toggle(`unavailable`,object[key].version>version.selected);
 			title.dataset.version=object[key].version;
 			text.innerHTML=docs.parse(object[key].description);
 			article.append(title,text);
@@ -721,7 +723,7 @@ docs={
 					break;
 				default:
 					title.dataset.character=key[0];
-					title.append(t(json.object+`.`+key),svg,t(object[key].returns));
+					title.append(t(key),svg,t(object[key].returns));
 					docs.search.article.append(title=title.cloneNode(true),text=text.cloneNode(true));
 					title.dataset.object=json.object;
 					title.classList.add(`dn`);
@@ -744,7 +746,7 @@ docs={
 		let heading,intro,text;
 		heading=e(`h3`);
 		heading.classList.add(`ps`);
-		heading.append(t(json.title));
+		heading.innerHTML=json.type===`methods`?json.title.replace(/./,`<code>$&</code>`):json.title;
 		article.append(heading);
 		if(json.intro){
 			for(intro of json.intro){
@@ -1121,7 +1123,7 @@ general={
 		"invert-colors":`M12,19.58V19.58C10.4,19.58 8.89,18.96 7.76,17.83C6.62,16.69 6,15.19 6,13.58C6,12 6.62,10.47 7.76,9.34L12,5.1M17.66,7.93L12,2.27V2.27L6.34,7.93C3.22,11.05 3.22,16.12 6.34,19.24C7.9,20.8 9.95,21.58 12,21.58C14.05,21.58 16.1,20.8 17.66,19.24C20.78,16.12 20.78,11.05 17.66,7.93Z`,
 		"keyboard":`M19,10H17V8H19M19,13H17V11H19M16,10H14V8H16M16,13H14V11H16M16,17H8V15H16M7,10H5V8H7M7,13H5V11H7M8,11H10V13H8M8,8H10V10H8M11,11H13V13H11M11,8H13V10H11M20,5H4C2.89,5 2,5.89 2,7V17A2,2 0 0,0 4,19H20A2,2 0 0,0 22,17V7C22,5.89 21.1,5 20,5Z`,
 		"launch":`M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z`,
-		"link-variant":`M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17A5,5 0 0,0 22,12A5,5 0 0,0 17,7Z`,
+		"link-variant":`M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z`,
 		"loading":`M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z`,
 		"magnify":`M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z`,
 		"markdown":`M2,16V8H4L7,11L10,8H12V16H10V10.83L7,13.83L4,10.83V16H2M16,8H19V12H21.5L17.5,16.5L13.5,12H16V8Z`,
@@ -1173,10 +1175,10 @@ general={
 			text;
 		if(target===`compressor`)
 			text=compressor.result.string;
-		else if(interpreter[target])
-			text=interpreter[target]();
 		else if(interpreter.fields[target])
 			text=interpreter.fields[target].value;
+		else if(interpreter[target])
+			text=interpreter[target]();
 		else if(target.startsWith(`docs-`))
 			text=interpreter.url()+`#`+target;
 		if(target===`explanation`)
@@ -1245,6 +1247,7 @@ general={
 		interpreter.button.addEventListener(`click`,interpreter.run,false);
 		i(`copy-link`).addEventListener(`click`,general.copy,false);
 		i(`copy-post`).addEventListener(`click`,general.copy,false);
+		i(`copy-flags`).addEventListener(`click`,general.copy,false);
 		i(`undo`).addEventListener(`click`,()=>d.execCommand(`undo`,false),false);
 		i(`redo`).addEventListener(`click`,()=>d.execCommand(`redo`,false),false);
 		i(`golf`).addEventListener(`click`,interpreter.golf,false);
