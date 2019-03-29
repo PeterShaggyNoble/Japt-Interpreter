@@ -221,7 +221,6 @@ interpreter={
 		if(code!==golfed){
 			interpreter.fields.code.select();
 			d.execCommand(`insertText`,false,golfed);
-			interpreter.update();
 			interpreter.fields.code.selectionStart=interpreter.fields.code.selectionEnd=golfed.length;
 		}else interpreter.fields.code.focus();
 		interpreter.regex.lastIndex=0;
@@ -288,13 +287,10 @@ interpreter={
 		let 	code=interpreter.fields.code.value,
 			encoding=`ISO-8859-1`;
 		interpreter.fields.transpiled.value=Japt.transpile(code);
-		general.resize(interpreter.fields.code);
 		general.resize(interpreter.fields.transpiled);
-		if (/[^\x00-\xff]/.test(code)){
-			code=unescape(encodeURI(code));
+		if(/[^\x00-\xff]/.test(code))
 			encoding=`UTF-8`;
-		}
-		interpreter.bytes=code.length;
+		interpreter.bytes=general.count(code);
 		interpreter.fields.counter.firstChild.nodeValue=interpreter.bytes+` bytes`.slice(0,interpreter.bytes!==1?6:5)+` (${encoding})`;
 	},
 	url(v=version.selected){
@@ -437,20 +433,20 @@ compressor={
 		compressor.field.value=`Original:    ${original}\n`;
 		if(compressor.result.permutation)
 			compressor.field.value+=`Permutation: ${JSON.stringify(compressor.result.permutation).replace(array?quotes:``,array?`$1"`:``)}\n`;
-		compressor.field.value+=`Bytes:       ${original.length}\n`;
+		compressor.field.value+=`Bytes:       ${general.count(original)}\n`;
 		compressor.field.value+=`Compressed:  ${compressor.result.string}\n`;
 		if(compressor.result.base)
 			compressor.field.value+=`Base:        ${compressor.result.base}\n`;
 		if(compressor.result.delimiter)
 			compressor.field.value+=`Delimiter:   ${compressor.result.delimiter}\n`;
-		compressor.field.value+=`Bytes:       ${compressor.result.string.length}`;
+		compressor.field.value+=`Bytes:       ${general.count(compressor.result.string)}`;
 		general.resize(compressor.field);
 		compressor.buttons.copy.parentNode.classList.remove(`dn`);
 		if(compressor.permutations.enabled)
 			compressor.buttons.reset.addEventListener(`animationiteration`,()=>compressor.buttons.reset.classList.remove(`spin`),{capture:false,once:true});
 	},
 	weigh(obj){
-		obj.weight=obj.string.length-` \n`.includes(obj.delimiter)-` \n${compressor.golfables}`.includes(obj.delimiter)-(obj.base<17||obj.base===32);
+		obj.weight=general.count(obj.string)-` \n`.includes(obj.delimiter)-` \n${compressor.golfables}`.includes(obj.delimiter)-(obj.base<17||obj.base===32);
 		return obj;
 	}
 },
@@ -487,7 +483,7 @@ keyboard={
 		keyboard.open=keyboard.list.parentNode.dataset.open!==`true`;
 		keyboard.list.parentNode.dataset.open=keyboard.open;
 		if(keyboard.open)
-			b.addEventListener(`keydown`,keyboard.close,false);
+			b.addEventListener(`keydown`,keyboard.close);
 		else b.removeEventListener(`keydown`,keyboard.close);
 	}
 },
@@ -515,7 +511,8 @@ docs={
 				text=title.nextElementSibling;
 				hide=	!value||
 					!methods.includes(title.dataset.object)||
-					!text.innerHTML.replace(/^Returns |\<[^>]+?\>/g,``).toLowerCase().includes(value);
+					!(text.innerHTML.replace(/^Returns |\<[^>]+?\>/g,``).toLowerCase().includes(value)||
+					title.firstChild.nodeValue.includes(value));
 				title.classList.toggle(`dn`,hide);
 				text.classList.toggle(`dn`,hide);
 			}
@@ -598,7 +595,7 @@ docs={
 					docs.current={article,item};
 				article.classList.toggle(`dn`,!current);
 				item.classList.toggle(`current`,current);
-				svg.addEventListener(`click`,general.copy,false);
+				svg.addEventListener(`click`,general.copy);
 				switch(docs.files[index].slice(-4)){
 					case`json`:
 						json=await file.json();
@@ -634,7 +631,7 @@ docs={
 			docs.menu(menu);
 			docs.shortcuts();
 			docs.regex();
-			i(`docs-examples`).addEventListener(`click`,docs.run,false);
+			i(`docs-examples`).addEventListener(`click`,docs.run);
 			docs.settings(sort);
 			general.icons(docs.sidebar);
 			docs.search.init();
@@ -794,7 +791,6 @@ docs={
 		if(dataset.code){
 			interpreter.fields.code.select();
 			d.execCommand(`insertText`,false,general.decode(dataset.code));
-			interpreter.update();
 			interpreter.run();
 		}
 	},
@@ -857,7 +853,7 @@ docs={
 		if(docs.open){
 			if(projects.open)
 				projects.toggle();
-			b.addEventListener(`keydown`,docs.close,false);
+			b.addEventListener(`keydown`,docs.close);
 		}
 		else b.removeEventListener(`keydown`,docs.close);
 	}
@@ -906,7 +902,7 @@ projects={
 		svg.classList.add(`cp`,`vat`);
 		svg.setAttribute(`viewBox`,`0 0 24 24`);
 		svg.dataset.mdi=`play-circle`;
-		svg.addEventListener(`click`,projects.load,false);
+		svg.addEventListener(`click`,projects.load);
 		action.append(svg);
 		menu.append(action);
 		action=action.cloneNode(false);
@@ -921,7 +917,7 @@ projects={
 		action=action.cloneNode(false);
 		svg=svg.cloneNode(true);
 		svg.dataset.mdi=`delete`;
-		svg.addEventListener(`click`,projects.delete,false);
+		svg.addEventListener(`click`,projects.delete);
 		action.append(svg);
 		menu.append(action);
 		for(let child of projects.items)
@@ -1053,20 +1049,21 @@ projects={
 		if(project.flags)
 			interpreter.fields.flags.value=general.decode(project.flags);
 		interpreter.fields.code.value=general.decode(project.code);
+		general.resize(interpreter.fields.code);
 		interpreter.update();
 		if(project.input){
 			interpreter.fields.input.value=general.decode(project.input);
 			general.resize(interpreter.fields.input);
 		}
 		if(project.cache)
-			interpreter.cache.buttons.toggle.dispatchEvent(new Event(`click`));
+			interpreter.cache.buttons.toggle.dispatchEvent(general.events.click);
 		interpreter.run();
 		if(project.explanation){
 			interpreter.fields.explanation.value=general.decode(project.explanation);
 			general.resize(interpreter.fields.explanation);
 		}
 		if(project.permutations)
-			compressor.buttons.permute.dispatchEvent(new Event(`click`));
+			compressor.buttons.permute.dispatchEvent(general.events.click);
 		if(project.compressor){
 			compressor.field.value=general.decode(project.compressor);
 			general.resize(compressor.field);
@@ -1081,7 +1078,7 @@ projects={
 		if(projects.open){
 			if(docs.open)
 				docs.toggle();
-			b.addEventListener(`keydown`,projects.close,false);
+			b.addEventListener(`keydown`,projects.close);
 		}
 		else b.removeEventListener(`keydown`,projects.close);
 	},
@@ -1104,6 +1101,7 @@ general={
 		"alert":`M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z`,
 		"arrow-right":`M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z`,
 		"autorenew":`M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z`,
+		"book-open-variant":`M21,5C19.89,4.65 18.67,4.5 17.5,4.5C15.55,4.5 13.45,4.9 12,6C10.55,4.9 8.45,4.5 6.5,4.5C4.55,4.5 2.45,4.9 1,6V20.65C1,20.9 1.25,21.15 1.5,21.15C1.6,21.15 1.65,21.1 1.75,21.1C3.1,20.45 5.05,20 6.5,20C8.45,20 10.55,20.4 12,21.5C13.35,20.65 15.8,20 17.5,20C19.15,20 20.85,20.3 22.25,21.05C22.35,21.1 22.4,21.1 22.5,21.1C22.75,21.1 23,20.85 23,20.6V6C22.4,5.55 21.75,5.25 21,5M21,18.5C19.9,18.15 18.7,18 17.5,18C15.8,18 13.35,18.65 12,19.5V8C13.35,7.15 15.8,6.5 17.5,6.5C18.7,6.5 19.9,6.65 21,7V18.5Z`,
 		"check":`M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z`,
 		"check-box-outline":`M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,5V19H5V5H19M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9`,
 		"checkbox-blank-outline":`M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z`,
@@ -1116,7 +1114,6 @@ general={
 		"drag-vertical":`M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z`,
 		"file-document-edit":`M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H10V20.09L12.09,18H6V16H14.09L16.09,14H6V12H18.09L20,10.09V8L14,2H6M13,3.5L18.5,9H13V3.5M20.15,13C20,13 19.86,13.05 19.75,13.16L18.73,14.18L20.82,16.26L21.84,15.25C22.05,15.03 22.05,14.67 21.84,14.46L20.54,13.16C20.43,13.05 20.29,13 20.15,13M18.14,14.77L12,20.92V23H14.08L20.23,16.85L18.14,14.77Z`,
 		"flag":`M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z`,
-		"file-document":`M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z`,
 		"forum":`M17,12V3A1,1 0 0,0 16,2H3A1,1 0 0,0 2,3V17L6,13H16A1,1 0 0,0 17,12M21,6H19V15H6V17A1,1 0 0,0 7,18H18L22,22V7A1,1 0 0,0 21,6Z`,
 		"golf":`M19.5,18A1.5,1.5 0 0,1 21,19.5A1.5,1.5 0 0,1 19.5,21A1.5,1.5 0 0,1 18,19.5A1.5,1.5 0 0,1 19.5,18M17,5.92L11,9V18.03C13.84,18.19 16,19 16,20C16,21.1 13.31,22 10,22C6.69,22 4,21.1 4,20C4,19.26 5.21,18.62 7,18.27V20H9V2L17,5.92Z`,
 		"github-circle":`M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z`,
@@ -1137,6 +1134,9 @@ general={
 		"text":`M21,6V8H3V6H21M3,18H12V16H3V18M3,13H21V11H3V13Z`,
 		"undo":`M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z`,
 		"upload":`M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z`
+	},
+	events:{
+		click:new Event(`click`)
 	},
 	init(){
 		general.theme();
@@ -1166,6 +1166,10 @@ general={
 			event.stopPropagation();
 		}
 	},
+	collapse(event){
+		if(event.target.constructor===HTMLHeadingElement)
+			event.target.parentNode.classList.toggle(`collapsed`);
+	},
 	confirm(button){
 		button.classList.add(`confirm`);
 		button.addEventListener(`transitionend`,general.unconfirm,{capture:false,once:true});
@@ -1188,6 +1192,11 @@ general={
 		d.execCommand(`copy`,false);
 		general.confirm(event.target);
 	},
+	count(code){
+		if(/[^\x00-\xff]/.test(code))
+			code=unescape(encodeURI(code));
+		return code.length;
+	},
 	decode(text){
 		return atob(text).replace(/\\u[0-9A-F]{4}/gi,chr=>String.fromCharCode(parseInt(chr.slice(2),16)));
 	},
@@ -1201,7 +1210,10 @@ general={
 		URL.revokeObjectURL(link.href);
 	},
 	encode(text){
-		return btoa(text.replace(/./g,chr=>chr.charCodeAt(0)<256?chr:`\\u`+chr.charCodeAt(0).toString(16).padStart(4,0))).replace(/=+$/,``);
+		return btoa(text.replace(/./g,chr=>chr<`Ā`?chr:`\\u`+chr.charCodeAt(0).toString(16).padStart(4,0))).replace(/=+$/,``);
+	},
+	exec(event){
+		d.execCommand(event.target.id,false);
 	},
 	icons(parent){
 		let icon,path,svg;
@@ -1234,62 +1246,65 @@ general={
 	keys(event){
 		if(event.keyCode==13)
 			if(event.ctrlKey)
-				interpreter.button.dispatchEvent(new Event(`click`));
+				interpreter.button.dispatchEvent(general.events.click);
 			else if(event.target===projects.fields.name||event.target===projects.fields.url)
-				projects.buttons.save.dispatchEvent(new Event(`click`));
+				projects.buttons.save.dispatchEvent(general.events.click);
 	},
 	listeners(){
-		b.addEventListener(`keydown`,general.keys,false);
-		version.list.addEventListener(`click`,version.change,false);
-		general.buttons.theme.addEventListener(`click`,general.theme,false);
-		interpreter.fields.flags.addEventListener(`focus`,interpreter.flags,false);
-		interpreter.fields.flags.addEventListener(`blur`,interpreter.flags,false);
-		interpreter.button.addEventListener(`click`,interpreter.run,false);
-		i(`copy-link`).addEventListener(`click`,general.copy,false);
-		i(`copy-post`).addEventListener(`click`,general.copy,false);
-		i(`copy-flags`).addEventListener(`click`,general.copy,false);
-		i(`undo`).addEventListener(`click`,()=>d.execCommand(`undo`,false),false);
-		i(`redo`).addEventListener(`click`,()=>d.execCommand(`redo`,false),false);
-		i(`golf`).addEventListener(`click`,interpreter.golf,false);
-		i(`copy-code`).addEventListener(`click`,general.copy,false);
-		interpreter.fields.code.addEventListener(`input`,interpreter.update,false);
-		i(`copy-js`).addEventListener(`click`,general.copy,false);
-		i(`copy-input`).addEventListener(`click`,general.copy,false);
-		interpreter.fields.input.addEventListener(`input`,()=>general.resize(interpreter.fields.input),false);
-		i(`copy-output`).addEventListener(`click`,general.copy,false);
-		interpreter.cache.buttons.toggle.addEventListener(`click`,interpreter.cache.toggle,false);
-		interpreter.cache.buttons.empty.addEventListener(`click`,interpreter.cache.empty,false);
-		i(`copy-explanation`).addEventListener(`click`,general.copy,false);
-		interpreter.fields.explanation.addEventListener(`input`,()=>general.resize(interpreter.fields.explanation),false);
-		compressor.buttons.compress.addEventListener(`click`,compressor.init,false);
-		compressor.buttons.permute.addEventListener(`click`,compressor.permutations.toggle,false);
-		compressor.buttons.copy.addEventListener(`click`,general.copy,false);
-		compressor.buttons.reset.addEventListener(`click`,compressor.reset,false);
-		compressor.field.addEventListener(`input`,()=>general.resize(compressor.field),false);
-		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle,false);
-		keyboard.list.addEventListener(`click`,keyboard.insert,false);
-		q(`#docs>h2`).addEventListener(`click`,docs.toggle,false);
-		docs.sidebar.addEventListener(`click`,docs.change,false);
-		docs.sidebar.addEventListener(`click`,keyboard.insert,false);
-		q(`#projects>h2`).addEventListener(`click`,projects.toggle,false);
-		i(`search`).addEventListener(`click`,docs.search.toggle,false);
-		projects.buttons.save.addEventListener(`click`,projects.save,false);
-		projects.buttons.upload.addEventListener(`click`,projects.upload,false);
-		projects.buttons.download.addEventListener(`click`,projects.download,false);
-		projects.buttons.clear.addEventListener(`click`,projects.clear,false);
-		i(`filter`).addEventListener(`input`,projects.filter,false);
-		w.addEventListener(`resize`,()=>{
+		b.addEventListener(`keydown`,general.keys);
+		version.list.addEventListener(`click`,version.change);
+		general.buttons.theme.addEventListener(`click`,general.theme);
+		i(`main`).addEventListener(`click`,general.collapse);
+		i(`main`).addEventListener(`input`,general.resize,true);
+		interpreter.fields.flags.addEventListener(`focus`,interpreter.flags);
+		interpreter.fields.flags.addEventListener(`blur`,interpreter.flags);
+		interpreter.button.addEventListener(`click`,interpreter.run);
+		i(`copy-link`).addEventListener(`click`,general.copy);
+		i(`copy-post`).addEventListener(`click`,general.copy);
+		i(`copy-flags`).addEventListener(`click`,general.copy);
+		i(`undo`).addEventListener(`click`,general.exec);
+		i(`redo`).addEventListener(`click`,general.exec);
+		i(`golf`).addEventListener(`click`,interpreter.golf);
+		i(`copy-code`).addEventListener(`click`,general.copy);
+		interpreter.fields.code.addEventListener(`input`,interpreter.update);
+		i(`copy-js`).addEventListener(`click`,general.copy);
+		i(`copy-input`).addEventListener(`click`,general.copy);
+		i(`copy-output`).addEventListener(`click`,general.copy);
+		interpreter.cache.buttons.toggle.addEventListener(`click`,interpreter.cache.toggle);
+		interpreter.cache.buttons.empty.addEventListener(`click`,interpreter.cache.empty);
+		i(`copy-explanation`).addEventListener(`click`,general.copy);
+		compressor.buttons.compress.addEventListener(`click`,compressor.init);
+		compressor.buttons.permute.addEventListener(`click`,compressor.permutations.toggle);
+		compressor.buttons.copy.addEventListener(`click`,general.copy);
+		compressor.buttons.reset.addEventListener(`click`,compressor.reset);
+		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle);
+		keyboard.list.addEventListener(`click`,keyboard.insert);
+		q(`#docs>h2`).addEventListener(`click`,docs.toggle);
+		docs.sidebar.addEventListener(`click`,docs.change);
+		docs.sidebar.addEventListener(`click`,keyboard.insert);
+		q(`#projects>h2`).addEventListener(`click`,projects.toggle);
+		i(`search`).addEventListener(`click`,docs.search.toggle);
+		projects.buttons.save.addEventListener(`click`,projects.save);
+		projects.buttons.upload.addEventListener(`click`,projects.upload);
+		projects.buttons.download.addEventListener(`click`,projects.download);
+		projects.buttons.clear.addEventListener(`click`,projects.clear);
+		i(`filter`).addEventListener(`input`,projects.filter);
+		i(`footer`).addEventListener(`click`,general.toggle);
+		w.addEventListener(`resize`,general.resize);
+	},
+	resize(event){
+		let target=event.target||event;
+		if(target===w){
 			general.resize(interpreter.fields.code);
 			general.resize(interpreter.fields.transpiled);
 			general.resize(interpreter.fields.input);
 			general.resize(interpreter.fields.output);
 			general.resize(interpreter.fields.explanation);
 			general.resize(compressor.field);
-		},false);
-	},
-	resize(field){
-		general.clipboard.value=field.value;
-		field.style.height=2+general.clipboard.scrollHeight+`px`;
+		}else if(target!==general.clipboard&&target.constructor===HTMLTextAreaElement){
+			general.clipboard.value=target.value;
+			target.style.height=2+general.clipboard.scrollHeight+`px`;
+		}
 	},
 	theme(loaded=false){
 		if(loaded){
@@ -1301,6 +1316,10 @@ general={
 		general.buttons.theme.parentNode.dataset.title=`${light?`Dark`:`Light`} Theme`;
 		if(loaded)
 			l.setItem(`japt-theme`,light?`light`:`dark`);
+	},
+	toggle(event){
+		if(event.target.dataset.sidebar)
+			q(`#${event.target.dataset.sidebar}>h2`).dispatchEvent(general.events.click);
 	},
 	unconfirm(event){
 		event.currentTarget.classList.remove(`confirm`);

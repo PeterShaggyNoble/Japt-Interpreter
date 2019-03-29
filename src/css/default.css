@@ -54,11 +54,11 @@ body.dark{
 	--background:#424242;
 	--border:#616161;
 	--caret:#fff;
-	--foreground:#e0e0e0;
+	--foreground:#e9e7e5;
 	--primary:#212121;
 }
 body.light{
-	--background:#e0e0e0;
+	--background:#e9e7e5;
 	--border:#bdbdbd;
 	--caret:#000;
 	--foreground:#212121;
@@ -84,11 +84,10 @@ svg.spin{
 }
 @media(hover:hover){
 	[data-title]::after{
-		background:var(--foreground);
+		background:var(--background);
 		border:1px solid var(--border);
 		border-radius:2px;
 		bottom:-22px;
-		color:var(--primary);
 		content:attr(data-title);
 		font-size:12px;
 		line-height:22px;
@@ -119,6 +118,7 @@ svg.spin{
 	padding:0 16px;
 	right:0;
 	top:0;
+	user-select:none;
 }
 #header [data-title]::after{
 	left:50%;
@@ -230,22 +230,39 @@ body.light #tools::after{
 	transform:scale(.925);
 	transform-origin:50%;
 }
-#interpreter{
-	padding:110px 20px 20px;
+#main{
+	padding-top:90px;
 	z-index:1;
+	user-select:none;
 }
-#interpreter [data-title]::after{
+#main [data-title]::after{
 	right:0;
 }
-#interpreter>h2,#interpreter>p{
+#main article{
+	margin-bottom:20px;
+}
+#main article.collapsed{
+	height:24px;
+	margin-bottom:10px;
+}
+#main h2,#main p{
 	font-size:14px;
 	line-height:24px;
 	margin-bottom:2px;
 }
-#interpreter svg{
+#main article>h2>svg{
+	margin:-1px -2px 0 -4px;
+}
+#main article.collapsed>h2>svg{
+	transform:rotate(-90deg);
+}
+#main article.collapsed p{
+	display:none;
+}
+#main p.fr{
 	margin-left:8px;
 }
-#interpreter>input{
+#main input{
 	background:var(--primary);
 	border:1px solid var(--border);
 	border-radius:2px;
@@ -254,11 +271,10 @@ body.light #tools::after{
 	font-size:16px;
 	height:30px;
 	line-height:28px;
-	margin-bottom:20px;
 	padding:4px;
 	width:100%;
 }
-#interpreter>textarea{
+#main textarea{
 	background:var(--primary);
 	border:1px solid var(--border);
 	border-radius:2px;
@@ -267,16 +283,18 @@ body.light #tools::after{
 	font-size:16px;
 	height:30px;
 	line-height:20px;
-	margin-bottom:20px;
 	padding:4px;
 	resize:none;
 	width:100%;
 }
-#interpreter>textarea:-moz-read-only{
+#main textarea:-moz-read-only{
 	border-color:var(--primary);
 }
-#interpreter>textarea:read-only{
+#main textarea:read-only{
 	border-color:var(--primary);
+}
+#main textarea#clipboard{
+	height:0;
 }
 #code{
 	min-height:170px;
@@ -284,19 +302,17 @@ body.light #tools::after{
 #input{
 	min-height:90px;
 }
-#interpreter>textarea#clipboard{
-	height:0;
-}
-#interpreter>p#error{
+#main p#error{
 	font-size:16px;
-	margin-top:-12px;
-	margin-bottom:20px;
+	margin-top:8px;
 }
 #error>svg{
 	margin-right:8px;
 }
 #cache.enabled>path:first-of-type,
-#cache:not(.enabled)>path:last-of-type,
+#cache:not(.enabled)>path:last-of-type{
+	display:none;
+}
 #permute.enabled>path:first-of-type,
 #permute:not(.enabled)>path:last-of-type{
 	display:none;
@@ -305,27 +321,12 @@ body.light #tools::after{
 	background:var(--primary);
 	border:1px solid var(--border);
 	border-bottom:0;
-	border-radius:4px 4px 0 0;
-	bottom:0;
 	left:0;
 	overscroll-behavior:contain;
 	padding:2px;
 	transition:transform .375s var(--timing-function);
 	width:calc(100% + 2px);
 	max-width:804px;
-}
-#keyboard>h2{
-	left:calc(50% - 36px);
-	top:-32px;
-	line-height:24px;
-	padding:4px 24px;
-	width:72px;
-}
-body.dark>#keyboard>h2{
-	background:url('data:image/svg+xml;utf-8,<svg height="32" viewBox="0 0 72 32" width="72" xmlns="http://www.w3.org/2000/svg"><path fill="%23616161" d="M0,32L16,0H56L72,32"/><path fill="%23212121" d="M1,32L17,1H55L71,32"/></svg>') no-repeat;
-}
-body.light>#keyboard>h2{
-	background:url('data:image/svg+xml;utf-8,<svg height="32" viewBox="0 0 72 32" width="72" xmlns="http://www.w3.org/2000/svg"><path fill="%23bdbdbd" d="M0,32L16,0H56L72,32"/><path fill="%23fff" d="M1,32L17,1H55L71,32"/></svg>') no-repeat;
 }
 #keyboard>h2[data-title]::after{
 	left:50%;
@@ -613,30 +614,15 @@ body.light>#keyboard>h2{
 #projects{
 	background:var(--primary);
 	border-right:1px solid var(--border);
-	bottom:0;
 	left:0;
 	padding-bottom:20px;
 	top:0;
 	transform:translatex(-100%);
 	transition:transform .375s var(--timing-function);
-	width:calc(100% - 32px);
 	max-width:400px;
 }
 #projects[data-open=true]{
 	transform:translatex(0%);
-}
-#projects>h2{
-	right:-32px;
-	line-height:24px;
-	padding:24px 4px;
-	top:calc(50% - 36px);
-	width:32px;
-}
-body.dark>#projects>h2{
-	background:url('data:image/svg+xml;utf-8,<svg height="72" viewBox="0 0 32 72" width="32" xmlns="http://www.w3.org/2000/svg"><path fill="%23616161" d="M0,0L32,16V56L0,72"/><path fill="%23212121" d="M0,1L31,17V55L0,71"/></svg>') no-repeat;
-}
-body.light>#projects>h2{
-	background:url('data:image/svg+xml;utf-8,<svg height="72" viewBox="0 0 32 72" width="32" xmlns="http://www.w3.org/2000/svg"><path fill="%23bdbdbd" d="M0,0L32,16V56L0,72"/><path fill="%23fff" d="M0,1L31,17V55L0,71"/></svg>') no-repeat;
 }
 #projects>h2[data-title]::after{
 	left:2px;
@@ -767,26 +753,95 @@ input#filter{
 	}
 	#keyboard{
 		left:0;
+		margin:0 -1px;
 		transform:translatey(100%);
 		z-index:3;
 	}
 	#keyboard[data-open=true]{
-		transform:translatey(0%)
+		transform:translatey(0%);
 	}
 	#docs{
-		bottom:0;
 		position:fixed;
 		right:0;
 		top:0;
 		transform:translatex(100%);
 		transition:transform .375s var(--timing-function);
-		width:calc(100% - 32px);
 		max-width:400px;
 		z-index:4;
 	}
 	#docs[data-open=true]{
 		transform:translatex(0%);
 		z-index:5;
+	}
+	#docs>h2[data-title]::after{
+		right:2px;
+		bottom:0;
+	}
+	#projects{
+		z-index:4;
+	}
+	#projects[data-open=true]{
+		z-index:5;
+	}
+}
+@media(max-width:600px){
+	body{
+		padding-bottom:17px;
+	}
+	#main{
+		padding-left:20px;
+		padding-right:20px;
+	}
+	#keyboard,#docs,#projects{
+		bottom:37px;
+	}
+	#docs,#projects{
+		width:calc(100% + 1px);
+	}
+	#keyboard>h2,#docs>h2,#projects>h2{
+		display:none;
+	}
+	#footer{
+		background:var(--primary);
+		border-top:1px solid var(--border);
+		bottom:0;
+		height:37px;
+		left:0;
+		justify-content:space-around;
+		padding:6px;
+		right:0;
+		z-index:6;
+	}
+	#footer [data-title]::after{
+		bottom:24px;
+		left:50%;
+		transform:translatex(-50%);
+	}
+}
+@media(min-width:601px){
+	#main{
+		padding-left:40px;
+		padding-right:40px;
+	}
+	#keyboard,#docs,#projects{
+		bottom:0;
+	}
+	#docs,#projects{
+		width:calc(100% - 32px);
+	}
+	#keyboard>h2{
+		left:calc(50% - 36px);
+		top:-32px;
+		line-height:24px;
+		padding:4px 24px;
+		position:absolute;
+		width:72px;
+	}
+	body.dark>#keyboard>h2{
+		background:url('data:image/svg+xml;utf-8,<svg height="32" viewBox="0 0 72 32" width="72" xmlns="http://www.w3.org/2000/svg"><path fill="%23616161" d="M0,32L16,0H56L72,32"/><path fill="%23212121" d="M1,32L17,1H55L71,32"/></svg>') no-repeat;
+	}
+	body.light>#keyboard>h2{
+		background:url('data:image/svg+xml;utf-8,<svg height="32" viewBox="0 0 72 32" width="72" xmlns="http://www.w3.org/2000/svg"><path fill="%23bdbdbd" d="M0,32L16,0H56L72,32"/><path fill="%23fff" d="M1,32L17,1H55L71,32"/></svg>') no-repeat;
 	}
 	#docs>h2{
 		left:-32px;
@@ -801,15 +856,21 @@ input#filter{
 	body.light>#docs>h2{
 		background:url('data:image/svg+xml;utf-8,<svg height="72" viewBox="0 0 32 72" width="32" xmlns="http://www.w3.org/2000/svg"><path fill="%23bdbdbd" d="M32,0L0,16V56L32,72"/><path fill="%23fff" d="M32,1L1,17V55L32,71"/></svg>') no-repeat;
 	}
-	#docs>h2[data-title]::after{
-		right:2px;
-		bottom:0;
+	#projects>h2{
+		right:-32px;
+		line-height:24px;
+		padding:24px 4px;
+		top:calc(50% - 36px);
+		width:32px;
 	}
-	#projects{
-		z-index:4;
+	body.dark>#projects>h2{
+		background:url('data:image/svg+xml;utf-8,<svg height="72" viewBox="0 0 32 72" width="32" xmlns="http://www.w3.org/2000/svg"><path fill="%23616161" d="M0,0L32,16V56L0,72"/><path fill="%23212121" d="M0,1L31,17V55L0,71"/></svg>') no-repeat;
 	}
-	#projects[data-open=true]{
-		z-index:5;
+	body.light>#projects>h2{
+		background:url('data:image/svg+xml;utf-8,<svg height="72" viewBox="0 0 32 72" width="32" xmlns="http://www.w3.org/2000/svg"><path fill="%23bdbdbd" d="M0,0L32,16V56L0,72"/><path fill="%23fff" d="M0,1L31,17V55L0,71"/></svg>') no-repeat;
+	}
+	#footer{
+		display:none;
 	}
 }
 @media(min-width:801px){
@@ -819,14 +880,15 @@ input#filter{
 	#tools{
 		transform:translatex(-50%) translatex(-200px);
 	}
-	#interpreter,#docs{
+	#main,#docs{
 		display:inline-block;
 		vertical-align:top;
 	}
-	#interpreter{
+	#main{
 		width:calc(100% - 400px);
 	}
 	#keyboard{
+		border-radius:4px 4px 0 0;
 		z-index:3;
 	}
 	#docs{
