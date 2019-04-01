@@ -309,12 +309,22 @@ compressor={
 	delimiters:` \nabcdefghijklmnopqrstuvwxyz`,
 	golfables:`gnpqswy`,
 	shortcuts:`ÎÍ²¬¤ÔÕ`,
-	field:i(`compressor`),
+	results:i(`results`),
+	fields:{
+		input:i(`compressor`),
+		original:i(`original`).firstChild,
+		permutation:i(`permutation`).firstChild,
+		size:i(`size`).firstChild,
+		compressed:i(`compressed`).firstChild,
+		base:i(`base`).firstChild,
+		delimiter:i(`delimiter`).firstChild,
+		bytes:i(`bytes`).firstChild
+	},
 	buttons:{
 		compress:i(`compress`),
 		copy:i(`copy-compressed`),
-		permute:i(`permute`),
-		reset:i(`reset`)
+		insert:i(`insert`),
+		permute:i(`permute`)
 	},
 	permutations:{
 		enabled:false,
@@ -340,20 +350,20 @@ compressor={
 		}
 	},
 	init(){
-		compressor.value=compressor.field.value.trim();
+		compressor.value=compressor.fields.input.value.trim();
 		if(compressor.value){
 			compressor.original=compressor.value;
-			compressor.buttons.compress.parentNode.classList.add(`dn`);
-			compressor.buttons.permute.parentNode.classList.add(`dn`);
-			compressor.buttons.reset.parentNode.classList.remove(`dn`);
-			if(compressor.permutations.enabled)
-				compressor.buttons.reset.classList.add(`spin`);
-			compressor.field.readOnly=true;
-			setTimeout(compressor.run);
+			compressor.run();
 		}
 	},
 	get(array){
 		return array.map(compressor.weigh).sort((one,two)=>(one.weight>two.weight)-(one.weight<two.weight))[0];
+	},
+	insert(event){
+		interpreter.fields.code.focus();
+		d.execCommand(`insertText`,false,compressor.result.string);
+		interpreter.fields.code.blur();
+		general.confirm(event.target);
 	},
 	map(array,base){
 		if(array[0].constructor===Array)
@@ -375,20 +385,13 @@ compressor={
 			return obj;
 		});
 	},
-	reset(){
-		compressor.field.readOnly=false;
-		compressor.field.value=compressor.original;
-		general.resize(compressor.field);
-		compressor.buttons.compress.parentNode.classList.remove(`dn`);
-		compressor.buttons.permute.parentNode.classList.remove(`dn`);
-		compressor.buttons.copy.parentNode.classList.add(`dn`);
-		compressor.buttons.reset.parentNode.classList.add(`dn`);
-	},
 	run(){
 		try{
-			let array=compressor.value.startsWith(`["`);
+			let array=compressor.value.startsWith(`["`)&&compressor.value.endsWith(`"]`);
 			if(array)
-				compressor.value=compressor.value.replace(/([^\\[]")"/g,`$1,"`);
+				compressor.value=compressor.value.replace(/([^\\["])",?"/g,"$1`,`").replace(/\["/,"[`").replace(/"\]/,"`]");
+			else if(compressor.value.startsWith(`"`)&&compressor.value.endsWith(`"`))
+				compressor.value=compressor.value.replace(/^"|"$/g,"`");
 			compressor.value=eval(compressor.value);
 			if(compressor.value.constructor===String)
 				compressor.result={string:`\`${shoco.c(compressor.value).replace(/(?=`)/g,`\\`)}\``};
@@ -408,14 +411,31 @@ compressor={
 			compressor.update(array);
 		}catch(err){
 			console.error(err);
-			compressor.reset();
+		}
+	},
+	test(){
+		let value=compressor.fields.input.value.trim();
+		if(value.startsWith(`["`)&&value.endsWith(`"]`))
+			value=value.replace(/([^\\["])",?"/g,"$1`,`").replace(/\["/,"[`").replace(/"\]/,"`]");
+		else if(value.startsWith(`"`)&&value.endsWith(`"`))
+			value=value.replace(/^"|"$/g,"`");
+		try{
+			value=eval(value);
+			if(value.constructor===String)
+				value=value.length>0;
+			else if(value.constructor===Array)
+				value=value.every(elm=>elm.constructor===String)&&value.some(elm=>elm.length>0)||value.length>0&&value.every(elm=>elm.constructor===Number);
+			else value=false;
+			compressor.buttons.compress.classList.toggle(`pen`,!value);
+		}catch(err){
+			compressor.buttons.compress.classList.add(`pen`);
 		}
 	},
 	update(array){
 		let 	original=compressor.original,
-			quotes=/([^\\]"),"/g;
+			quotes=/([^\\[])("|`),\2/g;
 		if(array)
-			original=original.replace(quotes,`$1"`);
+			original=original.replace(quotes,`$1$2$2`);
 		if(compressor.result.delimiter){
 			if(compressor.result.delimiter===` `){
 				compressor.result.delimiter=`S`;
@@ -430,20 +450,14 @@ compressor={
 		}
 		if(compressor.result.base)
 			compressor.result.string+=`mn${compressor.result.base=compressor.result.base<17?`ABCDEFG`[compressor.result.base%10]:compressor.result.base===32?`H`:compressor.result.base} `;
-		compressor.field.value=`Original:    ${original}\n`;
-		if(compressor.result.permutation)
-			compressor.field.value+=`Permutation: ${JSON.stringify(compressor.result.permutation).replace(array?quotes:``,array?`$1"`:``)}\n`;
-		compressor.field.value+=`Bytes:       ${general.count(original)}\n`;
-		compressor.field.value+=`Compressed:  ${compressor.result.string}\n`;
-		if(compressor.result.base)
-			compressor.field.value+=`Base:        ${compressor.result.base}\n`;
-		if(compressor.result.delimiter)
-			compressor.field.value+=`Delimiter:   ${compressor.result.delimiter}\n`;
-		compressor.field.value+=`Bytes:       ${general.count(compressor.result.string)}`;
-		general.resize(compressor.field);
-		compressor.buttons.copy.parentNode.classList.remove(`dn`);
-		if(compressor.permutations.enabled)
-			compressor.buttons.reset.addEventListener(`animationiteration`,()=>compressor.buttons.reset.classList.remove(`spin`),{capture:false,once:true});
+		compressor.fields.original.nodeValue=original;
+		compressor.fields.permutation.nodeValue=compressor.result.permutation?JSON.stringify(compressor.result.permutation).replace(array?quotes:``,array?`$1$2$2`:``):``;
+		compressor.fields.size.nodeValue=general.count(original);
+		compressor.fields.compressed.nodeValue=compressor.result.string;
+		compressor.fields.base.nodeValue=compressor.result.base||``;
+		compressor.fields.delimiter.nodeValue=compressor.result.delimiter||``;
+		compressor.fields.bytes.nodeValue=general.count(compressor.result.string);
+		compressor.results.classList.remove(`dn`);
 	},
 	weigh(obj){
 		obj.weight=general.count(obj.string)-` \n`.includes(obj.delimiter)-` \n${compressor.golfables}`.includes(obj.delimiter)-(obj.base<17||obj.base===32);
@@ -474,9 +488,9 @@ keyboard={
 		if(event.target.dataset.character){
 			interpreter.fields.code.focus();
 			d.execCommand(`insertText`,false,event.target.dataset.character);
-			interpreter.update();
 			if(event.currentTarget===keyboard.list)
 				event.target.focus();
+			else interpreter.fields.code.blur();
 		}
 	},
 	toggle(){
@@ -995,7 +1009,7 @@ projects={
 		let key=projects.fields.name.value.trim();
 		if(key&&interpreter.fields.code.value){
 			let 	url=projects.fields.url.value.trim(),
-				compress=compressor.field.readOnly?compressor.original:compressor.field.value.trim(),
+				compress=compressor.fields.input.value.trim(),
 				link;
 			if(projects.data[key])
 				if(!confirm(`You already have a project saved with the name "${key}"; would you like to overwrite it with your current project?`))
@@ -1026,7 +1040,7 @@ projects={
 				projects.data[key].explanation=general.encode(interpreter.fields.explanation.value);
 			if(compressor.permutations.enabled)
 				projects.data[key].permutations=1;
-			if(compressor)
+			if(compress)
 				projects.data[key].compressor=compress;
 			l.setItem(projects.storage,JSON.stringify(projects.data));
 			if(!link)
@@ -1065,8 +1079,8 @@ projects={
 		if(project.permutations)
 			compressor.buttons.permute.dispatchEvent(general.events.click);
 		if(project.compressor){
-			compressor.field.value=general.decode(project.compressor);
-			general.resize(compressor.field);
+			compressor.fields.input.value=general.decode(project.compressor);
+			general.resize(compressor.fields.input);
 		}
 		projects.fields.name.value=key;
 		if(project.url)
@@ -1100,8 +1114,8 @@ general={
 	mdi:{
 		"alert":`M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z`,
 		"arrow-right":`M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z`,
-		"autorenew":`M12,6V9L16,5L12,1V4A8,8 0 0,0 4,12C4,13.57 4.46,15.03 5.24,16.26L6.7,14.8C6.25,13.97 6,13 6,12A6,6 0 0,1 12,6M18.76,7.74L17.3,9.2C17.74,10.04 18,11 18,12A6,6 0 0,1 12,18V15L8,19L12,23V20A8,8 0 0,0 20,12C20,10.43 19.54,8.97 18.76,7.74Z`,
 		"book-open-variant":`M21,5C19.89,4.65 18.67,4.5 17.5,4.5C15.55,4.5 13.45,4.9 12,6C10.55,4.9 8.45,4.5 6.5,4.5C4.55,4.5 2.45,4.9 1,6V20.65C1,20.9 1.25,21.15 1.5,21.15C1.6,21.15 1.65,21.1 1.75,21.1C3.1,20.45 5.05,20 6.5,20C8.45,20 10.55,20.4 12,21.5C13.35,20.65 15.8,20 17.5,20C19.15,20 20.85,20.3 22.25,21.05C22.35,21.1 22.4,21.1 22.5,21.1C22.75,21.1 23,20.85 23,20.6V6C22.4,5.55 21.75,5.25 21,5M21,18.5C19.9,18.15 18.7,18 17.5,18C15.8,18 13.35,18.65 12,19.5V8C13.35,7.15 15.8,6.5 17.5,6.5C18.7,6.5 19.9,6.65 21,7V18.5Z`,
+		"cached":`M19,8L15,12H18A6,6 0 0,1 12,18C11,18 10.03,17.75 9.2,17.3L7.74,18.76C8.97,19.54 10.43,20 12,20A8,8 0 0,0 20,12H23M6,12A6,6 0 0,1 12,6C13,6 13.97,6.25 14.8,6.7L16.26,5.24C15.03,4.46 13.57,4 12,4A8,8 0 0,0 4,12H1L5,16L9,12`,
 		"check":`M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z`,
 		"check-box-outline":`M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,5V19H5V5H19M10,17L6,13L7.41,11.58L10,14.17L16.59,7.58L18,9`,
 		"checkbox-blank-outline":`M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z`,
@@ -1113,7 +1127,7 @@ general={
 		"download":`M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z`,
 		"drag-vertical":`M9,3H11V5H9V3M13,3H15V5H13V3M9,7H11V9H9V7M13,7H15V9H13V7M9,11H11V13H9V11M13,11H15V13H13V11M9,15H11V17H9V15M13,15H15V17H13V15M9,19H11V21H9V19M13,19H15V21H13V19Z`,
 		"file-document-edit":`M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H10V20.09L12.09,18H6V16H14.09L16.09,14H6V12H18.09L20,10.09V8L14,2H6M13,3.5L18.5,9H13V3.5M20.15,13C20,13 19.86,13.05 19.75,13.16L18.73,14.18L20.82,16.26L21.84,15.25C22.05,15.03 22.05,14.67 21.84,14.46L20.54,13.16C20.43,13.05 20.29,13 20.15,13M18.14,14.77L12,20.92V23H14.08L20.23,16.85L18.14,14.77Z`,
-		"flag":`M14.4,6L14,4H5V21H7V14H12.6L13,16H20V6H14.4Z`,
+		"format-indent-increase":`M11,13H21V11H11M11,9H21V7H11M3,3V5H21V3M11,17H21V15H11M3,8V16L7,12M3,21H21V19H3V21Z`,
 		"forum":`M17,12V3A1,1 0 0,0 16,2H3A1,1 0 0,0 2,3V17L6,13H16A1,1 0 0,0 17,12M21,6H19V15H6V17A1,1 0 0,0 7,18H18L22,22V7A1,1 0 0,0 21,6Z`,
 		"golf":`M19.5,18A1.5,1.5 0 0,1 21,19.5A1.5,1.5 0 0,1 19.5,21A1.5,1.5 0 0,1 18,19.5A1.5,1.5 0 0,1 19.5,18M17,5.92L11,9V18.03C13.84,18.19 16,19 16,20C16,21.1 13.31,22 10,22C6.69,22 4,21.1 4,20C4,19.26 5.21,18.62 7,18.27V20H9V2L17,5.92Z`,
 		"github-circle":`M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z`,
@@ -1130,8 +1144,6 @@ general={
 		"play-circle":`M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z`,
 		"redo":`M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z`,
 		"shuffle":`M14.83,13.41L13.42,14.82L16.55,17.95L14.5,20H20V14.5L17.96,16.54L14.83,13.41M14.5,4L16.54,6.04L4,18.59L5.41,20L17.96,7.46L20,9.5V4M10.59,9.17L5.41,4L4,5.41L9.17,10.58L10.59,9.17Z`,
-		"shuffle-disabled":`M16,4.5V7H5V9H16V11.5L19.5,8M16,12.5V15H5V17H16V19.5L19.5,16`,
-		"text":`M21,6V8H3V6H21M3,18H12V16H3V18M3,13H21V11H3V13Z`,
 		"undo":`M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z`,
 		"upload":`M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z`
 	},
@@ -1246,7 +1258,9 @@ general={
 	keys(event){
 		if(event.keyCode==13)
 			if(event.ctrlKey)
-				interpreter.button.dispatchEvent(general.events.click);
+				if(event.target!==compressor.fields.input)
+					interpreter.button.dispatchEvent(general.events.click);
+				else compressor.buttons.compress.dispatchEvent(general.events.click);
 			else if(event.target===projects.fields.name||event.target===projects.fields.url)
 				projects.buttons.save.dispatchEvent(general.events.click);
 	},
@@ -1275,8 +1289,9 @@ general={
 		i(`copy-explanation`).addEventListener(`click`,general.copy);
 		compressor.buttons.compress.addEventListener(`click`,compressor.init);
 		compressor.buttons.permute.addEventListener(`click`,compressor.permutations.toggle);
+		compressor.fields.input.addEventListener(`input`,compressor.test);
+		compressor.buttons.insert.addEventListener(`click`,compressor.insert);
 		compressor.buttons.copy.addEventListener(`click`,general.copy);
-		compressor.buttons.reset.addEventListener(`click`,compressor.reset);
 		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle);
 		keyboard.list.addEventListener(`click`,keyboard.insert);
 		q(`#docs>h2`).addEventListener(`click`,docs.toggle);
@@ -1300,7 +1315,7 @@ general={
 			general.resize(interpreter.fields.input);
 			general.resize(interpreter.fields.output);
 			general.resize(interpreter.fields.explanation);
-			general.resize(compressor.field);
+			general.resize(compressor.fields.input);
 		}else if(target!==general.clipboard&&target.constructor===HTMLTextAreaElement){
 			general.clipboard.value=target.value;
 			target.style.height=2+general.clipboard.scrollHeight+`px`;

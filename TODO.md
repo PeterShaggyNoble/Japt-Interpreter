@@ -5,20 +5,17 @@ The following lists are in no particular order other than what was most likely t
 
 ## GENERAL
 - [ ] Find out if others are having caching issues with `v.1.4.6` and remove date versioning of CDN files if not.
-- [x] Move sidebar tabs to a new bottom bar when window width is below `600px`(?) and increase padding of `main` above that to properly accommodate the tabs.
-- [x] Easter Egg: Change `--foreground` of dark theme and `--background` of light theme to `#e9e7e5`.
-- [x] Change colours of tooltips.
+- [ ] When a field has focus but no selection, allow Ctrl+C to copy its entire contents.
 - [ ] Create Slack workspace.
 - [ ] Design a simple Japt logo & icons.
 - [ ] Create a web application for Android devices.
-- [ ] Split `main` into collapsible `section`s with headings for the interpreter, compressor & additional, future tools.
-- [x] Wrap each field in a container to allow them to be individually collapsed.
 - [ ] Fix CSS media query for disabling tooltips on touchscreens (S9). Or just replace custom tooltips with standard `title` attributes & tags.
 - [ ] Add the ability to prevent programmes from auto running and save setting to `localStorage`.
 - [ ] Add pop-up notifications for confirmation & error messages?
 - [ ] Investigate the viability of an offline version.
 
 ## HEADER
+- [x] Reduce `height`.
 - [ ] Change the style of or animate the `play` icon while programme is running.
 - [ ] Pick an alternative icon for copying Markdown (see: https://materialdesignicons.com/ or https://petershaggynoble.github.io/MDI-Sandbox/).
 - [ ] Change icon order to be: copy link, undo, run, redo, copy Markdown.
@@ -26,9 +23,9 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [ ] Remove `min-height` from code & input fields?
-- [ ] Replace checkbox for output caching with `cached` icon (or similar).
-- [ ] Reduce the `opacity` of the icon when caching is disabled.
+- [x] Remove `min-height` from code & input fields.
+- [x] Replace checkbox for output caching with `cached` icon (or similar).
+- [x] Reduce the `opacity` of the icon when caching is disabled.
 - [ ] Add `information` icon to open the documentation on flags.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
@@ -38,19 +35,19 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add clipping path to tab.
 
 ## COMPRESSOR
-- [x] Update byte counts in results to factor in multi-byte characters.
-- [ ] Separate output from the `textarea` and restyle it.
+- [x] Separate output from the `textarea` and restyle it.
+- [x] Add support for multi-line strings.
+- [x] Add the ability to insert the compressed string directly into code.
+- [x] Reduce the `opacity` of the icon when permutations are disabled.
+- [x] Override Ctrl+Enter when compressor field has focus.
+- [x] Disable and reduce the `opacity` of the `play` icon while input is invalid.
 - [ ] Add byte counter above the `textarea`, similar to the code's.
-- [ ] Disable and reduce the `opacity` of the `play` icon while input is invalid.
-- [ ] Replace icon for permutations with `shuffle-variant`.
-- [ ] Reduce the `opacity` of the icon when permutations are disabled.
+- [ ] Replace icon for permutations with `shuffle-variant`?
 - [ ] Add support for arrays of strings of equal length.
 - [ ] Add `information` icon to open the compressor's documentation.
 
 ## DOCUMENTATION
-- [ ] Add a `CONTRIBUTING.md` file.
 - [ ] Figure out *exactly* what `F.b()` does(!) and add it to `functions.json`.
-- [x] Include method names when searching.
 - [ ] Deemphasise, in some way, methods that are not supported in the currently selected version of Japt and remove highlighting.
 - [ ] Collapse the content below each heading in `.html` docs.
 - [ ] Add "alias" (array) & "summary" (string) keys to all method JSON files.
@@ -62,7 +59,7 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Decide whether or not to close documentation after clicking a character to insert.
 
 ## PROJECTS
-- [ ] Always show the sidebar when the window width is greater than `1200px`(?).
+- [ ] Always show the sidebar when the window width is greater than `1200px`(?)?
 - [ ] Redesign projects list to allow the addition of icons to:
   - [ ] Copy link
   - [ ] Copy Markdown
@@ -77,6 +74,7 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add a "scratchpad" field for writing notes, keeping copies of WIP programmes, etc.
 
 ## GITHUB REPO
+- [ ] Add a `CONTRIBUTING.md` file.
 - [ ] Create issue labels.
 - [ ] Finish writing `README.md`.
 
@@ -85,6 +83,10 @@ The following lists are in no particular order other than what was most likely t
 <summary>**COMPLETED**</summary>
 	
 ### GENERAL
+- [x] Wrap each field in a container to allow them to be individually collapsed.
+- [x] Change colours of tooltips.
+- [x] Easter Egg: Change `--foreground` of dark theme and `--background` of light theme to `#e9e7e5`.
+- [x] Move sidebar tabs to a new bottom bar when window width is below `600px`(?) and increase padding of `main` above that to properly accommodate the tabs.
 - [x] Hide tooltips for `:active` icons.
 - [x] Add `notranslate` `meta` tag for Google.
 
@@ -94,7 +96,11 @@ The following lists are in no particular order other than what was most likely t
 ### INTERPRETER
 - [x] Move flags field from header.
 
+### COMPRESSOR
+- [x] Update byte counts in results to factor in multi-byte characters.
+
 ### DOCUMENTATION
+- [x] Include method names when searching.
 - [x] Don't include object names in method names. Instead, wrap the first character in each section's title in `<code>` tags.
 - [x] Highlight which methods are and are not supported in the currently selected version of Japt.
 - [x] Change the colour used in `text-decoration` for links.
