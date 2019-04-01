@@ -15,7 +15,6 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Investigate the viability of an offline version.
 
 ## HEADER
-- [x] Reduce `height`.
 - [ ] Change the style of or animate the `play` icon while programme is running.
 - [ ] Pick an alternative icon for copying Markdown (see: https://materialdesignicons.com/ or https://petershaggynoble.github.io/MDI-Sandbox/).
 - [ ] Change icon order to be: copy link, undo, run, redo, copy Markdown.
@@ -23,9 +22,6 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [x] Remove `min-height` from code & input fields.
-- [x] Replace checkbox for output caching with `cached` icon (or similar).
-- [x] Reduce the `opacity` of the icon when caching is disabled.
 - [ ] Add `information` icon to open the documentation on flags.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
@@ -35,12 +31,6 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add clipping path to tab.
 
 ## COMPRESSOR
-- [x] Separate output from the `textarea` and restyle it.
-- [x] Add support for multi-line strings.
-- [x] Add the ability to insert the compressed string directly into code.
-- [x] Reduce the `opacity` of the icon when permutations are disabled.
-- [x] Override Ctrl+Enter when compressor field has focus.
-- [x] Disable and reduce the `opacity` of the `play` icon while input is invalid.
 - [ ] Add byte counter above the `textarea`, similar to the code's.
 - [ ] Replace icon for permutations with `shuffle-variant`?
 - [ ] Add support for arrays of strings of equal length.
@@ -91,12 +81,22 @@ The following lists are in no particular order other than what was most likely t
 - [x] Add `notranslate` `meta` tag for Google.
 
 ### HEADER
+- [x] Reduce `height`.
 - [x] Move `undo` & `redo` to header.
 
 ### INTERPRETER
+- [x] Reduce the `opacity` of the icon when caching is disabled.
+- [x] Replace checkbox for output caching with `cached` icon (or similar).
+- [x] Remove `min-height` from code & input fields.
 - [x] Move flags field from header.
 
 ### COMPRESSOR
+- [x] Disable and reduce the `opacity` of the `play` icon while input is invalid.
+- [x] Override Ctrl+Enter when compressor field has focus.
+- [x] Reduce the `opacity` of the icon when permutations are disabled.
+- [x] Add the ability to insert the compressed string directly into code.
+- [x] Add support for multi-line strings.
+- [x] Separate output from the `textarea` and restyle it.
 - [x] Update byte counts in results to factor in multi-byte characters.
 
 ### DOCUMENTATION

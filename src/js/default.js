@@ -1041,7 +1041,7 @@ projects={
 			if(compressor.permutations.enabled)
 				projects.data[key].permutations=1;
 			if(compress)
-				projects.data[key].compressor=compress;
+				projects.data[key].compressor=general.encode(compress);
 			l.setItem(projects.storage,JSON.stringify(projects.data));
 			if(!link)
 				general.icons(projects.add(key));
@@ -1080,7 +1080,7 @@ projects={
 			compressor.buttons.permute.dispatchEvent(general.events.click);
 		if(project.compressor){
 			compressor.fields.input.value=general.decode(project.compressor);
-			general.resize(compressor.fields.input);
+			compressor.fields.input.dispatchEvent(general.events.input);
 		}
 		projects.fields.name.value=key;
 		if(project.url)
@@ -1109,7 +1109,9 @@ general={
 	buttons:{
 		theme:i(`theme`)
 	},
-	clipboard:i(`clipboard`),
+	fields:{
+		clipboard:i(`clipboard`)
+	},
 	meta:q(`meta[name=theme-color]`),
 	mdi:{
 		"alert":`M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z`,
@@ -1148,7 +1150,8 @@ general={
 		"upload":`M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z`
 	},
 	events:{
-		click:new Event(`click`)
+		click:new Event(`click`),
+		input:new Event(`input`)
 	},
 	init(){
 		general.theme();
@@ -1199,8 +1202,8 @@ general={
 			text=interpreter.url()+`#`+target;
 		if(target===`explanation`)
 			text=text.replace(/^/gm,`    `);
-		general.clipboard.value=text;
-		general.clipboard.select();
+		general.fields.clipboard.value=text;
+		general.fields.clipboard.select();
 		d.execCommand(`copy`,false);
 		general.confirm(event.target);
 	},
@@ -1316,9 +1319,9 @@ general={
 			general.resize(interpreter.fields.output);
 			general.resize(interpreter.fields.explanation);
 			general.resize(compressor.fields.input);
-		}else if(target!==general.clipboard&&target.constructor===HTMLTextAreaElement){
-			general.clipboard.value=target.value;
-			target.style.height=2+general.clipboard.scrollHeight+`px`;
+		}else if(target!==general.fields.clipboard&&target.constructor===HTMLTextAreaElement){
+			general.fields.clipboard.value=target.value;
+			target.style.height=2+general.fields.clipboard.scrollHeight+`px`;
 		}
 	},
 	theme(loaded=false){
