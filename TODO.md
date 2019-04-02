@@ -22,7 +22,8 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [ ] Add `information` icon to open the documentation on flags.
+- [x] Add `information` icon to open the documentation on flags.
+- [ ] Replace code's `textarea` with a `contenteditable` element.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
 ## KEYBOARD
@@ -31,10 +32,10 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add clipping path to tab.
 
 ## COMPRESSOR
+- [x] Add `information` icon to open the compressor's documentation.
 - [ ] Add byte counter above the `textarea`, similar to the code's.
 - [ ] Replace icon for permutations with `shuffle-variant`?
 - [ ] Add support for arrays of strings of equal length.
-- [ ] Add `information` icon to open the compressor's documentation.
 
 ## DOCUMENTATION
 - [ ] Figure out *exactly* what `F.b()` does(!) and add it to `functions.json`.
@@ -61,7 +62,7 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add clipping path to tab.
 
 ## OTHER TOOLS
-- [ ] Add a "scratchpad" field for writing notes, keeping copies of WIP programmes, etc.
+- [x] Add a "scratchpad" field for writing notes, keeping copies of WIP programmes, etc.
 
 ## GITHUB REPO
 - [ ] Add a `CONTRIBUTING.md` file.

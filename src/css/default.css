@@ -330,6 +330,7 @@ body.light #tools::after{
 	font-size:16px;
 	line-height:20px;
 	padding:4px 4px 4px 99px;
+	white-space:pre-wrap;
 }
 #results>pre:first-of-type{
 	border-radius:2px 2px 0 0;

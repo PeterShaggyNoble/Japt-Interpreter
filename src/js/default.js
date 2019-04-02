@@ -654,6 +654,8 @@ docs={
 	},
 	change(event){
 		if(event.target.dataset.section){
+			if(w.getComputedStyle(docs.sidebar).getPropertyValue(`transform`)!==`none`)
+				docs.toggle();
 			docs.current.article.classList.add(`dn`);
 			docs.current.article=i(event.target.dataset.section);
 			docs.current.article.classList.remove(`dn`);
@@ -1042,6 +1044,8 @@ projects={
 				projects.data[key].permutations=1;
 			if(compress)
 				projects.data[key].compressor=general.encode(compress);
+			if(general.fields.notes.value)
+				projects.data[key].explanation=general.encode(general.fields.notes.value);
 			l.setItem(projects.storage,JSON.stringify(projects.data));
 			if(!link)
 				general.icons(projects.add(key));
@@ -1082,6 +1086,10 @@ projects={
 			compressor.fields.input.value=general.decode(project.compressor);
 			compressor.fields.input.dispatchEvent(general.events.input);
 		}
+		if(project.notes){
+			general.fields.notes.value=general.decode(project.notes);
+			general.resize(general.fields.notes);
+		}
 		projects.fields.name.value=key;
 		if(project.url)
 			projects.fields.url.value=project.url;
@@ -1110,7 +1118,8 @@ general={
 		theme:i(`theme`)
 	},
 	fields:{
-		clipboard:i(`clipboard`)
+		clipboard:i(`clipboard`),
+		notes:i(`notes`)
 	},
 	meta:q(`meta[name=theme-color]`),
 	mdi:{
@@ -1196,6 +1205,8 @@ general={
 			text=compressor.result.string;
 		else if(interpreter.fields[target])
 			text=interpreter.fields[target].value;
+		else if(general.fields[target])
+			text=general.fields[target].value;
 		else if(interpreter[target])
 			text=interpreter[target]();
 		else if(target.startsWith(`docs-`))
@@ -1233,7 +1244,7 @@ general={
 	icons(parent){
 		let icon,path,svg;
 		for(svg of parent.querySelectorAll(`svg[data-mdi]`)){
-			if(!svg.getAttribute(`viewBox`))
+			if(!svg.hasAttribute(`viewBox`))
 				svg.setAttribute(`viewBox`,`0 0 24 24`);
 			for(icon of svg.dataset.mdi.split(`,`)){
 				if(path)
@@ -1272,6 +1283,7 @@ general={
 		version.list.addEventListener(`click`,version.change);
 		general.buttons.theme.addEventListener(`click`,general.theme);
 		i(`main`).addEventListener(`click`,general.collapse);
+		i(`main`).addEventListener(`click`,docs.change);
 		i(`main`).addEventListener(`input`,general.resize,true);
 		interpreter.fields.flags.addEventListener(`focus`,interpreter.flags);
 		interpreter.fields.flags.addEventListener(`blur`,interpreter.flags);
@@ -1295,6 +1307,7 @@ general={
 		compressor.fields.input.addEventListener(`input`,compressor.test);
 		compressor.buttons.insert.addEventListener(`click`,compressor.insert);
 		compressor.buttons.copy.addEventListener(`click`,general.copy);
+		i(`copy-notes`).addEventListener(`click`,general.copy);
 		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle);
 		keyboard.list.addEventListener(`click`,keyboard.insert);
 		q(`#docs>h2`).addEventListener(`click`,docs.toggle);
@@ -1319,6 +1332,7 @@ general={
 			general.resize(interpreter.fields.output);
 			general.resize(interpreter.fields.explanation);
 			general.resize(compressor.fields.input);
+			general.resize(general.fields.notes);
 		}else if(target!==general.fields.clipboard&&target.constructor===HTMLTextAreaElement){
 			general.fields.clipboard.value=target.value;
 			target.style.height=2+general.fields.clipboard.scrollHeight+`px`;
