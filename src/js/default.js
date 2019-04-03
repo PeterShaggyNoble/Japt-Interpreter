@@ -136,7 +136,10 @@ interpreter={
 		timer:i(`timer`),
 		transpiled:i(`transpiled`)
 	},
-	button:i(`run`),
+	buttons:{
+		golf:i(`golf`),
+		run:i(`run`)
+	},
 	cache:{
 		enabled:false,
 		storage:`japt-cache`,
@@ -219,9 +222,9 @@ interpreter={
 			}else interpreter.regex.lastIndex=match.index+1;
 		}
 		if(code!==golfed){
+			interpreter.fields.code.focus();
 			interpreter.fields.code.select();
 			d.execCommand(`insertText`,false,golfed);
-			interpreter.fields.code.selectionStart=interpreter.fields.code.selectionEnd=golfed.length;
 		}else interpreter.fields.code.focus();
 		interpreter.regex.lastIndex=0;
 	},
@@ -239,6 +242,8 @@ interpreter={
 	reset(){
 		b.classList.remove(`cw`);
 		interpreter.running=false;
+		general.resize(interpreter.fields.output);
+		interpreter.buttons.run.classList.remove(`running`);
 	},
 	run(){
 		if(!interpreter.running){
@@ -258,7 +263,8 @@ interpreter={
 				interpreter.running=true;
 				b.classList.add(`cw`);
 				interpreter.fields.timer.firstChild.nodeValue=``;
-				Japt.run(
+				interpreter.buttons.run.classList.add(`running`);
+				setTimeout(Japt.run,1,
 					code,
 					input+`\n`+flags,
 					false,
@@ -268,7 +274,6 @@ interpreter={
 						interpreter.fields.timer.firstChild.nodeValue=(timer/1e3).toFixed(3)+` seconds`;
 						if(Japt.implicit_output)
 							Japt.output(output);
-						general.resize(interpreter.fields.output);
 						interpreter.reset();
 						if(interpreter.cache.enabled&&timer>100)
 							interpreter.cache.add(code,flags,input,output,timer);
@@ -311,18 +316,10 @@ compressor={
 	shortcuts:`ÎÍ²¬¤ÔÕ`,
 	results:i(`results`),
 	fields:{
-		input:i(`compressor`),
-		original:i(`original`).firstChild,
-		permutation:i(`permutation`).firstChild,
-		size:i(`size`).firstChild,
-		compressed:i(`compressed`).firstChild,
-		base:i(`base`).firstChild,
-		delimiter:i(`delimiter`).firstChild,
-		bytes:i(`bytes`).firstChild
+		input:i(`compressor`)
 	},
 	buttons:{
 		compress:i(`compress`),
-		copy:i(`copy-compressed`),
 		insert:i(`insert`),
 		permute:i(`permute`)
 	},
@@ -350,20 +347,17 @@ compressor={
 		}
 	},
 	init(){
-		compressor.value=compressor.fields.input.value.trim();
-		if(compressor.value){
-			compressor.original=compressor.value;
-			compressor.run();
-		}
+		for(let field of results.querySelectorAll(`pre`))
+			compressor.fields[field.id]=field.appendChild(t(``));
 	},
 	get(array){
 		return array.map(compressor.weigh).sort((one,two)=>(one.weight>two.weight)-(one.weight<two.weight))[0];
 	},
-	insert(event){
+	insert(){
 		interpreter.fields.code.focus();
 		d.execCommand(`insertText`,false,compressor.result.string);
 		interpreter.fields.code.blur();
-		general.confirm(event.target);
+		general.confirm(compressor.buttons.insert);
 	},
 	map(array,base){
 		if(array[0].constructor===Array)
@@ -386,31 +380,35 @@ compressor={
 		});
 	},
 	run(){
-		try{
-			let array=compressor.value.startsWith(`["`)&&compressor.value.endsWith(`"]`);
-			if(array)
-				compressor.value=compressor.value.replace(/([^\\["])",?"/g,"$1`,`").replace(/\["/,"[`").replace(/"\]/,"`]");
-			else if(compressor.value.startsWith(`"`)&&compressor.value.endsWith(`"`))
-				compressor.value=compressor.value.replace(/^"|"$/g,"`");
-			compressor.value=eval(compressor.value);
-			if(compressor.value.constructor===String)
-				compressor.result={string:`\`${shoco.c(compressor.value).replace(/(?=`)/g,`\\`)}\``};
-			else if(compressor.value.constructor===Array){
-				if(compressor.value.every(elm=>elm.constructor===String)){
-					if(compressor.permutations.enabled)
-						compressor.permutations.get();
-					compressor.result=compressor.map(compressor.value);
-				}else if(compressor.value.every(elm=>elm.constructor===Number)){
-					if(compressor.permutations.enabled)
-						compressor.permutations.get();
-					compressor.result=compressor.bases.map(base=>compressor.map(compressor.value,base));
-					compressor.result=compressor.result.map(compressor.get);
+		compressor.value=compressor.fields.input.value.trim();
+		if(compressor.value){
+			compressor.original=compressor.value;
+			try{
+				let array=compressor.value.startsWith(`["`);
+				if(array)
+					compressor.value=compressor.value.replace(/([^\\["])",?"/g,"$1`,`").replace(/\["/,"[`").replace(/"\]/,"`]");
+				else if(compressor.value.startsWith(`"`))
+					compressor.value=compressor.value.replace(/^"|"$/g,"`");
+				compressor.value=eval(compressor.value);
+				if(compressor.value.constructor===String)
+					compressor.result={string:`\`${shoco.c(compressor.value).replace(/(?=`)/g,`\\`)}\``};
+				else if(compressor.value.constructor===Array){
+					if(compressor.value.every(elm=>elm.constructor===String)){
+						if(compressor.permutations.enabled)
+							compressor.permutations.get();
+						compressor.result=compressor.map(compressor.value);
+					}else if(compressor.value.every(elm=>elm.constructor===Number)){
+						if(compressor.permutations.enabled)
+							compressor.permutations.get();
+						compressor.result=compressor.bases.map(base=>compressor.map(compressor.value,base));
+						compressor.result=compressor.result.map(compressor.get);
+					}
+					compressor.result=compressor.get(compressor.result);
 				}
-				compressor.result=compressor.get(compressor.result);
+				compressor.update(array);
+			}catch(err){
+				console.error(err);
 			}
-			compressor.update(array);
-		}catch(err){
-			console.error(err);
 		}
 	},
 	test(){
@@ -805,6 +803,7 @@ docs={
 	run(event){
 		let dataset=event.target.dataset;
 		if(dataset.code){
+			interpreter.fields.code.focus();
 			interpreter.fields.code.select();
 			d.execCommand(`insertText`,false,general.decode(dataset.code));
 			interpreter.run();
@@ -1115,6 +1114,8 @@ projects={
 },
 general={
 	buttons:{
+		link:i(`copy-link`),
+		post:i(`copy-post`),
 		theme:i(`theme`)
 	},
 	fields:{
@@ -1145,6 +1146,7 @@ general={
 		"invert-colors":`M12,19.58V19.58C10.4,19.58 8.89,18.96 7.76,17.83C6.62,16.69 6,15.19 6,13.58C6,12 6.62,10.47 7.76,9.34L12,5.1M17.66,7.93L12,2.27V2.27L6.34,7.93C3.22,11.05 3.22,16.12 6.34,19.24C7.9,20.8 9.95,21.58 12,21.58C14.05,21.58 16.1,20.8 17.66,19.24C20.78,16.12 20.78,11.05 17.66,7.93Z`,
 		"keyboard":`M19,10H17V8H19M19,13H17V11H19M16,10H14V8H16M16,13H14V11H16M16,17H8V15H16M7,10H5V8H7M7,13H5V11H7M8,11H10V13H8M8,8H10V10H8M11,11H13V13H11M11,8H13V10H11M20,5H4C2.89,5 2,5.89 2,7V17A2,2 0 0,0 4,19H20A2,2 0 0,0 22,17V7C22,5.89 21.1,5 20,5Z`,
 		"launch":`M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z`,
+		"link":`M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17A5,5 0 0,0 22,12A5,5 0 0,0 17,7Z`,
 		"link-variant":`M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z`,
 		"loading":`M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z`,
 		"magnify":`M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z`,
@@ -1174,15 +1176,46 @@ general={
 			general.js(file).then(()=>{
 				Japt.stdout=interpreter.fields.output;
 				Japt.stderr=interpreter.fields.error;
+				general.listeners();
+				compressor.init();
 				if(interpreter.fields.code.value){
 					interpreter.update();
 					interpreter.run();
 				}
-				general.listeners();
 				docs.init().catch(err=>console.error(`Failed to load documentation:`,err));
 				projects.init();
 			}).catch(err=>console.error(`Failed to load interpreter:`,err));
 		}).catch(err=>console.error(`Failed to load schoco:`,err));
+	},
+	click(event){
+		let 	target=event.target,
+			dataset=target.dataset;
+		if(event.target.constructor===HTMLHeadingElement)
+			general.collapse(event);
+		else if(dataset.copy)
+			general.copy(event);
+		else if(dataset.section)
+			docs.change(event);
+		else switch(target){
+			case interpreter.buttons.golf:
+				interpreter.golf();
+				break;
+			case interpreter.cache.buttons.toggle:
+				interpreter.cache.toggle();
+				break;
+			case interpreter.cache.buttons.empty:
+				interpreter.cache.empty();
+				break;
+			case compressor.buttons.compress:
+				compressor.run();
+				break;
+			case compressor.buttons.permute:
+				compressor.permutations.toggle();
+				break;
+			case compressor.buttons.insert:
+				compressor.insert();
+				break;
+		}
 	},
 	close(event,fn){
 		if(event.keyCode===27){
@@ -1191,32 +1224,43 @@ general={
 		}
 	},
 	collapse(event){
-		if(event.target.constructor===HTMLHeadingElement)
-			event.target.parentNode.classList.toggle(`collapsed`);
+		event.target.parentNode.classList.toggle(`collapsed`);
 	},
 	confirm(button){
 		button.classList.add(`confirm`);
 		button.addEventListener(`transitionend`,general.unconfirm,{capture:false,once:true});
 	},
 	copy(event){
-		let 	target=event.target.dataset.copy,
-			text;
-		if(target===`compressor`)
-			text=compressor.result.string;
-		else if(interpreter.fields[target])
-			text=interpreter.fields[target].value;
-		else if(general.fields[target])
-			text=general.fields[target].value;
-		else if(interpreter[target])
-			text=interpreter[target]();
-		else if(target.startsWith(`docs-`))
-			text=interpreter.url()+`#`+target;
-		if(target===`explanation`)
-			text=text.replace(/^/gm,`    `);
-		general.fields.clipboard.value=text;
+		let 	svg=event.target.constructor===SVGSVGElement,
+			field,text;
+		if(svg){
+			let target=event.target.dataset.copy;
+			if(target===`compressor`)
+				text=compressor.result.string;
+			else if(interpreter.fields[target]){
+				field=interpreter.fields[target];
+				text=field.value;
+			}else if(general.fields[target]){
+				field=general.fields[target];
+				text=field.value;
+			}else if(interpreter[target])
+				text=interpreter[target]();
+			else if(target.startsWith(`docs-`))
+				text=interpreter.url()+`#`+target;
+			if(target===`explanation`)
+				text=text.replace(/^/gm,`    `);
+		}else{
+			field=event.target;
+			text=field.value;
+		}
+		general.fields.clipboard.value=text||``;
+		general.fields.clipboard.focus();
 		general.fields.clipboard.select();
 		d.execCommand(`copy`,false);
-		general.confirm(event.target);
+		if(field)
+			field.focus();
+		if(svg)
+			general.confirm(event.target);
 	},
 	count(code){
 		if(/[^\x00-\xff]/.test(code))
@@ -1259,6 +1303,19 @@ general={
 			svg.removeAttribute(`data-mdi`);
 		}
 	},
+	input(event){
+		let target=event.target;
+		if(target.constructor===HTMLTextAreaElement)
+			general.resize(target);
+		switch(target){
+			case interpreter.fields.code:
+				interpreter.update();
+				break;
+			case compressor.fields.input:
+				compressor.test();
+				break;
+		}
+	},
 	js(file){
 		return new Promise((resolve,reject)=>{
 			let script=e(`script`);
@@ -1270,51 +1327,54 @@ general={
 		});
 	},
 	keys(event){
-		if(event.keyCode==13)
-			if(event.ctrlKey)
-				if(event.target!==compressor.fields.input)
-					interpreter.button.dispatchEvent(general.events.click);
-				else compressor.buttons.compress.dispatchEvent(general.events.click);
-			else if(event.target===projects.fields.name||event.target===projects.fields.url)
-				projects.buttons.save.dispatchEvent(general.events.click);
+		let 	key=event.key,
+			target=event.target;
+		if(event.ctrlKey)
+			switch(key){
+				case`Enter`:
+					if(target!==compressor.fields.input)
+						interpreter.buttons.run.dispatchEvent(general.events.click);
+					else compressor.buttons.compress.dispatchEvent(general.events.click);
+					break;
+				case`c`:
+					if(target.value&&target.selectionStart===target.selectionEnd)
+						general.copy(event);
+					break;
+				case`k`:
+					event.preventDefault();
+					keyboard.toggle();
+					break;
+				case`l`:
+					event.preventDefault();
+					general.buttons.link.dispatchEvent(general.events.click);
+					break;
+				case`m`:
+					general.buttons.post.dispatchEvent(general.events.click);
+					break;
+			}
+		else if(key===`Enter`&&(target===projects.fields.name||target===projects.fields.url))
+			projects.buttons.save.dispatchEvent(general.events.click);
 	},
 	listeners(){
 		b.addEventListener(`keydown`,general.keys);
 		version.list.addEventListener(`click`,version.change);
 		general.buttons.theme.addEventListener(`click`,general.theme);
-		i(`main`).addEventListener(`click`,general.collapse);
-		i(`main`).addEventListener(`click`,docs.change);
-		i(`main`).addEventListener(`input`,general.resize,true);
-		interpreter.fields.flags.addEventListener(`focus`,interpreter.flags);
-		interpreter.fields.flags.addEventListener(`blur`,interpreter.flags);
-		interpreter.button.addEventListener(`click`,interpreter.run);
-		i(`copy-link`).addEventListener(`click`,general.copy);
-		i(`copy-post`).addEventListener(`click`,general.copy);
-		i(`copy-flags`).addEventListener(`click`,general.copy);
 		i(`undo`).addEventListener(`click`,general.exec);
 		i(`redo`).addEventListener(`click`,general.exec);
-		i(`golf`).addEventListener(`click`,interpreter.golf);
-		i(`copy-code`).addEventListener(`click`,general.copy);
-		interpreter.fields.code.addEventListener(`input`,interpreter.update);
-		i(`copy-js`).addEventListener(`click`,general.copy);
-		i(`copy-input`).addEventListener(`click`,general.copy);
-		i(`copy-output`).addEventListener(`click`,general.copy);
-		interpreter.cache.buttons.toggle.addEventListener(`click`,interpreter.cache.toggle);
-		interpreter.cache.buttons.empty.addEventListener(`click`,interpreter.cache.empty);
-		i(`copy-explanation`).addEventListener(`click`,general.copy);
-		compressor.buttons.compress.addEventListener(`click`,compressor.init);
-		compressor.buttons.permute.addEventListener(`click`,compressor.permutations.toggle);
-		compressor.fields.input.addEventListener(`input`,compressor.test);
-		compressor.buttons.insert.addEventListener(`click`,compressor.insert);
-		compressor.buttons.copy.addEventListener(`click`,general.copy);
-		i(`copy-notes`).addEventListener(`click`,general.copy);
+		interpreter.buttons.run.addEventListener(`click`,interpreter.run);
+		general.buttons.link.addEventListener(`click`,general.copy);
+		general.buttons.post.addEventListener(`click`,general.copy);
+		i(`main`).addEventListener(`click`,general.click,true);
+		i(`main`).addEventListener(`input`,general.input,true);
+		interpreter.fields.flags.addEventListener(`focus`,interpreter.flags);
+		interpreter.fields.flags.addEventListener(`blur`,interpreter.flags);
 		q(`#keyboard>h2`).addEventListener(`click`,keyboard.toggle);
 		keyboard.list.addEventListener(`click`,keyboard.insert);
 		q(`#docs>h2`).addEventListener(`click`,docs.toggle);
 		docs.sidebar.addEventListener(`click`,docs.change);
 		docs.sidebar.addEventListener(`click`,keyboard.insert);
-		q(`#projects>h2`).addEventListener(`click`,projects.toggle);
 		i(`search`).addEventListener(`click`,docs.search.toggle);
+		q(`#projects>h2`).addEventListener(`click`,projects.toggle);
 		projects.buttons.save.addEventListener(`click`,projects.save);
 		projects.buttons.upload.addEventListener(`click`,projects.upload);
 		projects.buttons.download.addEventListener(`click`,projects.download);
@@ -1323,9 +1383,11 @@ general={
 		i(`footer`).addEventListener(`click`,general.toggle);
 		w.addEventListener(`resize`,general.resize);
 	},
-	resize(event){
-		let target=event.target||event;
-		if(target===w){
+	resize(target){
+		if(target.currentTarget!==w){
+			general.fields.clipboard.value=target.value;
+			target.style.height=2+general.fields.clipboard.scrollHeight+`px`;
+		}else{
 			general.resize(interpreter.fields.code);
 			general.resize(interpreter.fields.transpiled);
 			general.resize(interpreter.fields.input);
@@ -1333,9 +1395,6 @@ general={
 			general.resize(interpreter.fields.explanation);
 			general.resize(compressor.fields.input);
 			general.resize(general.fields.notes);
-		}else if(target!==general.fields.clipboard&&target.constructor===HTMLTextAreaElement){
-			general.fields.clipboard.value=target.value;
-			target.style.height=2+general.fields.clipboard.scrollHeight+`px`;
 		}
 	},
 	theme(loaded=false){

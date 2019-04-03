@@ -5,34 +5,35 @@ The following lists are in no particular order other than what was most likely t
 
 ## GENERAL
 - [ ] Find out if others are having caching issues with `v.1.4.6` and remove date versioning of CDN files if not.
-- [ ] When a field has focus but no selection, allow Ctrl+C to copy its entire contents.
+- [x] When a field has focus but no selection, allow Ctrl+C to copy its entire contents.
+- [x] Ctrl+L copies the link.
+- [x] Ctrl+M copies the Markdown.
 - [ ] Create Slack workspace.
 - [ ] Design a simple Japt logo & icons.
 - [ ] Create a web application for Android devices.
-- [ ] Fix CSS media query for disabling tooltips on touchscreens (S9). Or just replace custom tooltips with standard `title` attributes & tags.
+- [ ] Fix CSS media query for disabling tooltips on touchscreens (S9). (Or just replace custom tooltips with standard `title` attributes & tags?)
 - [ ] Add the ability to prevent programmes from auto running and save setting to `localStorage`.
 - [ ] Add pop-up notifications for confirmation & error messages?
 - [ ] Investigate the viability of an offline version.
 
 ## HEADER
-- [ ] Change the style of or animate the `play` icon while programme is running.
+- [x] Change the style of or animate the `play` icon while a programme is running.
 - [ ] Pick an alternative icon for copying Markdown (see: https://materialdesignicons.com/ or https://petershaggynoble.github.io/MDI-Sandbox/).
 - [ ] Change icon order to be: copy link, undo, run, redo, copy Markdown.
 - [ ] Clip or redraw background `circle`s in `play` icon.
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [x] Add `information` icon to open the documentation on flags.
-- [ ] Replace code's `textarea` with a `contenteditable` element.
+- [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
 ## KEYBOARD
+- [x] Ctrl+K toggles the keyboard.
 - [ ] Come up with a solution for how to proceed after clicking a key on touchscreens (see https://chat.stackexchange.com/transcript/message/49610491#49610491).
 - [ ] Add touch events to allow dragging open or closed.
 - [ ] Add clipping path to tab.
 
 ## COMPRESSOR
-- [x] Add `information` icon to open the compressor's documentation.
 - [ ] Add byte counter above the `textarea`, similar to the code's.
 - [ ] Replace icon for permutations with `shuffle-variant`?
 - [ ] Add support for arrays of strings of equal length.
@@ -61,9 +62,6 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add touch events to allow dragging open or closed.
 - [ ] Add clipping path to tab.
 
-## OTHER TOOLS
-- [x] Add a "scratchpad" field for writing notes, keeping copies of WIP programmes, etc.
-
 ## GITHUB REPO
 - [ ] Add a `CONTRIBUTING.md` file.
 - [ ] Create issue labels.
@@ -86,12 +84,14 @@ The following lists are in no particular order other than what was most likely t
 - [x] Move `undo` & `redo` to header.
 
 ### INTERPRETER
+- [x] Add `information` icon to open the documentation on flags.
 - [x] Reduce the `opacity` of the icon when caching is disabled.
 - [x] Replace checkbox for output caching with `cached` icon (or similar).
 - [x] Remove `min-height` from code & input fields.
 - [x] Move flags field from header.
 
 ### COMPRESSOR
+- [x] Add `information` icon to open the compressor's documentation.
 - [x] Disable and reduce the `opacity` of the `play` icon while input is invalid.
 - [x] Override Ctrl+Enter when compressor field has focus.
 - [x] Reduce the `opacity` of the icon when permutations are disabled.
@@ -108,4 +108,7 @@ The following lists are in no particular order other than what was most likely t
 
 ### PROJECTS
 - [x] Change wording of import & export icons to upload & download.
+
+## OTHER TOOLS
+- [x] Add a "scratchpad" field for writing notes, keeping copies of WIP programmes, etc.
 </details>
