@@ -20,6 +20,8 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
+- [x] Add syntax highlighting for JavaScript.
+- [ ] Try to add syntax highlighting for Japt.
 - [ ] Add header & footer (à la TIO)?
 - [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.

@@ -288,11 +288,14 @@ interpreter={
 			}
 		}
 	},
-	update(){
+	update(loaded=true){
 		let 	code=interpreter.fields.code.value,
-			encoding=`ISO-8859-1`;
-		interpreter.fields.transpiled.value=Japt.transpile(code);
-		general.resize(interpreter.fields.transpiled);
+			encoding=`ISO-8859-1`,
+			transpiled=Japt.transpile(code);
+		interpreter.fields.transpiled.value=transpiled;
+		if(loaded)
+			general.ace.setValue(transpiled,1);
+		else general.resize(interpreter.fields.transpiled);
 		if(/[^\x00-\xff]/.test(code))
 			encoding=`UTF-8`;
 		interpreter.bytes=general.count(code);
@@ -1067,7 +1070,7 @@ projects={
 			interpreter.fields.flags.value=general.decode(project.flags);
 		interpreter.fields.code.value=general.decode(project.code);
 		general.resize(interpreter.fields.code);
-		interpreter.update();
+		interpreter.update(false);
 		if(project.input){
 			interpreter.fields.input.value=general.decode(project.input);
 			general.resize(interpreter.fields.input);
@@ -1179,13 +1182,38 @@ general={
 				general.listeners();
 				compressor.init();
 				if(interpreter.fields.code.value){
-					interpreter.update();
+					interpreter.update(false);
 					interpreter.run();
 				}
 				docs.init().catch(err=>console.error(`Failed to load documentation:`,err));
 				projects.init();
-			}).catch(err=>console.error(`Failed to load interpreter:`,err));
-		}).catch(err=>console.error(`Failed to load schoco:`,err));
+			}).then(()=>{
+				general.js(`https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js`).then(()=>{
+					general.ace=ace.edit(interpreter.fields.transpiled,{
+						behavioursEnabled:false,
+						dragEnabled:false,
+						cursorStyle:`slim`,
+						fontFamily:`Roboto Mono,Lucida Console,Courier New,monospace`,
+						fontSize:16,
+						highlightActiveLine:false,
+						highlightGutterLine:false,
+						highlightSelectedWord:false,
+						maxLines:Infinity,
+						minLines:1,
+						mergeUndoDeltas:false,
+						mode:`ace/mode/javascript`,
+						readOnly:true,
+						selectionStyle:`text`,
+						showPrintMargin:false,
+						tabSize:2,
+						theme:`ace/theme/${b.classList.contains(`light`)?`xcode`:`merbivore_soft`}`,
+						useWorker:false,
+						wrap:true
+					});
+					general.ace.setValue(interpreter.fields.transpiled.value,1);
+				}).catch(err=>console.error(`Failed to load Ace:`,err));
+			}).catch(err=>console.error(`Failed to load Japt:`,err));
+		}).catch(err=>console.error(`Failed to load Shoco:`,err));
 	},
 	click(event){
 		let 	target=event.target,
@@ -1405,8 +1433,10 @@ general={
 		let light=b.classList.contains(`light`);
 		general.meta.content=`#${light?`fff`:`212121`}`;
 		general.buttons.theme.parentNode.dataset.title=`${light?`Dark`:`Light`} Theme`;
-		if(loaded)
+		if(loaded){
+			general.ace.setTheme(`ace/theme/${b.classList.contains(`light`)?`xcode`:`merbivore_soft`}`);
 			l.setItem(`japt-theme`,light?`light`:`dark`);
+		}
 	},
 	toggle(event){
 		if(event.target.dataset.sidebar)
