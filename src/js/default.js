@@ -223,7 +223,7 @@ interpreter={
 		}
 		if(code!==golfed){
 			interpreter.fields.code.focus();
-			interpreter.fields.code.select();
+			d.execCommand(`selectAll`,false);
 			d.execCommand(`insertText`,false,golfed);
 		}else interpreter.fields.code.focus();
 		interpreter.regex.lastIndex=0;
@@ -271,7 +271,7 @@ interpreter={
 					()=>timer=performance.now(),
 					output=>{
 						timer=performance.now()-timer;
-						interpreter.fields.timer.firstChild.nodeValue=(timer/1e3).toFixed(3)+` seconds`;
+						interpreter.fields.timer.firstChild.nodeValue=(timer/1000).toFixed(3)+` seconds`;
 						if(Japt.implicit_output)
 							Japt.output(output);
 						interpreter.reset();
@@ -804,7 +804,7 @@ docs={
 		let dataset=event.target.dataset;
 		if(dataset.code){
 			interpreter.fields.code.focus();
-			interpreter.fields.code.select();
+			d.execCommand(`selectAll`,false);
 			d.execCommand(`insertText`,false,general.decode(dataset.code));
 			interpreter.run();
 		}
@@ -936,7 +936,7 @@ projects={
 		action.append(svg);
 		menu.append(action);
 		for(let child of projects.items)
-			if(child.dataset.project>key){
+			if(child.dataset.project.toLowerCase()>key.toLowerCase()){
 				insert=child;
 				break;
 			}
@@ -961,11 +961,11 @@ projects={
 			let item=event.target.parentNode.parentNode.parentNode;
 			delete projects.data[item.dataset.project];
 			item.remove();
-			if(project.items.length)
+			if(projects.items.length)
 				l.setItem(projects.storage,JSON.stringify(projects.data));
 			else l.removeItem(projects.storage);
-			projects.buttons.download.classList.toggle(`dn`,!project.items.length);
-			projects.buttons.clear.classList.toggle(`dn`,!project.items.length);
+			projects.buttons.download.classList.toggle(`dn`,!projects.items.length);
+			projects.buttons.clear.classList.toggle(`dn`,!projects.items.length);
 		}
 	},
 	download(){
@@ -1254,8 +1254,8 @@ general={
 			text=field.value;
 		}
 		general.fields.clipboard.value=text||``;
-		general.fields.clipboard.focus();
-		general.fields.clipboard.select();
+		general.fields.clipboard.focus({preventScroll:true});
+		d.execCommand(`selectAll`,false);
 		d.execCommand(`copy`,false);
 		if(field)
 			field.focus();

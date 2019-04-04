@@ -5,9 +5,6 @@ The following lists are in no particular order other than what was most likely t
 
 ## GENERAL
 - [ ] Find out if others are having caching issues with `v.1.4.6` and remove date versioning of CDN files if not.
-- [x] When a field has focus but no selection, allow Ctrl+C to copy its entire contents.
-- [x] Ctrl+L copies the link.
-- [x] Ctrl+M copies the Markdown.
 - [ ] Create Slack workspace.
 - [ ] Design a simple Japt logo & icons.
 - [ ] Create a web application for Android devices.
@@ -17,20 +14,18 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Investigate the viability of an offline version.
 
 ## HEADER
-- [x] Change the style of or animate the `play` icon while a programme is running.
 - [ ] Pick an alternative icon for copying Markdown (see: https://materialdesignicons.com/ or https://petershaggynoble.github.io/MDI-Sandbox/).
 - [ ] Change icon order to be: copy link, undo, run, redo, copy Markdown.
 - [ ] Clip or redraw background `circle`s in `play` icon.
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
+- [ ] Add header & footer (à la TIO)?
 - [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
 ## KEYBOARD
-- [x] Ctrl+K toggles the keyboard.
 - [ ] Come up with a solution for how to proceed after clicking a key on touchscreens (see https://chat.stackexchange.com/transcript/message/49610491#49610491).
-- [ ] Add touch events to allow dragging open or closed.
 - [ ] Add clipping path to tab.
 
 ## COMPRESSOR
@@ -46,7 +41,6 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add aliases, as a `data` attribute, to each method's heading for search and update `hide` variable in `docs.search.exec()` to include them.
 - [ ] Create an alternative design for method sections, allowing all methods to be collapsed to their headings, displaying only the method name, supported version & summary.
 - [ ] Figure out if there's a better way to display the type of each method's return value.
-- [ ] Add touch events to allow dragging open or closed.
 - [ ] Add clipping path to tab.
 - [ ] Decide whether or not to close documentation after clicking a character to insert.
 
@@ -59,7 +53,6 @@ The following lists are in no particular order other than what was most likely t
   - [ ] Download project
   - [ ] Rename project
 - [ ] Add categories with collapsible "folders" (with support for custom icons?)
-- [ ] Add touch events to allow dragging open or closed.
 - [ ] Add clipping path to tab.
 
 ## GITHUB REPO
@@ -72,6 +65,7 @@ The following lists are in no particular order other than what was most likely t
 <summary>**COMPLETED**</summary>
 	
 ### GENERAL
+- [x] When a field has focus but no selection, allow Ctrl+C to copy its entire contents.
 - [x] Wrap each field in a container to allow them to be individually collapsed.
 - [x] Change colours of tooltips.
 - [x] Easter Egg: Change `--foreground` of dark theme and `--background` of light theme to `#e9e7e5`.
@@ -80,6 +74,9 @@ The following lists are in no particular order other than what was most likely t
 - [x] Add `notranslate` `meta` tag for Google.
 
 ### HEADER
+- [x] Ctrl+M copies the Markdown.
+- [x] Ctrl+L copies the link.
+- [x] Change the style of or animate the `play` icon while a programme is running.
 - [x] Reduce `height`.
 - [x] Move `undo` & `redo` to header.
 
@@ -89,6 +86,9 @@ The following lists are in no particular order other than what was most likely t
 - [x] Replace checkbox for output caching with `cached` icon (or similar).
 - [x] Remove `min-height` from code & input fields.
 - [x] Move flags field from header.
+
+### KEYBOARD
+- [x] Ctrl+K toggles the keyboard.
 
 ### COMPRESSOR
 - [x] Add `information` icon to open the compressor's documentation.
