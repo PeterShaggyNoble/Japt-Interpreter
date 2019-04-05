@@ -176,7 +176,7 @@ interpreter={
 			interpreter.cache.enabled=!interpreter.cache.enabled;
 			interpreter.cache.buttons.toggle.classList.toggle(`enabled`,interpreter.cache.enabled);
 			interpreter.cache.buttons.empty.parentNode.classList.toggle(`dn`,!interpreter.cache.enabled||!interpreter.cache.array.length);
-			interpreter.cache.buttons.toggle.parentNode.dataset.title=`${interpreter.cache.enabled?`Disable`:`Enable`} Caching`;
+			interpreter.cache.buttons.toggle.parentNode.dataset.title=`${interpreter.cache.enabled?`Dis`:`En`}able Caching`;
 		},
 		update(index){
 			interpreter.cache.array.push(interpreter.cache.array.splice(index,1)[0]);
@@ -212,19 +212,24 @@ interpreter={
 		let 	code=golfed=interpreter.fields.code.value,
 			transpiled=interpreter.fields.transpiled.value,
 			offset=0,
-			match,tmp,shortcut;
+			selection=interpreter.fields.code.selectionStart,
+			length,match,tmp,shortcut;
 		while(match=interpreter.regex.exec(code)){
 			shortcut=shortcuts[match[0]].character;
 			tmp=golfed.substring(0,match.index-offset)+shortcut+golfed.slice(match.index+match[0].length-offset);
 			if(transpiled===Japt.transpile(tmp)){
 				golfed=tmp;
-				offset+=match[0].length-shortcut.length;
+				length=match[0].length-shortcut.length;
+				offset+=length;
+				if(offset<selection)
+					selection-=length;
 			}else interpreter.regex.lastIndex=match.index+1;
 		}
 		if(code!==golfed){
 			interpreter.fields.code.focus();
 			d.execCommand(`selectAll`,false);
 			d.execCommand(`insertText`,false,golfed);
+			interpreter.fields.code.selectionStart=interpreter.fields.code.selectionEnd=selection;
 		}else interpreter.fields.code.focus();
 		interpreter.regex.lastIndex=0;
 	},
@@ -293,9 +298,10 @@ interpreter={
 			encoding=`ISO-8859-1`,
 			transpiled=Japt.transpile(code);
 		interpreter.fields.transpiled.value=transpiled;
-		if(loaded)
-			general.ace.setValue(transpiled,1);
-		else general.resize(interpreter.fields.transpiled);
+		if(loaded){
+			highlighter.ace.transpiled.setValue(transpiled,1);
+			general.resize(interpreter.fields.transpiled);
+		}
 		if(/[^\x00-\xff]/.test(code))
 			encoding=`UTF-8`;
 		interpreter.bytes=general.count(code);
@@ -311,6 +317,54 @@ interpreter={
 			url+=`&input=`+general.encode(interpreter.fields.input.value);
 		return url.replace(/\+/g,`%2b`).replace(/ /g,`%20`);
 	}
+},
+highlighter={
+	buttons:{
+		transpiled:i(`hl-transpiled`),
+	},
+	themes:{
+		dark:`merbivore_soft`,
+		light:`xcode`
+	},
+	init(){
+		general.js(`https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js`).then(()=>{
+			highlighter.ace={
+				transpiled:highlighter.load(interpreter.fields.transpiled,`ace/mode/javascript`)
+			};
+		}).catch(err=>console.error(`Failed to load Ace:`,err));
+	},
+	load(field,mode){
+		let editor=ace.edit(field,{
+			behavioursEnabled:false,
+			dragEnabled:false,
+			cursorStyle:`slim`,
+			fontFamily:`Roboto Mono,Lucida Console,Courier New,monospace`,
+			fontSize:16,
+			highlightActiveLine:false,
+			highlightGutterLine:false,
+			highlightSelectedWord:false,
+			maxLines:Infinity,
+			minLines:1,
+			mergeUndoDeltas:false,
+			mode:mode,
+			readOnly:field.parentNode.classList.contains(`readonly`),
+			selectionStyle:`text`,
+			showGutter:false,
+			showPrintMargin:false,
+			tabSize:2,
+			theme:`ace/theme/${highlighter.themes[b.classList.contains(`light`)?`light`:`dark`]}`,
+			useWorker:false,
+			wrap:true
+		});
+		editor.container.parentNode.parentNode.append(field);
+		general.resize(field);
+		return editor;
+	},
+	toggle(editor){
+		highlighter.buttons[editor].classList.toggle(`enabled`);
+		highlighter.ace[editor].container.parentNode.classList.toggle(`dn`);
+		highlighter.buttons[editor].parentNode.dataset.title=`${highlighter.ace[editor].container.parentNode.classList.contains(`dn`)?`En`:`Dis`}able Highlighting`;
+	},
 },
 compressor={
 	bases:[11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36],
@@ -346,7 +400,7 @@ compressor={
 		toggle(){
 			compressor.permutations.enabled=!compressor.permutations.enabled;
 			compressor.buttons.permute.classList.toggle(`enabled`,compressor.permutations.enabled);
-			compressor.buttons.permute.parentNode.dataset.title=`${compressor.permutations.enabled?`Disable`:`Enable`} Permutations`;
+			compressor.buttons.permute.parentNode.dataset.title=`${compressor.permutations.enabled?`Dis`:`En`}able Permutations`;
 		}
 	},
 	init(){
@@ -357,7 +411,7 @@ compressor={
 		return array.map(compressor.weigh).sort((one,two)=>(one.weight>two.weight)-(one.weight<two.weight))[0];
 	},
 	insert(){
-		interpreter.fields.code.focus();
+		interpreter.fields.code.focus({preventScroll:true});
 		d.execCommand(`insertText`,false,compressor.result.string);
 		interpreter.fields.code.blur();
 		general.confirm(compressor.buttons.insert);
@@ -1126,6 +1180,7 @@ general={
 		notes:i(`notes`)
 	},
 	meta:q(`meta[name=theme-color]`),
+	shortcuts:a(`[data-key]`),
 	mdi:{
 		"alert":`M13,14H11V10H13M13,18H11V16H13M1,21H23L12,2L1,21Z`,
 		"arrow-right":`M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z`,
@@ -1154,6 +1209,7 @@ general={
 		"loading":`M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z`,
 		"magnify":`M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z`,
 		"markdown":`M2,16V8H4L7,11L10,8H12V16H10V10.83L7,13.83L4,10.83V16H2M16,8H19V12H21.5L17.5,16.5L13.5,12H16V8Z`,
+		"marker":`M18.5,1.15C17.97,1.15 17.46,1.34 17.07,1.73L11.26,7.55L16.91,13.2L22.73,7.39C23.5,6.61 23.5,5.35 22.73,4.56L19.89,1.73C19.5,1.34 19,1.15 18.5,1.15M10.3,8.5L4.34,14.46C3.56,15.24 3.56,16.5 4.36,17.31C3.14,18.54 1.9,19.77 0.67,21H6.33L7.19,20.14C7.97,20.9 9.22,20.89 10,20.12L15.95,14.16`,
 		"menu-down":`M7,10L12,15L17,10H7Z`,
 		"menu-right":`M10,17L15,12L10,7V17Z`,
 		"play":`M8,5.14V19.14L19,12.14L8,5.14Z`,
@@ -1186,32 +1242,8 @@ general={
 					interpreter.run();
 				}
 				docs.init().catch(err=>console.error(`Failed to load documentation:`,err));
+				highlighter.init();
 				projects.init();
-			}).then(()=>{
-				general.js(`https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js`).then(()=>{
-					general.ace=ace.edit(interpreter.fields.transpiled,{
-						behavioursEnabled:false,
-						dragEnabled:false,
-						cursorStyle:`slim`,
-						fontFamily:`Roboto Mono,Lucida Console,Courier New,monospace`,
-						fontSize:16,
-						highlightActiveLine:false,
-						highlightGutterLine:false,
-						highlightSelectedWord:false,
-						maxLines:Infinity,
-						minLines:1,
-						mergeUndoDeltas:false,
-						mode:`ace/mode/javascript`,
-						readOnly:true,
-						selectionStyle:`text`,
-						showPrintMargin:false,
-						tabSize:2,
-						theme:`ace/theme/${b.classList.contains(`light`)?`xcode`:`merbivore_soft`}`,
-						useWorker:false,
-						wrap:true
-					});
-					general.ace.setValue(interpreter.fields.transpiled.value,1);
-				}).catch(err=>console.error(`Failed to load Ace:`,err));
 			}).catch(err=>console.error(`Failed to load Japt:`,err));
 		}).catch(err=>console.error(`Failed to load Shoco:`,err));
 	},
@@ -1222,11 +1254,16 @@ general={
 			general.collapse(event);
 		else if(dataset.copy)
 			general.copy(event);
+		else if(dataset.highlight)
+			highlighter.toggle(dataset.highlight);
 		else if(dataset.section)
 			docs.change(event);
 		else switch(target){
 			case interpreter.buttons.golf:
 				interpreter.golf();
+				break;
+			case highlighter.buttons.highlight:
+				interpreter.highlight();
 				break;
 			case interpreter.cache.buttons.toggle:
 				interpreter.cache.toggle();
@@ -1286,7 +1323,7 @@ general={
 		d.execCommand(`selectAll`,false);
 		d.execCommand(`copy`,false);
 		if(field)
-			field.focus();
+			field.focus({preventScroll:true});
 		if(svg)
 			general.confirm(event.target);
 	},
@@ -1354,11 +1391,15 @@ general={
 			script.addEventListener(`error`,reject,{capture:false,once:true});
 		});
 	},
-	keys(event){
+	keydown(event){
 		let 	key=event.key,
 			target=event.target;
 		if(event.ctrlKey)
 			switch(key){
+				case`Control`:
+					for(let button of general.shortcuts)
+						button.classList.add(`show`);
+					break;
 				case`Enter`:
 					if(target!==compressor.fields.input)
 						interpreter.buttons.run.dispatchEvent(general.events.click);
@@ -1367,6 +1408,10 @@ general={
 				case`c`:
 					if(target.value&&target.selectionStart===target.selectionEnd)
 						general.copy(event);
+					break;
+				case`g`:
+					event.preventDefault();
+					interpreter.buttons.golf.dispatchEvent(general.events.click);
 					break;
 				case`k`:
 					event.preventDefault();
@@ -1383,8 +1428,14 @@ general={
 		else if(key===`Enter`&&(target===projects.fields.name||target===projects.fields.url))
 			projects.buttons.save.dispatchEvent(general.events.click);
 	},
+	keyup(event){
+		if(event.key===`Control`)
+			for(let button of general.shortcuts)
+				button.classList.remove(`show`);
+	},
 	listeners(){
-		b.addEventListener(`keydown`,general.keys);
+		b.addEventListener(`keydown`,general.keydown);
+		b.addEventListener(`keyup`,general.keyup);
 		version.list.addEventListener(`click`,version.change);
 		general.buttons.theme.addEventListener(`click`,general.theme);
 		i(`undo`).addEventListener(`click`,general.exec);
@@ -1434,7 +1485,8 @@ general={
 		general.meta.content=`#${light?`fff`:`212121`}`;
 		general.buttons.theme.parentNode.dataset.title=`${light?`Dark`:`Light`} Theme`;
 		if(loaded){
-			general.ace.setTheme(`ace/theme/${b.classList.contains(`light`)?`xcode`:`merbivore_soft`}`);
+			for(let editor in highlighter.ace)
+				highlighter.ace[editor].setTheme(`ace/theme/${highlighter.themes[light?`light`:`dark`]}`);
 			l.setItem(`japt-theme`,light?`light`:`dark`);
 		}
 	},

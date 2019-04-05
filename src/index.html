@@ -15,12 +15,12 @@
 		<div class="pa wsnw" id="tools">
 			<p class="dib pr" data-title="Undo" tabindex="-1"><svg class="cp" data-mdi="undo" id="undo" viewBox="0 0 24 24"></svg></p>
 			<p class="dib pr" data-title="Redo" tabindex="-1"><svg class="cp" data-mdi="redo" id="redo" viewBox="0 0 24 24"></svg></p>
-			<p class="dib pr vat" data-title="Run (Ctrl+Enter)" tabindex="-1">
+			<p class="dib pr vat" data-key="Enter" data-title="Run (Ctrl+Enter)" tabindex="-1">
 				<svg class="cp" data-mdi="play-circle" id="run" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle><circle cx="12" cy="12" r="11.625"></circle><rect height="17.325" width="24" x="0" y="0"></rect></svg>
 				<svg class="pa pen spin" data-mdi="loading,loading" viewBox="0 0 24 24"></svg>
 			</p>
-			<p class="dib pr" data-title="Copy Link (Ctrl+L)" tabindex="-1"><svg class="cp" data-copy="url" data-mdi="link,check" id="copy-link" viewBox="0 0 24 24"></svg></p>
-			<p class="dib pr" data-title="Copy Markdown (Ctrl+M)" tabindex="-1"><svg class="cp" data-copy="markdown" data-mdi="markdown,check" id="copy-post" viewBox="0 0 24 24"></svg></p>
+			<p class="dib pr" data-key="L" data-title="Copy Link (Ctrl+L)" tabindex="-1"><svg class="cp" data-copy="url" data-mdi="link,check" id="copy-link" viewBox="0 0 24 24"></svg></p>
+			<p class="dib pr" data-key="M" data-title="Copy Markdown (Ctrl+M)" tabindex="-1"><svg class="cp" data-copy="markdown" data-mdi="markdown,check" id="copy-post" viewBox="0 0 24 24"></svg></p>
 		</div>
 		<ul class="pr" id="links">
 			<li class="dib pr" data-title="Light Theme" tabindex="-1"><svg class="cp" data-mdi="invert-colors" id="theme" viewBox="0 0 24 24"></svg></li>
@@ -35,17 +35,20 @@
 			<p class="fr pr" data-title="View Documentation" tabindex="-1"><svg class="ch vam" data-mdi="book-open-variant" data-section="docs-flags" viewBox="0 0 24 24"></svg></p>
 			<input id="flags" spellcheck="false" value="">
 		</section>
-		<section class="oh">
+		<section class="oh pr">
 			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Code</h2>
 			<p class="fr pr" data-title="Copy Code" tabindex="-1"><svg class="cp vat" data-copy="code" data-mdi="clipboard-text-outline,check" id="copy-code" viewBox="0 0 24 24"></svg></p>
-			<p class="fr pr" data-title="Auto-Golf" tabindex="-1"><svg class="cp vat" data-mdi="golf" id="golf" viewBox="0 0 24 24"></svg></p>
+			<p class="fr pr" data-key="G" data-title="Auto-Golf (Ctrl+G)" tabindex="-1"><svg class="cp vat" data-mdi="golf" id="golf" viewBox="0 0 24 24"></svg></p>
 			<p class="fr" id="counter"></p>
 			<textarea autocomplete="off" class="oh" id="code" spellcheck="false" rows="1"></textarea>
 		</section>
 		<section class="oh">
 			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Transpiled JS</h2>
 			<p class="fr pr" data-title="Copy Code" tabindex="-1"><svg class="cp vat" data-copy="transpiled" data-mdi="clipboard-text-outline,check" id="copy-js" viewBox="0 0 24 24"></svg></p>
-			<textarea autocomplete="off" class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
+			<p class="fr pr" data-title="Disable Highlighting" tabindex="-1"><svg class="enabled cp vat" data-highlight="transpiled" data-mdi="marker" id="hl-transpiled" viewBox="0 0 24 24"></svg></p>
+			<div class="highlight readonly">
+				<textarea autocomplete="off" class="oh" id="transpiled" spellcheck="false" rows="1" readonly></textarea>
+			</div>
 		</section>
 		<section class="oh">
 			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Input</h2>
@@ -93,7 +96,7 @@
 		<textarea autocomplete="off" class="mz oh oz pen" id="clipboard" readonly spellcheck="false" rows="1"></textarea>
 	</main>
 	<aside class="pf" id="keyboard">
-		<h2 class="cp" data-title="Keyboard (Ctrl+K)" tabindex="-1"><svg class="pen" data-mdi="keyboard" viewBox="0 0 24 24"><title>Keyboard</title></svg></h2>
+		<h2 class="cp" data-key="K" data-title="Keyboard (Ctrl+K)" tabindex="-1"><svg class="pen" data-mdi="keyboard" viewBox="0 0 24 24"><title>Keyboard</title></svg></h2>
 		<ol class="dg"></ol>
 	</aside>
 	<section id="docs">
@@ -127,7 +130,7 @@
 	</section>
 	<footer class="df pf" id="footer">
 		<p class="pr" data-title="Projects" tabindex="-1"><svg class="cp" data-mdi="file-document-edit" data-sidebar="projects" viewBox="0 0 24 24"></svg></p>
-		<p class="pr" data-title="Keyboard (Ctrl+K)" tabindex="-1"><svg class="cp" data-mdi="keyboard" data-sidebar="keyboard" viewBox="0 0 24 24"></svg></p>
+		<p class="pr" data-title="Keyboard" tabindex="-1"><svg class="cp" data-mdi="keyboard" data-sidebar="keyboard" viewBox="0 0 24 24"></svg></p>
 		<p class="pr" data-title="Documentation" tabindex="-1"><svg class="ch" data-mdi="book-open-variant" data-sidebar="docs" viewBox="0 0 24 24"></svg></p>
 	</footer>
 	<script src="js/default.js"></script>

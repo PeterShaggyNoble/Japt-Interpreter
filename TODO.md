@@ -5,6 +5,7 @@ The following lists are in no particular order other than what was most likely t
 
 ## GENERAL
 - [ ] Find out if others are having caching issues with `v.1.4.6` and remove date versioning of CDN files if not.
+- [x] Show keyboard shortcut tooltips when Ctrl key is depressed.
 - [ ] Create Slack workspace.
 - [ ] Design a simple Japt logo & icons.
 - [ ] Create a web application for Android devices.
@@ -20,11 +21,16 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [x] Add syntax highlighting for JavaScript.
-- [ ] Try to add syntax highlighting for Japt.
-- [ ] Add header & footer (à la TIO)?
+- [x] Ctrl+G runs auto-golf.
+- [x] Return caret to the same position after auto-golfing.
+- [ ] Add header & footer fields (à la TIO)?
 - [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
+
+## HIGHLIGHTER
+- [x] Add a toggle to disable syntax highlighting.
+- [ ] Create custom themes.
+- [ ] Create a custom mode to (try to) add syntax highlighting for Japt.
 
 ## KEYBOARD
 - [ ] Come up with a solution for how to proceed after clicking a key on touchscreens (see https://chat.stackexchange.com/transcript/message/49610491#49610491).
@@ -88,6 +94,9 @@ The following lists are in no particular order other than what was most likely t
 - [x] Replace checkbox for output caching with `cached` icon (or similar).
 - [x] Remove `min-height` from code & input fields.
 - [x] Move flags field from header.
+
+### HIGHLIGHTER
+- [x] Add syntax highlighting for JavaScript.
 
 ### KEYBOARD
 - [x] Ctrl+K toggles the keyboard.

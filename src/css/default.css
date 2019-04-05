@@ -85,12 +85,12 @@ svg.spin{
 	animation:spin 1.5s infinite var(--timing-function);
 }
 @media(hover:hover){
+	[data-key]::before,
 	[data-title]::after{
 		background:var(--background);
 		border:1px solid var(--border);
 		border-radius:2px;
 		bottom:-22px;
-		content:attr(data-title);
 		font-size:12px;
 		line-height:22px;
 		opacity:0;
@@ -103,11 +103,21 @@ svg.spin{
 		white-space:nowrap;
 		z-index:1;
 	}
+	[data-key]::before{
+		content:attr(data-key);
+	}
+	[data-title]::after{
+		content:attr(data-title);
+	}
+	[data-key].show::before,
 	[data-title]:hover:not(:active):not(:focus)::after{
 		opacity:1;
 		transition:opacity .195s var(--timing-function) .5s;
 		max-width:250px;
 		z-index:2;
+	}
+	[data-key].show::before{
+		transition-delay:0s;
 	}
 }
 #header{
@@ -122,6 +132,7 @@ svg.spin{
 	top:0;
 	user-select:none;
 }
+#header [data-key]::before,
 #header [data-title]::after{
 	left:50%;
 	transform:translatex(-50%);
@@ -316,17 +327,33 @@ body.light #tools::after{
 #main textarea#clipboard{
 	height:0;
 }
+.highlight{
+	background:var(--primary);
+	border:1px solid var(--border);
+	border-radius:2px;
+	padding:4px 0;
+}
+.highlight.readonly{
+	border-color:var(--primary);
+}
+#main .highlight>textarea{
+	border:0;
+	max-height:20px;
+	padding:0 5px;
+}
 .ace_editor{
 	background:var(--primary);
-	border-radius:2px;
-	line-height:24px;
-	margin-top:2px;
+	color:var(--foreground);
+	line-height:20px;
 }
 #main .ace_editor>textarea{
 	border:0;
 	padding:0;
 }
-.ace_cursor-layer,
+#main .highlight:not(.dn)+#transpiled{
+	display:none;
+}
+.highlight.readonly .ace_cursor-layer,
 .ace_editor .ace_marker-layer .ace_bracket{
 	display:none;
 }
@@ -337,6 +364,7 @@ body.light #tools::after{
 #error>svg{
 	margin-right:8px;
 }
+[data-highlight]:not(.enabled),
 #cache:not(.enabled){
 	opacity:.375;
 }
@@ -402,6 +430,7 @@ body.light #tools::after{
 	width:calc(100% + 2px);
 	max-width:804px;
 }
+#keyboard>h2[data-key]::before,
 #keyboard>h2[data-title]::after{
 	left:50%;
 	bottom:36px;
@@ -982,6 +1011,7 @@ input#filter{
 	}
 	#docs{
 		height:calc(100vh - 40px);
+		position:-webkit-sticky;
 		position:sticky;
 		top:40px;
 		width:400px;
@@ -1029,7 +1059,7 @@ input#filter{
 .pa{position:absolute;}
 .pf{position:fixed;}
 .pr{position:relative;}
-.ps{position:sticky;}
+.ps{position:-webkit-sticky;position:sticky;}
 .fwm{font-weight:500;}
 .tac{text-align:center;}
 .tdu{text-decoration:var(--border) underline;}
