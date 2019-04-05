@@ -9,12 +9,12 @@
 	<link href="css/default.css" rel="stylesheet">
 </head>
 <body>
-	<header class="df pf" id="header">
+	<header class="df pf">
 		<h1>Japt</h1>
 		<ol class="df oh pr" id="versions" tabindex="-1"></ol>
 		<div class="pa wsnw" id="tools">
-			<p class="dib pr" data-title="Undo" tabindex="-1"><svg class="cp" data-mdi="undo" id="undo" viewBox="0 0 24 24"></svg></p>
-			<p class="dib pr" data-title="Redo" tabindex="-1"><svg class="cp" data-mdi="redo" id="redo" viewBox="0 0 24 24"></svg></p>
+			<p class="dib pr" data-key="Z" data-title="Undo" tabindex="-1"><svg class="cp" data-mdi="undo" id="undo" viewBox="0 0 24 24"></svg></p>
+			<p class="dib pr" data-key="Y" data-title="Redo" tabindex="-1"><svg class="cp" data-mdi="redo" id="redo" viewBox="0 0 24 24"></svg></p>
 			<p class="dib pr vat" data-key="Enter" data-title="Run (Ctrl+Enter)" tabindex="-1">
 				<svg class="cp" data-mdi="play-circle" id="run" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle><circle cx="12" cy="12" r="11.625"></circle><rect height="17.325" width="24" x="0" y="0"></rect></svg>
 				<svg class="pa pen spin" data-mdi="loading,loading" viewBox="0 0 24 24"></svg>
@@ -28,22 +28,32 @@
 			<li class="dib"><a href="https://github.com/PeterShaggyNoble/Japt-Interpreter/"><svg data-mdi="github-circle" viewBox="0 0 24 24"></svg></a></li>
 		</ul>
 	</header>
-	<main class="pr" id="main">
-		<section class="oh">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Flags</h2>
+	<main class="pr">
+		<section class="collapsed oh">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Flags</h2>
 			<p class="fr pr" data-title="Copy Flags" tabindex="-1"><svg class="cp vat" data-copy="flags" data-mdi="clipboard-text-outline,check" id="copy-flags" viewBox="0 0 24 24"></svg></p>
 			<p class="fr pr" data-title="View Documentation" tabindex="-1"><svg class="ch vam" data-mdi="book-open-variant" data-section="docs-flags" viewBox="0 0 24 24"></svg></p>
-			<input id="flags" spellcheck="false" value="">
+			<input id="flags" spellcheck="false" type="text" value="">
 		</section>
-		<section class="oh pr">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Code</h2>
+		<section class="collapsed oh">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Header</h2>
+			<p class="fr pr" data-title="Copy Code" tabindex="-1"><svg class="cp vat" data-copy="header" data-mdi="clipboard-text-outline,check" id="copy-header" viewBox="0 0 24 24"></svg></p>
+			<textarea autocomplete="off" class="oh" id="header" spellcheck="false" rows="1"></textarea>
+		</section>
+		<section class="oh">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Code</h2>
 			<p class="fr pr" data-title="Copy Code" tabindex="-1"><svg class="cp vat" data-copy="code" data-mdi="clipboard-text-outline,check" id="copy-code" viewBox="0 0 24 24"></svg></p>
 			<p class="fr pr" data-key="G" data-title="Auto-Golf (Ctrl+G)" tabindex="-1"><svg class="cp vat" data-mdi="golf" id="golf" viewBox="0 0 24 24"></svg></p>
 			<p class="fr" id="counter"></p>
 			<textarea autocomplete="off" class="oh" id="code" spellcheck="false" rows="1"></textarea>
 		</section>
-		<section class="oh">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Transpiled JS</h2>
+		<section class="collapsed oh">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Footer</h2>
+			<p class="fr pr" data-title="Copy Code" tabindex="-1"><svg class="cp vat" data-copy="footer" data-mdi="clipboard-text-outline,check" id="copy-footer" viewBox="0 0 24 24"></svg></p>
+			<textarea autocomplete="off" class="oh" id="footer" spellcheck="false" rows="1"></textarea>
+		</section>
+		<section class="oh pr">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Transpiled JS</h2>
 			<p class="fr pr" data-title="Copy Code" tabindex="-1"><svg class="cp vat" data-copy="transpiled" data-mdi="clipboard-text-outline,check" id="copy-js" viewBox="0 0 24 24"></svg></p>
 			<p class="fr pr" data-title="Disable Highlighting" tabindex="-1"><svg class="enabled cp vat" data-highlight="transpiled" data-mdi="marker" id="hl-transpiled" viewBox="0 0 24 24"></svg></p>
 			<div class="highlight readonly">
@@ -51,12 +61,12 @@
 			</div>
 		</section>
 		<section class="oh">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Input</h2>
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Input</h2>
 			<p class="fr pr" data-title="Copy Input" tabindex="-1"><svg class="cp vat" data-copy="input" data-mdi="clipboard-text-outline,check" id="copy-input" viewBox="0 0 24 24"></svg></p>
 			<textarea autocomplete="off" class="oh" id="input" spellcheck="false" rows="1"></textarea>
 		</section>
 		<section class="oh">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Output</h2>
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Output</h2>
 			<p class="fr pr" data-title="Copy Output" tabindex="-1"><svg class="cp vat" data-copy="output" data-mdi="clipboard-text-outline,check" id="copy-output" viewBox="0 0 24 24"></svg></p>
 			<p class="fr pr" data-title="Enable Caching" tabindex="-1"><svg class="cp vat" data-mdi="cached" id="cache" viewBox="0 0 24 24"></svg></p>
 			<p class="dn fr pr" data-title="Clear Cache" tabindex="-1"><svg class="cp vat" data-mdi="delete" id="empty" viewBox="0 0 24 24"></svg></p>
@@ -64,34 +74,34 @@
 			<textarea autocomplete="off" class="oh" id="output" spellcheck="false" rows="1" readonly></textarea>
 			<p class="dn" id="error"><svg class="vat" data-mdi="alert" viewBox="0 0 24 24"></svg> <span class="vam"></span></p>
 		</section>
-		<section class="oh">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Explanation</h2>
+		<section class="collapsed oh">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Explanation</h2>
 			<p class="fr pr" data-title="Copy Explanation" tabindex="-1"><svg class="cp vat" data-copy="explanation" data-mdi="clipboard-text-outline,check" id="copy-explanation" viewBox="0 0 24 24"></svg></p>
-			<textarea autocomplete="off" class="oh" id="explanation" spellcheck="false" rows="1"></textarea>
+			<textarea autocomplete="off" class="oh" id="explanation" rows="1"></textarea>
 		</section>
-		<section class="oh">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Compressor</h2>
+		<section class="collapsed oh">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Compressor</h2>
 			<p class="fr pr" data-title="Compress" tabindex="-1"><svg class="cp pen vat" data-mdi="play" id="compress" viewBox="0 0 24 24"></svg></p>
 			<p class="fr pr" data-title="Enable Permutations" tabindex="-1"><svg class="cp vat" data-mdi="shuffle" id="permute" viewBox="0 0 24 24"></svg></p>
 			<p class="fr pr" data-title="View Documentation" tabindex="-1"><svg class="ch vat" data-mdi="book-open-variant" data-section="docs-compression" viewBox="0 0 24 24"></svg></p>
 			<textarea autocomplete="off" class="oh" id="compressor" spellcheck="false" rows="1"></textarea>
+			<section class="dn oh" id="results">
+				<h3 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Results</h3>
+				<p class="fr pr" data-title="Insert Into Code" tabindex="-1"><svg class="cp vat" data-mdi="format-indent-increase,check" id="insert" viewBox="0 0 24 24"></svg></p>
+				<p class="fr pr" data-title="Copy Result" tabindex="-1"><svg class="cp vat" data-copy="compressor" data-mdi="clipboard-text-outline,check" id="copy-compressed" viewBox="0 0 24 24"></svg></p>
+				<pre class="oh pr" id="original" data-label="Original"></pre>
+				<pre class="oh pr" id="permutation" data-label="Permutation"></pre>
+				<pre class="oh pr" id="size" data-label="Bytes"></pre>
+				<pre class="oh pr" id="compressed" data-label="Compressed"></pre>
+				<pre class="oh pr" id="base" data-label="Base"></pre>
+				<pre class="oh pr" id="delimiter" data-label="Delimiter"></pre>
+				<pre class="oh pr" id="bytes" data-label="Bytes"></pre>
+			</section>
 		</section>
-		<section class="dn oh" id="results">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Results</h2>
-			<p class="fr pr" data-title="Insert Into Code" tabindex="-1"><svg class="cp vat" data-mdi="format-indent-increase,check" id="insert" viewBox="0 0 24 24"></svg></p>
-			<p class="fr pr" data-title="Copy Result" tabindex="-1"><svg class="cp vat" data-copy="compressor" data-mdi="clipboard-text-outline,check" id="copy-compressed" viewBox="0 0 24 24"></svg></p>
-			<pre class="oh pr" id="original" data-label="Original"></pre>
-			<pre class="oh pr" id="permutation" data-label="Permutation"></pre>
-			<pre class="oh pr" id="size" data-label="Bytes"></pre>
-			<pre class="oh pr" id="compressed" data-label="Compressed"></pre>
-			<pre class="oh pr" id="base" data-label="Base"></pre>
-			<pre class="oh pr" id="delimiter" data-label="Delimiter"></pre>
-			<pre class="oh pr" id="bytes" data-label="Bytes"></pre>
-		</section>
-		<section class="oh">
-			<h2 class="cp dib fwm"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Notes</h2>
+		<section class="collapsed oh">
+			<h2 class="cp dib fwm ttu"><svg class="pen vat" data-mdi="menu-down" viewBox="0 0 24 24"></svg>Notes</h2>
 			<p class="fr pr" data-title="Copy Notes" tabindex="-1"><svg class="cp vat" data-copy="notes" data-mdi="clipboard-text-outline,check" id="copy-notes" viewBox="0 0 24 24"></svg></p>
-			<textarea autocomplete="off" class="oh" id="notes" spellcheck="false" rows="1"></textarea>
+			<textarea autocomplete="off" class="oh" id="notes" rows="1"></textarea>
 		</section>
 		<textarea autocomplete="off" class="mz oh oz pen" id="clipboard" readonly spellcheck="false" rows="1"></textarea>
 	</main>
@@ -128,7 +138,7 @@
 		<input id="filter" type="text" value="">
 		<ol class="oa"></ol>
 	</section>
-	<footer class="df pf" id="footer">
+	<footer class="pf">
 		<p class="pr" data-title="Projects" tabindex="-1"><svg class="cp" data-mdi="file-document-edit" data-sidebar="projects" viewBox="0 0 24 24"></svg></p>
 		<p class="pr" data-title="Keyboard" tabindex="-1"><svg class="cp" data-mdi="keyboard" data-sidebar="keyboard" viewBox="0 0 24 24"></svg></p>
 		<p class="pr" data-title="Documentation" tabindex="-1"><svg class="ch" data-mdi="book-open-variant" data-sidebar="docs" viewBox="0 0 24 24"></svg></p>

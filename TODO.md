@@ -5,7 +5,7 @@ The following lists are in no particular order other than what was most likely t
 
 ## GENERAL
 - [ ] Find out if others are having caching issues with `v.1.4.6` and remove date versioning of CDN files if not.
-- [x] Show keyboard shortcut tooltips when Ctrl key is depressed.
+- [ ] Add more `transition`s.
 - [ ] Create Slack workspace.
 - [ ] Design a simple Japt logo & icons.
 - [ ] Create a web application for Android devices.
@@ -21,14 +21,12 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [x] Ctrl+G runs auto-golf.
-- [x] Return caret to the same position after auto-golfing.
-- [ ] Add header & footer fields (à la TIO)?
+- [x] Add header & footer fields.
+- [x] Collapse non-essential fields by default.
 - [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
 ## HIGHLIGHTER
-- [x] Add a toggle to disable syntax highlighting.
 - [ ] Create custom themes.
 - [ ] Create a custom mode to (try to) add syntax highlighting for Japt.
 
@@ -73,6 +71,7 @@ The following lists are in no particular order other than what was most likely t
 <summary>**COMPLETED**</summary>
 	
 ### GENERAL
+- [x] Show keyboard shortcut tooltips when Ctrl key is depressed.
 - [x] When a field has focus but no selection, allow Ctrl+C to copy its entire contents.
 - [x] Wrap each field in a container to allow them to be individually collapsed.
 - [x] Change colours of tooltips.
@@ -89,6 +88,8 @@ The following lists are in no particular order other than what was most likely t
 - [x] Move `undo` & `redo` to header.
 
 ### INTERPRETER
+- [x] Return caret to the same position after auto-golfing.
+- [x] Ctrl+G runs auto-golf.
 - [x] Add `information` icon to open the documentation on flags.
 - [x] Reduce the `opacity` of the icon when caching is disabled.
 - [x] Replace checkbox for output caching with `cached` icon (or similar).
@@ -96,6 +97,7 @@ The following lists are in no particular order other than what was most likely t
 - [x] Move flags field from header.
 
 ### HIGHLIGHTER
+- [x] Add a toggle to disable syntax highlighting.
 - [x] Add syntax highlighting for JavaScript.
 
 ### KEYBOARD
