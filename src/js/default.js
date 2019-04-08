@@ -1188,7 +1188,7 @@ projects={
 			if(compress)
 				projects.data[key].compressor=general.encode(compress);
 			if(general.fields.notes.value)
-				projects.data[key].explanation=general.encode(general.fields.notes.value);
+				projects.data[key].notes=general.encode(general.fields.notes.value);
 			l.setItem(projects.storage,JSON.stringify(projects.data));
 			if(!link)
 				general.icons(projects.add(key));
