@@ -305,9 +305,19 @@
 			"version":"1.4.5"
 		},
 		"ì(n/s/a)":{
-			"description":"Returns the result of converting `A` from an array of base-`n/s/a` digits to base-`10`. (e.g., `[\"b\",\"a\",\"a\",\"b\"].n(\"ab\")` = `[1,0,0,1].ì(2)` = `9`)",
+			"description":"Returns the result of converting `A` from an array of base-`n/s/a` digits to a base-`10` integer. (e.g., `[\"b\",\"a\",\"a\",\"b\"].n(\"ab\")` = `[1,0,0,1].ì(2)` = `9`)",
 			"returns":"N",
 			"version":"1.4.5"
+		},
+		"ì(x,x)":{
+			"description":"Returns the result of converting `A` from an array of base-`x1` digits to an array of base-`x2` digits.",
+			"returns":"A",
+			"version":"2.0a0"
+		},
+		"ì(x,x?,f)":{
+			"description":"Returns the result of converting `S` from an array of base-`x1` digits to a base-`10` integer, passing it through `f` and then converting it to an array of base-`x2` digits. If `x2` is not passed then the result will be converted back to the original base.",
+			"returns":"A",
+			"version":"2.0a0"
 		},
 		"í(a?,f?)":{
 			"description":"Returns the result of pairing each element in `A` with the corresponding element in `a`. If `a` is not passed then the indices of the elements in `A` are used instead. If `f` is passed then each pair of elements is reduced by passing it through `f`.",

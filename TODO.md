@@ -21,8 +21,6 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [x] Add header & footer fields.
-- [x] Collapse non-essential fields by default.
 - [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
@@ -40,6 +38,7 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add support for arrays of strings of equal length.
 
 ## DOCUMENTATION
+- [x] Add version highlighting for shortcuts & Regular Expressions.
 - [ ] Figure out *exactly* what `F.b()` does(!) and add it to `functions.json`.
 - [ ] Deemphasise, in some way, methods that are not supported in the currently selected version of Japt and remove highlighting.
 - [ ] Collapse the content below each heading in `.html` docs.
@@ -88,6 +87,8 @@ The following lists are in no particular order other than what was most likely t
 - [x] Move `undo` & `redo` to header.
 
 ### INTERPRETER
+- [x] Collapse non-essential fields by default.
+- [x] Add header & footer fields.
 - [x] Return caret to the same position after auto-golfing.
 - [x] Ctrl+G runs auto-golf.
 - [x] Add `information` icon to open the documentation on flags.

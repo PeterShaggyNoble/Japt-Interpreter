@@ -124,6 +124,11 @@
 			"returns":"N",
 			"version":"1.4.5"
 		},
+		"s(x,f)":{
+			"description":"Returns the result of converting `N` to a base-`x` string, passing it through `f` and then converting it back to a number.",
+			"returns":"N",
+			"version":"2.0a0"
+		},
 		"t(f)":{
 			"description":"Returns an `timeoutID` and executes `f` after `N` milliseconds.",
 			"returns":"N",
@@ -188,6 +193,11 @@
 			"description":"Returns the result of converting `N` to an array of digits, passing it through `f` and then converting it back to a number.",
 			"returns":"N",
 			"version":"1.4.5"
+		},
+		"ì(x,f)":{
+			"description":"Returns the result of converting `N` to an array of base-`x` digits, passing it through `f` and then converting it back to a number.",
+			"returns":"N",
+			"version":"2.0a0"
 		},
 		"î(s=\" \")":{
 			"description":"Returns `s` repeated and sliced to length `N`.",

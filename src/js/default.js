@@ -884,6 +884,7 @@ docs={
 			cell.append(t(regexes[regex].match));
 			row.append(cell);
 			cell=cell.cloneNode(false);
+			ver.classList.toggle(`unavailable`,version.selected<regexes[regex].version);
 			ver.append(t(`v`+regexes[regex].version));
 			cell.append(ver);
 			row.append(cell);
@@ -946,6 +947,7 @@ docs={
 			cell.append(code);
 			row.append(cell);
 			cell=cell.cloneNode(false);
+			ver.classList.toggle(`unavailable`,version.selected<shortcuts[shortcut].version);
 			ver.append(t(`v`+shortcuts[shortcut].version));
 			cell.append(ver);
 			row.append(cell);

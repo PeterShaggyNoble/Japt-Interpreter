@@ -427,10 +427,14 @@ main p#error{
 	top:0;
 	width:90px;
 }
+#compressed{
+	user-select:text;
+}
 #keyboard{
 	background:var(--primary);
 	border:1px solid var(--border);
 	border-bottom:0;
+	font-family:var(--mono);
 	left:0;
 	overscroll-behavior:contain;
 	padding:2px;
@@ -637,6 +641,12 @@ main p#error{
 	font-size:11px;
 	line-height:16px;
 	padding:0 4px;
+}
+#docs table span.version{
+	border-color:var(--confirm);
+}
+#docs span.version.unavailable{
+	border-color:var(--error);
 }
 #docs p>svg,
 #docs li>svg{
