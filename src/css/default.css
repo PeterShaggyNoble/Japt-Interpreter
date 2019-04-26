@@ -112,7 +112,7 @@ svg.spin{
 		content:attr(data-title);
 	}
 	[data-key].show::before,
-	[data-title]:hover:not(:active):not(:focus)::after{
+	[data-title]:not(.show):hover:not(:active):not(:focus)::after{
 		opacity:1;
 		transition:opacity .195s var(--timing-function) .5s;
 		max-width:250px;
@@ -333,6 +333,16 @@ main textarea:read-only{
 }
 main textarea#clipboard{
 	height:0;
+}
+#golf>path{
+	transition:opacity .375s var(--timing-function) .375s;
+}
+#golf.confirm>path{
+	transition-delay:.1s;
+}
+#golf:not(.confirm)>path:last-child,
+#golf.confirm>path:first-child{
+	opacity:0;
 }
 .highlight{
 	background:var(--primary);

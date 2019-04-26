@@ -122,12 +122,12 @@
 		"n(x,x)":{
 			"description":"Returns the result of converting `S` from a base-`x1` to a base-`x2` string.",
 			"returns":"S",
-			"version":"2.0a0"
+			"version":"1.4.6"
 		},
-		"n(x,x?,f)":{
+		"n(x=10,x?,f)":{
 			"description":"Returns the result of converting `S` from a base-`x1` string to a base-`10` integer, passing it through `f` and then converting it to a base-`x2` string. If `x2` is not passed then the result will be converted back to the original base.",
 			"returns":"S",
-			"version":"2.0a0"
+			"version":"1.4.6"
 		},
 		"o(s/n/a,x?)":{
 			"description":"Returns the result of removing all characters not in `s/n/a` from `S`. Case-insensitive unless `x` is truthy.",

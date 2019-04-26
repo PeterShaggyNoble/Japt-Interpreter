@@ -21,6 +21,7 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
+- [x] Add confirmation to auto-golf icon.
 - [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
@@ -38,9 +39,10 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Add support for arrays of strings of equal length.
 
 ## DOCUMENTATION
-- [x] Add version highlighting for shortcuts & Regular Expressions.
 - [ ] Figure out *exactly* what `F.b()` does(!) and add it to `functions.json`.
 - [ ] Deemphasise, in some way, methods that are not supported in the currently selected version of Japt and remove highlighting.
+- [ ] Add the ability to highlight deprecated methods.
+- [ ] Wrap method names in spans and only have them be clickable.
 - [ ] Collapse the content below each heading in `.html` docs.
 - [ ] Add "alias" (array) & "summary" (string) keys to all method JSON files.
 - [ ] Add aliases, as a `data` attribute, to each method's heading for search and update `hide` variable in `docs.search.exec()` to include them.
@@ -115,6 +117,7 @@ The following lists are in no particular order other than what was most likely t
 - [x] Update byte counts in results to factor in multi-byte characters.
 
 ### DOCUMENTATION
+- [x] Add version highlighting for shortcuts & Regular Expressions.
 - [x] Include method names when searching.
 - [x] Don't include object names in method names. Instead, wrap the first character in each section's title in `<code>` tags.
 - [x] Highlight which methods are and are not supported in the currently selected version of Japt.

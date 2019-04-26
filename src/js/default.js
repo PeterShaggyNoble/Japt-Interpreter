@@ -224,7 +224,7 @@ interpreter={
 		else if(event.type===`blur`&&interpreter.fields.flags.value===`-`)
 			interpreter.fields.flags.value=``;
 	},
-	golf(){
+	golf(event){
 		let 	code=golfed=interpreter.fields.code.value,
 			transpiled=Japt.transpile(code),
 			offset=0,
@@ -248,6 +248,7 @@ interpreter={
 			interpreter.fields.code.selectionStart=interpreter.fields.code.selectionEnd=selection;
 		}else interpreter.fields.code.focus();
 		interpreter.regex.lastIndex=0;
+		general.confirm(event.target);
 	},
 	markdown(){
 		let markdown=`#[Japt](https://github.com/ETHproductions/japt)`;
@@ -1309,7 +1310,7 @@ general={
 			docs.change(event);
 		else switch(target){
 			case interpreter.buttons.golf:
-				interpreter.golf();
+				interpreter.golf(event);
 				break;
 			case highlighter.buttons.highlight:
 				interpreter.highlight();

@@ -314,10 +314,10 @@
 			"returns":"A",
 			"version":"2.0a0"
 		},
-		"ì(x,x?,f)":{
+		"ì(x=10,x?,f)":{
 			"description":"Returns the result of converting `S` from an array of base-`x1` digits to a base-`10` integer, passing it through `f` and then converting it to an array of base-`x2` digits. If `x2` is not passed then the result will be converted back to the original base.",
 			"returns":"A",
-			"version":"2.0a0"
+			"version":"1.4.6"
 		},
 		"í(a?,f?)":{
 			"description":"Returns the result of pairing each element in `A` with the corresponding element in `a`. If `a` is not passed then the indices of the elements in `A` are used instead. If `f` is passed then each pair of elements is reduced by passing it through `f`.",
