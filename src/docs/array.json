@@ -414,7 +414,7 @@
 			"returns":"A",
 			"version":"1.4.5"
 		},
-		"û(f?)":{
+		"ü(f?)":{
 			"description":"Returns the elements of `A` sorted and grouped by the values returned by passing each through `f`.",
 			"returns":"A",
 			"version":"1.4.6"
