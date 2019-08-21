@@ -256,7 +256,7 @@ interpreter={
 			markdown+=` v`+version.selected;
 		if(interpreter.fields.flags.value)
 			markdown+=` [\`${interpreter.fields.flags.value}\`](https://codegolf.meta.stackexchange.com/a/14339/)`;
-		markdown+=`, ${interpreter.bytes} ${`bytes`.slice(0,interpreter.bytes!==1?5:4)}\n\n${interpreter.fields.code.value.replace(/^/gm,`    `)}\n\n[Try it](${interpreter.url()})`;
+		markdown+=`, ${interpreter.bytes} [${`bytes`.slice(0,interpreter.bytes!==1?5:4)}](https://en.wikipedia.org/wiki/${interpreter.enconding===`UTF-8`?`UTF-8`:`ISO/IEC_8859-1`})\n\n${interpreter.fields.code.value.replace(/^/gm,`    `)}\n\n[Try it](${interpreter.url()})`;
 		if(interpreter.fields.explanation.value)
 			markdown+=`\n\n`+interpreter.fields.explanation.value.replace(/^/gm,`    `);
 		return markdown;
@@ -320,7 +320,6 @@ interpreter={
 		let 	header=interpreter.fields.header.value,
 			code=programme=interpreter.fields.code.value,
 			footer=interpreter.fields.footer.value,
-			encoding=`ISO-8859-1`,
 			transpiled;
 		if(header)
 			programme=header+`\n`+programme;
@@ -333,9 +332,10 @@ interpreter={
 			general.resize(interpreter.fields.transpiled);
 		}
 		if(/[^\x00-\xff]/.test(code))
-			encoding=`UTF-8`;
+			interpreter.encoding=`UTF-8`;
+		else interpreter.encoding=`ISO-8859-1`;
 		interpreter.bytes=general.count(code);
-		interpreter.fields.counter.firstChild.nodeValue=interpreter.bytes+` bytes`.slice(0,interpreter.bytes!==1?6:5)+` (${encoding})`;
+		interpreter.fields.counter.firstChild.nodeValue=interpreter.bytes+` bytes`.slice(0,interpreter.bytes!==1?6:5)+` (${interpreter.encoding})`;
 	},
 	url(v=version.selected){
 		let url=u.protocol+`//${u.hostname+u.pathname}?v=`+v;
@@ -1258,7 +1258,7 @@ general={
 		"link-variant":`M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z`,
 		"loading":`M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z`,
 		"magnify":`M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z`,
-		"markdown":`M2,16V8H4L7,11L10,8H12V16H10V10.83L7,13.83L4,10.83V16H2M16,8H19V12H21.5L17.5,16.5L13.5,12H16V8Z`,
+		"markdown":`M20.56 18H3.44C2.65 18 2 17.37 2 16.59V7.41C2 6.63 2.65 6 3.44 6H20.56C21.35 6 22 6.63 22 7.41V16.59C22 17.37 21.35 18 20.56 18M6.81 15.19V11.53L8.73 13.88L10.65 11.53V15.19H12.58V8.81H10.65L8.73 11.16L6.81 8.81H4.89V15.19H6.81M19.69 12H17.77V8.81H15.85V12H13.92L16.81 15.28L19.69 12Z`,
 		"marker":`M18.5,1.15C17.97,1.15 17.46,1.34 17.07,1.73L11.26,7.55L16.91,13.2L22.73,7.39C23.5,6.61 23.5,5.35 22.73,4.56L19.89,1.73C19.5,1.34 19,1.15 18.5,1.15M10.3,8.5L4.34,14.46C3.56,15.24 3.56,16.5 4.36,17.31C3.14,18.54 1.9,19.77 0.67,21H6.33L7.19,20.14C7.97,20.9 9.22,20.89 10,20.12L15.95,14.16`,
 		"menu-down":`M7,10L12,15L17,10H7Z`,
 		"menu-right":`M10,17L15,12L10,7V17Z`,
