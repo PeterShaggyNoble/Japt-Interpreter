@@ -256,7 +256,7 @@ interpreter={
 			markdown+=` v`+version.selected;
 		if(interpreter.fields.flags.value)
 			markdown+=` [\`${interpreter.fields.flags.value}\`](https://codegolf.meta.stackexchange.com/a/14339/)`;
-		markdown+=`, ${interpreter.bytes} [${`bytes`.slice(0,interpreter.bytes!==1?5:4)}](https://en.wikipedia.org/wiki/${interpreter.enconding===`UTF-8`?`UTF-8`:`ISO/IEC_8859-1`})\n\n${interpreter.fields.code.value.replace(/^/gm,`    `)}\n\n[Try it](${interpreter.url()})`;
+		markdown+=`, ${interpreter.bytes} [${`bytes`.slice(0,interpreter.bytes!==1?5:4)}](https://en.wikipedia.org/wiki/${interpreter.enconding===`UTF-8`?`UTF-8`:`ISO/IEC_8859-1`})\n\n${interpreter.fields.code.value.replace(/^/gm,`    `)}\n\n[${interpreter.fields.input.value?`Try`:`Test`} it](${interpreter.url()})`;
 		if(interpreter.fields.explanation.value)
 			markdown+=`\n\n`+interpreter.fields.explanation.value.replace(/^/gm,`    `);
 		return markdown;
