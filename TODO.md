@@ -15,13 +15,11 @@ The following lists are in no particular order other than what was most likely t
 - [ ] Investigate the viability of an offline version.
 
 ## HEADER
-- [ ] Pick an alternative icon for copying Markdown (see: https://materialdesignicons.com/ or https://petershaggynoble.github.io/MDI-Sandbox/).
 - [ ] Change icon order to be: copy link, undo, run, redo, copy Markdown.
 - [ ] Clip or redraw background `circle`s in `play` icon.
 - [ ] Replace chat icon & link with Slack.
 
 ## INTERPRETER
-- [x] Add confirmation to auto-golf icon.
 - [ ] Replace code's `textarea` with a `contenteditable` element when broader support for `plaintext-only` is available.
 - [ ] Decide whether to continue using `localStorage` for output caching, switch to `sessionStorage` or use neither at all.
 
@@ -35,7 +33,6 @@ The following lists are in no particular order other than what was most likely t
 
 ## COMPRESSOR
 - [ ] Add byte counter above the `textarea`, similar to the code's.
-- [ ] Replace icon for permutations with `shuffle-variant`?
 - [ ] Add support for arrays of strings of equal length.
 
 ## DOCUMENTATION
@@ -82,6 +79,7 @@ The following lists are in no particular order other than what was most likely t
 - [x] Add `notranslate` `meta` tag for Google.
 
 ### HEADER
+- [x] Pick an alternative icon for copying Markdown (see: https://materialdesignicons.com/ or https://petershaggynoble.github.io/MDI-Sandbox/).
 - [x] Ctrl+M copies the Markdown.
 - [x] Ctrl+L copies the link.
 - [x] Change the style of or animate the `play` icon while a programme is running.
@@ -89,6 +87,9 @@ The following lists are in no particular order other than what was most likely t
 - [x] Move `undo` & `redo` to header.
 
 ### INTERPRETER
+- [x] Add confirmation to auto-golf icon.
+- [x] Change link wording in Markdown when no input is present.
+- [x] Add codepage link to byte count in Markdown header.
 - [x] Collapse non-essential fields by default.
 - [x] Add header & footer fields.
 - [x] Return caret to the same position after auto-golfing.

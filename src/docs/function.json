@@ -28,6 +28,16 @@
 			"description":"Returns the first `n` elements of `a` after repeatedly taking the last element of `a`, passing it through `F` and then appending the result to `a`.",
 			"returns":"A",
 			"version":"1.4.6"
+		},
+		"i(n1=0,n2=0)":{
+			"description":"Returns the first `n1`th item, 0-indexed, that returns a truthy value when passed through `F`, starting with `n2`.",
+			"returns":"X",
+			"version":"1.4.6"
+		},
+		"j(n1=10,n2=0)":{
+			"description":"Returns the first `n1` items that return a truthy value when passed through `F`, starting with `n2`.",
+			"returns":"A",
+			"version":"1.4.6"
 		}
 	}
 }
