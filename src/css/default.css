@@ -323,6 +323,7 @@ main textarea{
 	line-height:20px;
 	padding:4px;
 	resize:none;
+	tab-size:4;
 	width:100%;
 }
 main textarea:-moz-read-only{

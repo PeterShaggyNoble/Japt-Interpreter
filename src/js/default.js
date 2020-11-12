@@ -251,7 +251,7 @@ interpreter={
 		general.confirm(event.target);
 	},
 	markdown(){
-		let markdown=`#[Japt](https://github.com/ETHproductions/japt)`;
+		let markdown=`# [Japt](https://github.com/ETHproductions/japt)`;
 		if(version.current!==version.selected)
 			markdown+=` v`+version.selected;
 		if(interpreter.fields.flags.value)
@@ -320,12 +320,28 @@ interpreter={
 		let 	header=interpreter.fields.header.value,
 			code=programme=interpreter.fields.code.value,
 			footer=interpreter.fields.footer.value,
+			indent=1,
 			transpiled;
 		if(header)
 			programme=header+`\n`+programme;
 		if(footer)
 			programme+=`\n`+footer;
 		transpiled=Japt.transpile(programme);
+		transpiled=transpiled.replace(/\{ | \}|; /g,brace=>{
+			brace=brace.trim();
+			switch(brace){
+				case`{`:
+					indent++;
+					return`{\n`.padEnd(Math.max(1,indent+1),`\t`);
+					break;
+				case`}`:
+					indent--;
+					return`\n`.padEnd(Math.max(1,indent),`\t`)+`}`;
+					break;
+				default:
+					return`;\n`;
+			}
+		});		
 		interpreter.fields.transpiled.value=transpiled;
 		if(loaded){
 			highlighter.ace.transpiled.setValue(transpiled,1);
@@ -385,7 +401,7 @@ highlighter={
 			selectionStyle:`text`,
 			showGutter:false,
 			showPrintMargin:false,
-			tabSize:2,
+			tabSize:4,
 			theme:`ace/theme/${highlighter.themes[b.classList.contains(`light`)?`light`:`dark`]}`,
 			useWorker:false,
 			wrap:true
