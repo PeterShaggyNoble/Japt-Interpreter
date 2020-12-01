@@ -1385,8 +1385,7 @@ general={
 			text=field.value;
 		}
 		general.fields.clipboard.value=text||``;
-		general.fields.clipboard.focus({preventScroll:true});
-		d.execCommand(`selectAll`,false);
+		general.fields.clipboard.select();
 		d.execCommand(`copy`,false);
 		if(field)
 			field.focus({preventScroll:true});
